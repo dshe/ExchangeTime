@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExchangeTime", "ExchangeTim
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{59FF57CF-E68F-4B30-A9FC-0EB50DBA50E2}"
 	ProjectSection(SolutionItems) = preProject
-		ExchangeTime.png = ExchangeTime.png
+		..\..\..\temp\ExchangeTime.png = ..\..\..\temp\ExchangeTime.png
 	EndProjectSection
 EndProject
 Global
