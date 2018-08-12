@@ -1,6 +1,6 @@
 ## ExchangeTime&nbsp;&nbsp; [![License](https://img.shields.io/badge/license-Apache%202.0-7755BB.svg)](https://opensource.org/licenses/Apache-2.0)
 
-ExchangeTime is a WPF desktop application that displays a calendar/timeline indicating periods when financial exchanges are open.
+ExchangeTime is a small WPF desktop application that displays a calendar/timeline indicating periods when financial exchanges are open.
 
 **Notes**
 - the gold vertical line represents the current point in time
@@ -9,6 +9,7 @@ ExchangeTime is a WPF desktop application that displays a calendar/timeline indi
 - anchor the window to the edge of the screen by dragging it beyond the edge
 - edit ExchangeTime.xml to modify the timeline
 - audio notifications may be set
+
 
 ![ScreenShot](/Screenshot.png)
 
