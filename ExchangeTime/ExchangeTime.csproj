@@ -100,8 +100,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Code\Formats.cs" />
-    <Compile Include="Code\Data.cs" />
+    <Compile Include="Core\Formats.cs" />
+    <Compile Include="Core\Data.cs" />
     <Compile Include="Utility\Clock.cs" />
     <Compile Include="Utility\ExceptionHandlers.cs" />
     <Compile Include="Utility\Speech.cs" />
@@ -116,7 +116,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Utility\MsgBox.cs" />
-    <Compile Include="Code\Location.cs" />
+    <Compile Include="Core\Location.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

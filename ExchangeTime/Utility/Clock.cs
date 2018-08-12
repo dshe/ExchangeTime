@@ -13,7 +13,7 @@ namespace ExchangeTime.Utility
             {
                 return SystemClock.Instance.GetCurrentInstant();
                 /*
-                var ldt = new LocalDateTime(2018, 8, 13, 12, 0, 0);
+                var ldt = new LocalDateTime(2020, 6, 10, 14, 0, 0);
                 var zone = SystemTimeZone;
                 var zdt = zone.AtStrictly(ldt);
                 return zdt.ToInstant();

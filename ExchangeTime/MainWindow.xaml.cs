@@ -339,6 +339,5 @@ namespace ExchangeTime
 			canvas1.Children.Add(tb);
 			return tb;
 		}
-
 	}
 }

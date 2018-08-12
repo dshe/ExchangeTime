@@ -33,7 +33,7 @@ namespace ExchangeTime
             {
                 iconType = MsgBox.IconType.Information,
                 Background = Brushes.LightGray,
-                Title = "ExchangeTime 1.0"
+                Title = "ExchangeTime"
             }.Show("Zoom: mouse wheel\nQuit: double-click left mouse button");
         }
 
