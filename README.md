@@ -10,4 +10,4 @@ ExchangeTime is a WPF desktop application that displays a calendar/timeline indi
 - edit ExchangeTime.xml to modify the timeline
 - audio notifications may be set
 
-[ScreenShot](/ExchangeTime.png)
+[ScreenShot](/Screenshot.png)
