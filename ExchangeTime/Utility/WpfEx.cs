@@ -27,14 +27,14 @@ namespace ExchangeTime.Utility
             foreach (var s in strings)
             {
                 tb.Text = s;
-                if (tb.GetTextSize().Width < tb.Width)
+                if (tb.GetTextSize().Width < tb.Width - 1)
                     return;
             }
             if (char.IsLetter(strings[0][0])) // first letter of first string
             {
                 //Logger.LogInfo("is letter" + strings[0]);
                 tb.Text = strings[0].Substring(0, 1); // try first letter
-                if (tb.GetTextSize().Width < tb.Width)
+                if (tb.GetTextSize().Width < tb.Width - 1)
                     return;
             }
             tb.Text = null;

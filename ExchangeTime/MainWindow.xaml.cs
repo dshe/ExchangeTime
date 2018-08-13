@@ -41,9 +41,7 @@ namespace ExchangeTime
 			}
             formatIndex = Properties.Settings.Default.ZoomLevel;
 
-            Width = (24 * 60) / 3 + 4; // 1 px = 3 minutes (default)
-            width = Convert.ToInt32(Width - 2 * BorderThickness.Left); // 480
-
+            width = Convert.ToInt32(Width - 2 * BorderThickness.Left); // 484 -> 480
             Height = locations.Count * 11 + 32;
             height = Convert.ToInt32(Height - 2 * BorderThickness.Top);
 
@@ -88,7 +86,7 @@ namespace ExchangeTime
             canvas1.Children.Add(leftHeader);
             canvas1.Children.Add(rightHeader);
 
-            OriginSeconds = instant.ToUnixTimeSeconds() - SecondsPerPixel * 160;
+            OriginSeconds = instant.ToUnixTimeSeconds() - SecondsPerPixel * width / 3;
 
             DrawTicks();
             DrawBars();
@@ -111,14 +109,12 @@ namespace ExchangeTime
                     {
                         Foreground = Brushes.LightGray,
                         Text = dt.ToString(Format.MajorFormat, null),
-                        TextAlignment = TextAlignment.Center,
-                        FontFamily = new FontFamily("Verdana"),
-                        FontSize = 10
+                        TextAlignment = TextAlignment.Center
                     };
                     var size = tb.GetTextSize();
-                    tb.Width = size.Width;
+                    tb.Width = size.Width + 4;
                     tb.Height = size.Height;
-                    var halfWidth = Convert.ToInt32(size.Width / 2); // rounds up
+                    var halfWidth = tb.Width / 2;
                     if (i >= halfWidth && width - i >= halfWidth)
                     {
                         Canvas.SetTop(tb, Y1Hours);
@@ -215,13 +211,13 @@ namespace ExchangeTime
             var zone = location.Tz;
             int x1 = DateToPixels(zone.AtLeniently(start)), x2 = DateToPixels(zone.AtLeniently(end));
 
-            if (x1 <= 1)
-                x1 = 1;
-            else if (x1 > 480)
+            if (x1 <= 0)
+                x1 = 0;
+            else if (x1 >= width)
                 return;
-            if (x2 > 480)
-                x2 = 480;
-            if (x2 <= 1)
+            if (x2 >= width)
+                x2 = width - 1;
+            if (x2 < 0)
                 return;
 
             //Debug.WriteLine("Drawing: " + start + "=" + left + " to " + end + "=" + right);
@@ -229,7 +225,6 @@ namespace ExchangeTime
             //Sys.Assert(end < localOrigin.AddDays(1));
 
             var y1 = top;
-			var w = x2 - x1 + 1;
 
 		    var tb = new TextBlock
 		    {
@@ -239,10 +234,8 @@ namespace ExchangeTime
 		        TextAlignment = TextAlignment.Center,
 		        LineHeight = 11,
 		        LineStackingStrategy = LineStackingStrategy.BlockLineHeight,
-		        FontFamily = new FontFamily("Verdana"),
-		        FontSize = 10,
-		        Width = w
-		    };
+                Width = x2 - x1 + 1
+        };
 		    // important! allows spacing inside textblock
 		    switch (barHeight)
 		    {
@@ -281,10 +274,10 @@ namespace ExchangeTime
         {   // show the line showing the current point in time
             canvas1.Children.Add(new Line // vertical line 1 px width
             {
-                X1 = 160,
-                X2 = 160,
+                X1 = width / 3,
+                X2 = width / 3,
                 Y1 = Y1Hours + 12,
-                Y2 = height,
+                Y2 = height + 1,
                 Stroke = Brushes.Gold,
                 StrokeThickness = 1
             });
@@ -318,10 +311,9 @@ namespace ExchangeTime
 		    var tb = new TextBlock
 		    {
 		        VerticalAlignment = VerticalAlignment.Top,
-		        FontFamily = new FontFamily("Verdana"),
-		        FontSize = 12,
+		        FontSize = FontSize + 1,
 		        TextAlignment = ta,
-		        Foreground = Brushes.White
+                Foreground = Brushes.White
 		    };
             Canvas.SetTop(tb, 0);
             if (ta == TextAlignment.Center)

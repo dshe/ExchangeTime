@@ -40,7 +40,10 @@ namespace ExchangeTime.Utility
             if (mutex != null)
                 return true;
 
-            var mutexId = $"Global\\{{{Process.GetCurrentProcess().ProcessName}}}";
+            var processName = Process.GetCurrentProcess().ProcessName;
+            var version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            var mutexId = $"Global\\{{{processName}:{version}}}";
+
             mutex = new Mutex(false, mutexId);
 
             var allowEveryoneRule = new MutexAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null), MutexRights.FullControl, AccessControlType.Allow);
@@ -63,6 +66,7 @@ namespace ExchangeTime.Utility
             }
             return true;
         }
+
         public static void DisposeMutex()
         {
             if (mutex == null)
