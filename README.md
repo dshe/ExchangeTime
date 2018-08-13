@@ -5,8 +5,8 @@
 - move the mouse wheel to zoom the timeline
 - anchor the window to the edge of the screen by dragging it beyond the edge
 - double-click to exit
-- edit the file "ExchangeTime.xml" to modify the timeline
-- edit the file "ExchangeTime.xml" to set audio announcements
+- edit the file "ExchangeTime.xml" to modify the timeline data
+- edit the file "ExchangeTime.xml" to schedule audio announcements
 - right click to announce the current time
 - supports Windows Presentation Framework 4.7
 - dependencies: NodaTime
