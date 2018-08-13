@@ -11,5 +11,7 @@
 - supports Windows Presentation Framework 4.7
 - dependencies: NodaTime
 
-![ScreenShot](/Screenshot.png)
+![ScreenShot](/Screencap1.png)
+
+![ScreenShot](/Screencap2.png)
 
