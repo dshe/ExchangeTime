@@ -6,10 +6,12 @@
 - anchor the window to the edge of the screen by dragging it beyond the edge
 - double-click on the application to exit
 - edit ExchangeTime.xml to modify the timeline
-- audio announcements may be set
+- edit ExchangeTime.xml to set audio announcements
 - right click to announce the current time
 - supports Windows Presentation Framework 4.7
 - dependencies: NodaTime
 
-![ScreenShot](/Screenshot.png)
+![ScreenShot](/Screencap1.png)
+
+![ScreenShot](/Screencap2.png)
 
