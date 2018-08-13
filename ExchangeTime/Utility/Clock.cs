@@ -3,11 +3,11 @@ using System;
 
 namespace ExchangeTime.Utility
 {
-    public static class Clock
+    internal static class Clock
     {
-        public static readonly DateTimeZone SystemTimeZone = DateTimeZoneProviders.Tzdb.GetSystemDefault();
+        internal static readonly DateTimeZone SystemTimeZone = DateTimeZoneProviders.Tzdb.GetSystemDefault();
 
-        public static Instant CurrentInstant
+        internal static Instant CurrentInstant
         {
             get
             {
@@ -21,9 +21,9 @@ namespace ExchangeTime.Utility
             }
         }
 
-        public static ZonedDateTime SystemTime => CurrentInstant.InZone(SystemTimeZone);
+        internal static ZonedDateTime SystemTime => CurrentInstant.InZone(SystemTimeZone);
 
-        public static Instant Round(this Instant instant, long ticks) =>
+        internal static Instant Round(this Instant instant, long ticks) =>
             Instant.FromUnixTimeSeconds((instant.ToUnixTimeTicks() + ticks / 2) / ticks);
     }
 }

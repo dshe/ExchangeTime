@@ -104,6 +104,7 @@
     <Compile Include="Core\Data.cs" />
     <Compile Include="Utility\Clock.cs" />
     <Compile Include="Utility\ExceptionHandlers.cs" />
+    <Compile Include="Utility\MyBrushes.cs" />
     <Compile Include="Utility\Speech.cs" />
     <Compile Include="Utility\Sys.cs" />
     <Compile Include="Utility\WpfEx.cs" />

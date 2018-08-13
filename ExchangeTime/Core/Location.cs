@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Media;
 using System.Xml;
+using ExchangeTime.Utility;
 using NodaTime;
 using NodaTime.Text;
 
@@ -17,7 +18,7 @@ namespace ExchangeTime.Code
         Weekend
     };
 
-    public class Holiday
+    internal class Holiday
     {
         internal readonly string Name;
         internal readonly LocalDate Date;
@@ -45,13 +46,13 @@ namespace ExchangeTime.Code
         }
     }
 
-    public class Interval
+    internal class Interval
     {
         internal readonly string Label;
         internal readonly LocalTime Start, End;
         internal readonly int Shift;
         internal readonly BarHeight BarHeight;
-        public Interval(XmlNode node)
+        internal Interval(XmlNode node)
         {
             var attributes = node.Attributes;
             if (attributes == null)
@@ -83,16 +84,16 @@ namespace ExchangeTime.Code
         }
     }
 
-    public class Location
+    internal class Location
     {
         internal readonly string Name;
-        internal readonly Brush Brush;
+        internal readonly SolidColorBrush Brush;
         internal readonly DateTimeZone Tz;
 
         internal readonly List<Interval> Intervals = new List<Interval>();
         internal readonly List<Notification> Notifications = new List<Notification>();
         internal readonly Dictionary<LocalDate, Holiday> Holidays = new Dictionary<LocalDate, Holiday>();
-        private static readonly BrushConverter BrushConverter = new BrushConverter();
+
         internal Location(XmlNode node)
         {
             var attributes = node.Attributes ?? throw new Exception("Location node has no attributes.");
@@ -104,19 +105,9 @@ namespace ExchangeTime.Code
             if (Tz == null)
                 throw new Exception("Could not find timezone for: " + a.Value);
 
-            a = attributes["Color"]; // optional
-
+            a = attributes["Color"];
             if (a != null)
-            {
-                try
-                {
-                    Brush = (SolidColorBrush)BrushConverter.ConvertFromString(a.Value);
-                }
-                catch
-                {
-                    throw new Exception("invalid color: " + a.Value);
-                }
-            }
+                Brush = MyBrushes.CreateBrush(a.Value);
 
             AddIntervals(node);
             AddNotifications(node);

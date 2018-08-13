@@ -46,9 +46,9 @@ namespace ExchangeTime
             height = Convert.ToInt32(Height - 2 * BorderThickness.Top);
 
             AddChild(canvas1);
-            centerHeader = SetTopTextBlock(TextAlignment.Center);
-            leftHeader = SetTopTextBlock(TextAlignment.Left);
-            rightHeader = SetTopTextBlock(TextAlignment.Right);
+            centerHeader = CreateTopTextBlock(TextAlignment.Center);
+            leftHeader = CreateTopTextBlock(TextAlignment.Left);
+            rightHeader = CreateTopTextBlock(TextAlignment.Right);
 
             timer.Tick += Tick;
             Tick(null, null);
@@ -74,12 +74,9 @@ namespace ExchangeTime
             var instant = Clock.CurrentInstant.Round(NodaConstants.TicksPerSecond);
             var local = instant.InZone(Clock.SystemTimeZone);
 
-            //Debug.WriteLine("repainting: " + MyClock.CurrentInstant.InZone(MyClock.SystemTimeZone).ToString("dddd, MMMM d, yyyy H:mm:ss.fff", null));
-            //Debug.WriteLine("rounded:    " + instant.InZone(MyClock.SystemTimeZone).ToString("dddd, MMMM d, yyyy H:mm:ss.fff", null));
-
-            leftHeader.Text = local.ToString("H:mm:ss", null);
+            leftHeader.Text = " " + Clock.SystemTimeZone.Id;
             centerHeader.Text = local.ToString("dddd, MMMM d, yyyy", null);
-            rightHeader.Text = Clock.SystemTimeZone.Id;
+            rightHeader.Text = local.ToString("H:mm:ss ", null);
 
             canvas1.Children.Clear();
             canvas1.Children.Add(centerHeader);
@@ -107,7 +104,7 @@ namespace ExchangeTime
                 {
                     var tb = new TextBlock
                     {
-                        Foreground = Brushes.LightGray,
+                        Foreground = MyBrushes.Gray128,
                         Text = dt.ToString(Format.MajorFormat, null),
                         TextAlignment = TextAlignment.Center
                     };
@@ -127,7 +124,7 @@ namespace ExchangeTime
                         X2 = i,
                         Y1 = Y1Ticks, // top + text height
                         Y2 = height,  // straight line
-                        Stroke = new SolidColorBrush(Color.FromRgb(110, 110, 110)),
+                        Stroke = MyBrushes.Gray96,
                         StrokeThickness = 1
                     });
                 }
@@ -140,7 +137,7 @@ namespace ExchangeTime
                         Y1 = Y1Ticks + 2,
                         Y2 = height,
                         StrokeThickness = 1,
-                        Stroke = new SolidColorBrush(Color.FromRgb(64, 64, 64))
+                        Stroke = MyBrushes.Gray48
                     });
                 }
             }
@@ -220,30 +217,26 @@ namespace ExchangeTime
             if (x2 < 0)
                 return;
 
-            //Debug.WriteLine("Drawing: " + start + "=" + left + " to " + end + "=" + right);
-            //Debug.WriteLine("Drawing: " + x1 + " to " + x2 + ", " + start +" to " + end);
-            //Sys.Assert(end < localOrigin.AddDays(1));
-
             var y1 = top;
 
 		    var tb = new TextBlock
 		    {
-		        Background = location.Brush,
+                Foreground = MyBrushes.Gray224,
+                Background = location.Brush,
 		        Opacity = .95,
-		        Foreground = Brushes.WhiteSmoke,
 		        TextAlignment = TextAlignment.Center,
 		        LineHeight = 11,
 		        LineStackingStrategy = LineStackingStrategy.BlockLineHeight,
                 Width = x2 - x1 + 1
-        };
-		    // important! allows spacing inside textblock
+            };
+
 		    switch (barHeight)
 		    {
 		        case BarHeight.Holiday:
 		        case BarHeight.Weekend:
                     tb.Background = location.Brush.Clone();
-		            tb.Background.Opacity = .5;
-		            tb.Foreground = new SolidColorBrush(Color.FromRgb(200, 200, 200));
+                    tb.Background.Opacity = .5;
+		            tb.Foreground = MyBrushes.Gray224;
 		            tb.Height = 11;
 		            tb.Text = label;
 		            tb.FitText();
@@ -277,7 +270,7 @@ namespace ExchangeTime
                 X1 = width / 3,
                 X2 = width / 3,
                 Y1 = Y1Hours + 12,
-                Y2 = height + 1,
+                Y2 = height,
                 Stroke = Brushes.Gold,
                 StrokeThickness = 1
             });
@@ -306,30 +299,17 @@ namespace ExchangeTime
             return Convert.ToInt32(px);
         }
 
-        private TextBlock SetTopTextBlock(TextAlignment ta)
+        private TextBlock CreateTopTextBlock(TextAlignment ta)
 		{
-		    var tb = new TextBlock
-		    {
-		        VerticalAlignment = VerticalAlignment.Top,
-		        FontSize = FontSize + 1,
-		        TextAlignment = ta,
-                Foreground = Brushes.White
-		    };
-            Canvas.SetTop(tb, 0);
-            if (ta == TextAlignment.Center)
-			{
-				tb.Background = new SolidColorBrush(Color.FromRgb(50, 50, 50));
-				Canvas.SetLeft(tb, 1);
-				tb.Width = width - 2;
-			}
-			else
-			{
-				tb.Background = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0)); // transparent
-				Canvas.SetLeft(tb, 2);
-				tb.Width = width - 5;
-			}
-			canvas1.Children.Add(tb);
-			return tb;
+            return new TextBlock
+            {
+                Width = width,
+                VerticalAlignment = VerticalAlignment.Top,
+                FontSize = FontSize + 1,
+                TextAlignment = ta,
+                Foreground = MyBrushes.Gray224,
+                Background = (ta == TextAlignment.Center) ? MyBrushes.Gray48 : Brushes.Transparent
+            };
 		}
 	}
 }

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ExchangeTime>
-	<Location Name="Sydney" TimeZone="Australia/Sydney" Color="#700010">
+	<Location Name="Sydney" TimeZone="Australia/Sydney" Color="#701010">
 		<Interval Start="07:00:00" End="10:00:00" BarHeight="S" /><!-- SPI 200 futures -->
 		<Interval Start="10:00:00" End="16:00:00" BarHeight="L" Label="Australian Stock Exchange TIME;ASX TIME;ASX;A" />
     <Interval Start="16:00:00" End="19:00:00" BarHeight="S" /><!-- SPI 200 futures -->
@@ -111,7 +111,7 @@
     <Holiday Date="2019-12-26" Name="Christmas" />
   </Location>
 
-  <Location Name="Frankfurt" TimeZone="Europe/Berlin" Color="#3050E0">
+  <Location Name="Frankfurt" TimeZone="Europe/Berlin" Color="#104050">
     <Interval Start="07:50:00" End="22:00:00" BarHeight="S" />
     <!--DJ Euro Stoxx 50 futures-->
     <Interval Start="08:00:00" End="20:00:00" BarHeight="M" />
@@ -136,7 +136,7 @@
     <Holiday Date="2019-12-26" Name="Boxing Day" />
   </Location>
 
-  <Location Name="London" TimeZone="Europe/London" Color="#305060">
+  <Location Name="London" TimeZone="Europe/London" Color="#204090">
 		<Interval Start="01:00:00" End="07:50:00" BarHeight="S" /><!-- FTSE 100 -->
 		<Interval Start="08:00:00" End="16:20:00" BarHeight="L" Label="London Stock Exchange TIME;LSE TIME;LSE;L"/>
 		<Interval Start="16:20:00" End="21:00:00" BarHeight="S" /><!-- FTSE 100 -->
@@ -162,7 +162,7 @@
     <Holiday Date="2019-12-26" Name="Boxing Day" />
   </Location>
 
-	<Location Name="New York" TimeZone="America/New_York" Color="#4030A0">
+	<Location Name="New York" TimeZone="America/New_York" Color="#400090">
 		<Interval Start="18:00:00" End="16:15:00" BarHeight="S" Shift="-1"/><!-- S&P500 futures -->
 		<Interval Start="16:30:00" End="17:30:00" BarHeight="S" /><!-- S&P500 futures -->
 		<Interval Start="04:00:00" End="09:30:00" BarHeight="M" />
@@ -209,7 +209,7 @@
     <Holiday Date="2020-12-25" Name="Christmas" />
   </Location>
 
-	<Location Name="Toronto" TimeZone="America/Toronto" Color="#500050">
+	<Location Name="Toronto" TimeZone="America/Toronto" Color="#401030">
 		<Interval Start="09:30:00" End="16:00:00" BarHeight="L" Label="Toronto Stock Exchange TIME;TSX TIME;TSX;T"/>
 		<Interval Start="16:15:00" End="17:00:00" BarHeight="S" /><!-- S&P/TSX 60 futures -->
 		<Holiday Date="2018-01-02" Name="New Year" />
