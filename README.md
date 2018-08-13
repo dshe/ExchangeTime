@@ -4,9 +4,9 @@
 - the gold vertical line represents the current point in time
 - move the mouse wheel to zoom the timeline
 - anchor the window to the edge of the screen by dragging it beyond the edge
-- double-click on the application to exit
-- edit ExchangeTime.xml to modify the timeline
-- edit ExchangeTime.xml to set audio announcements
+- double-click to exit
+- edit the file "ExchangeTime.xml" to modify the timeline
+- edit the file "ExchangeTime.xml" to set audio announcements
 - right click to announce the current time
 - supports Windows Presentation Framework 4.7
 - dependencies: NodaTime
