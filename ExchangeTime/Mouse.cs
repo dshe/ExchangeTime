@@ -39,12 +39,28 @@ namespace ExchangeTime
 
         private void MainWindowMouseWheel(object sender, MouseWheelEventArgs e)
         {
-            if (e.Delta < 0)
+            if (e.Delta > 0)
+                Zoom(true);
+            else if (e.Delta < 0)
+                Zoom(false);
+        }
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.OemPlus || e.Key == Key.Add)
+                Zoom(true);
+            else if (e.Key == Key.OemMinus || e.Key == Key.Subtract)
+                Zoom(false);
+        }
+
+        private void Zoom(bool expand)
+        {
+            if (expand)
             {
                 if (formatIndex != 0)
                     formatIndex--;
             }
-            else if (e.Delta > 0)
+            else
             {
                 if (formatIndex < formats.Count - 1)
                     formatIndex++;

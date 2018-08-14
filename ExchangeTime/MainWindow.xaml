@@ -23,4 +23,5 @@
         MouseRightButtonDown = "MainWindowMouseRightButtonDown"
         MouseDown = "MainWindowMouseDown"
         MouseWheel = "MainWindowMouseWheel"
+        KeyDown="Window_KeyDown"
         />
