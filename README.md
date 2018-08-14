@@ -2,7 +2,7 @@
 
 ***A small desktop application that displays a timeline indicating periods when financial exchanges are open.***
 - the gold vertical line represents the current point in time
-- move the mouse wheel to zoom the timeline
+- zoom the timeline using the mouse wheel or +/- keys
 - anchor the window to the edge of the screen by dragging it beyond the edge
 - double-click to exit
 - edit the file "ExchangeTime.xml" to modify the timeline data
