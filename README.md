@@ -2,7 +2,7 @@
 
 ***A small desktop application that displays a timeline indicating periods when financial exchanges are operating***
 - the gold vertical line represents the current time
-- zoom the timeline using the mouse wheel or +/- keys
+- **zoom the timeline** using the mouse wheel or +/- keys
 - anchor the window to the edge of the screen by dragging it beyond the edge
 - right click to announce the current time
 - double-click to exit
