@@ -176,7 +176,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="NodaTime">
-      <Version>2.4.2</Version>
+      <Version>2.4.4</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
