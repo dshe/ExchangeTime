@@ -12,6 +12,8 @@ using ExchangeTime.Code;
 using ExchangeTime.Utility;
 using NodaTime;
 
+#nullable enable
+
 namespace ExchangeTime
 {
     public partial class MainWindow
@@ -62,7 +64,7 @@ namespace ExchangeTime
             speech.Dispose(); // automatically disposed when the process ends
         }
 
-		private void Tick(object sender, EventArgs e)
+		private void Tick(object? sender, EventArgs? e)
 		{
             timer.Stop();
             Repaint();

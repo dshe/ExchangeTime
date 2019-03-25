@@ -6,6 +6,8 @@ using System.Windows;
 using System.Xml;
 using System.Xml.Schema;
 
+#nullable enable
+
 namespace ExchangeTime.Code
 {
     internal static class Data

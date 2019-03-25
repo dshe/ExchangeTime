@@ -5,6 +5,8 @@ using System.Windows.Media;
 using ExchangeTime.Utility;
 using NodaTime;
 
+#nullable enable
+
 namespace ExchangeTime
 {
     public sealed partial class MainWindow : IDisposable

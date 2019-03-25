@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
 
+#nullable enable
+
 namespace ExchangeTime.Code
 {
     internal class Format
     {
         internal int SecondsPerPixel, Major, Minor;
-        internal string MajorFormat;
+        internal string MajorFormat = "";
     }
 
     internal class Formats : List<Format>

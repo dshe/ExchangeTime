@@ -7,6 +7,8 @@ using ExchangeTime.Utility;
 using NodaTime;
 using NodaTime.Text;
 
+#nullable enable
+
 namespace ExchangeTime.Code
 {
     internal enum BarHeight
@@ -106,8 +108,8 @@ namespace ExchangeTime.Code
                 throw new Exception("Could not find timezone for: " + a.Value);
 
             a = attributes["Color"];
-            if (a != null)
-                Brush = MyBrushes.CreateBrush(a.Value);
+            var color = a != null ? a.Value : "grey";
+            Brush = MyBrushes.CreateBrush(color);
 
             AddIntervals(node);
             AddNotifications(node);

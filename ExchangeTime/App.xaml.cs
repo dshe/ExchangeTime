@@ -8,6 +8,8 @@ using System.Xml;
 using ExchangeTime.Code;
 using ExchangeTime.Utility;
 
+#nullable enable
+
 namespace ExchangeTime
 {
 	public partial class App

@@ -1,6 +1,8 @@
 ﻿using NodaTime;
 using System;
 
+#nullable enable
+
 namespace ExchangeTime.Utility
 {
     internal static class Clock

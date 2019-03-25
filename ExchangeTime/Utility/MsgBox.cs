@@ -4,14 +4,16 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
+#nullable enable
+
 namespace ExchangeTime.Utility
 {
     public class MsgBox
     {
         public enum IconType { Information, Question, Warning, Error };
         private readonly Window window = new Window();
-        private Image image;
-        public MsgBox(Window owner = null)
+        private Image? image = null;
+        public MsgBox(Window? owner = null)
         {
             if (owner != null)
             {
@@ -25,7 +27,7 @@ namespace ExchangeTime.Utility
         public double FontSize { get; set; }
         public SolidColorBrush ForeGround { set { window.Foreground = value; } }
         public SolidColorBrush Background { set { window.Background = value; } }
-        public string Buttons { get; set; }
+        public string Buttons { get; set; } = "";
         public IconType iconType
         {
             set
@@ -40,9 +42,9 @@ namespace ExchangeTime.Utility
                 // must specify dll;//image.Source = new BitmapImage(new Uri("pack://application:,,," + path));
             }
         }
-        public string Show(string message = null)
+        public string? Show(string message = "")
         {
-            string result = null;
+            string? result = null;
             var grid = new Grid();
             //grid.ShowGridLines = true;
             grid.RowDefinitions.Add(new RowDefinition());
@@ -55,7 +57,7 @@ namespace ExchangeTime.Utility
                 Grid.SetRow(image, 0);
                 Grid.SetColumn(image, 0);
             }
-            if (message != null)
+            if (message != "")
             {
                 var tb = new TextBlock
                 {
@@ -70,7 +72,7 @@ namespace ExchangeTime.Utility
                 Grid.SetRow(tb, 0);
                 Grid.SetColumn(tb, 1);
             }
-            if (Buttons != null)
+            if (Buttons != "")
             {
                 var tb = new TextBlock
                 {
@@ -102,7 +104,7 @@ namespace ExchangeTime.Utility
                         Content = buttonText[i],
                         IsDefault = i == 0 // the first button is the default
                     };
-                    button.Click += (sender, e) => { result = ((Button)sender).Content as string; window.Close(); };
+                    button.Click += (sender, e) => { result = (((sender as Button)?.Content) as string); window.Close(); };
                     panel.Children.Add(button);
                 }
                 window.WindowStyle = (string.IsNullOrEmpty(window.Title)) ? WindowStyle.ToolWindow : WindowStyle.SingleBorderWindow;

@@ -7,6 +7,8 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
+#nullable enable
+
 namespace ExchangeTime.Utility
 {
     public static class WpfEx

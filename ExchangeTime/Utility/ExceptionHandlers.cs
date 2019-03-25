@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
 
+#nullable enable
+
 namespace ExchangeTime.Utility
 {
     public static partial class Sys

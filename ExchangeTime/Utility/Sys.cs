@@ -5,6 +5,8 @@ using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Threading;
 
+#nullable enable
+
 namespace ExchangeTime.Utility
 {
     public static partial class Sys
@@ -74,7 +76,6 @@ namespace ExchangeTime.Utility
             if (hasMutexHandle)
                 mutex.ReleaseMutex();
             mutex.Dispose();
-            mutex = null;
         }
     }
 

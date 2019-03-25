@@ -4,6 +4,8 @@ using System.Speech.Synthesis;
 //using Microsoft.Speech.Synthesis;
 //using Windows.Media.SpeechSynthesis;
 
+#nullable enable
+
 namespace ExchangeTime.Utility
 {
     public sealed class Speech : IDisposable
@@ -20,7 +22,7 @@ namespace ExchangeTime.Utility
             //synth.SelectVoice(voice.VoiceInfo.Name); // does not work
         }
 
-        public void AnnounceTime(ZonedDateTime dt, string locationName = null, string text = null)
+        public void AnnounceTime(ZonedDateTime dt, string locationName = "", string text = "")
         {
             var promptBuilder1 = new PromptBuilder();
 
@@ -47,13 +49,13 @@ namespace ExchangeTime.Utility
             promptBuilder.AppendBreak(PromptBreak.Small);
             promptBuilder.AppendText("at");
             promptBuilder.AppendTextWithHint(dt.ToString("hh:mm tt", null), SayAs.Time);
-            if (locationName != null)
+            if (locationName != "")
             {
                 promptBuilder.AppendBreak(PromptBreak.Small);
                 promptBuilder.AppendText(locationName);
             }
             promptBuilder.EndSentence();
-            if (text != null)
+            if (text != "")
             {
                 promptBuilder.AppendBreak(PromptBreak.Medium);
                 promptBuilder.StartSentence();
