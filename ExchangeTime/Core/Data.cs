@@ -28,7 +28,8 @@ namespace ExchangeTime.Code
             var uri = new Uri("/ExchangeTime.xsd", UriKind.Relative);
             // ExchangeTime.xsd is a project file added to assembly as a RESOURCE!
             var info = Application.GetResourceStream(uri); // will throw if cannot load resource
-            Trace.Assert(info != null);
+            if (info == null)
+                throw new NullReferenceException(nameof(info));
             XmlReader reader = new XmlTextReader(info.Stream);
             doc.Schemas.Add(null, reader);
             doc.Validate(ValidationHandler); // this does not exit on failure

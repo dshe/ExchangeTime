@@ -15,9 +15,9 @@ namespace ExchangeTime.Utility
         {
             if (Thread.CurrentThread.Name == null)
                 Thread.CurrentThread.Name = "MainThread";
-            var a = Assembly.GetCallingAssembly();
-            Trace.Assert(a != null);
-            if (singleInstance && !GlobalInstance.IsSingle(a))
+            //var a = Assembly.GetCallingAssembly();
+            //Trace.Assert(a != null);
+            if (singleInstance && !GlobalInstance.IsSingle())
             {
                 var msg = new MsgBox
                 {
@@ -35,9 +35,9 @@ namespace ExchangeTime.Utility
 
     public static class GlobalInstance
     {
-        private static Mutex mutex;
+        private static Mutex? mutex = null;
         private static bool hasMutexHandle;
-        internal static bool IsSingle(Assembly a)
+        internal static bool IsSingle()
         {
             if (mutex != null)
                 return true;
