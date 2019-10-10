@@ -7,7 +7,7 @@
 - right click to announce the current time
 - double-click to exit
 - edit the file "ExchangeTime.xml" to modify timeline data and schedule audio announcements
-- supports Windows Presentation Framework 4.7
+- supports Windows Presentation Framework 4.8
 - dependencies: NodaTime
 
 <img src="/Screencap2.png" width="484" height="120">
