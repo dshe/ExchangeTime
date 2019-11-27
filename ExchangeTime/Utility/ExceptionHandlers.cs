@@ -4,9 +4,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
 
-#nullable enable
-
-namespace ExchangeTime.Utility
+namespace ExchangeTime
 {
     public static partial class Sys
     {
@@ -30,6 +28,8 @@ namespace ExchangeTime.Utility
             // occurs when finalizer is run during a Garbage Collection. This non-deterministic.
             TaskScheduler.UnobservedTaskException += (sender, e) =>
             {
+                if (e.Exception == null)
+                    throw new Exception("Exception is null.");
                 LogFatalExceptions("UnobservedTaskException", e.Exception);
                 //e.SetObserved(); // ?
                 if (Application.Current != null)
@@ -69,8 +69,12 @@ namespace ExchangeTime.Utility
             {
                 if (e.InnerException != null)
                     LogFatalExceptions(msg, e.InnerException);
-                foreach (DictionaryEntry de in e.Data)
-                    Debug.WriteLine("{0}: {1}", de.Key, de.Value);
+                foreach (DictionaryEntry? de in e.Data)
+                {
+                    if (de == null)
+                        throw new Exception("de is null.");
+                    Debug.WriteLine("{0}: {1}", de.Value.Key, de.Value);
+                }
                 Debug.WriteLine(e, msg);
             }
         }

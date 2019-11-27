@@ -5,9 +5,7 @@ using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Threading;
 
-#nullable enable
-
-namespace ExchangeTime.Utility
+namespace ExchangeTime
 {
     public static partial class Sys
     {
@@ -43,7 +41,9 @@ namespace ExchangeTime.Utility
                 return true;
 
             var processName = Process.GetCurrentProcess().ProcessName;
-            var version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            var version = Assembly.GetExecutingAssembly().GetName().Version;
+            if (version == null)
+                throw new Exception("Version is null");
             var mutexId = $"Global\\{{{processName}:{version}}}";
 
             mutex = new Mutex(false, mutexId);

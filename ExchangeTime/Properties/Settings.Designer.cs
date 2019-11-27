@@ -106,5 +106,14 @@ namespace ExchangeTime.Properties {
                 this["Width"] = value;
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("asetting")]
+        public string ASetting {
+            get {
+                return ((string)(this["ASetting"]));
+            }
+        }
     }
 }

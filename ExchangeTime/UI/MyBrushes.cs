@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Windows.Media;
 
-#nullable enable
-
-namespace ExchangeTime.Utility
+namespace ExchangeTime
 {
     internal static class MyBrushes
     {
@@ -15,6 +13,7 @@ namespace ExchangeTime.Utility
             new SolidColorBrush(Color.FromRgb(b, b, b));
 
         private static readonly BrushConverter BrushConverter = new BrushConverter();
+
         internal static SolidColorBrush CreateBrush(string color)
         {
             try
@@ -23,7 +22,7 @@ namespace ExchangeTime.Utility
             }
             catch
             {
-                throw new Exception("invalid color: " + color + ".");
+                throw new Exception("Invalid color: " + color + ".");
             }
         }
     }

@@ -1,15 +1,13 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using ExchangeTime.Utility;
-using NodaTime;
-
-#nullable enable
 
 namespace ExchangeTime
 {
-    public sealed partial class MainWindow : IDisposable
+    public sealed partial class MainWindow
     {
         private void MainWindowMouseDoubleClick(object sender, MouseButtonEventArgs e) => Close();
         private void MainWindowMouseLeftButtonDown(object sender, MouseButtonEventArgs e) => DragMove();
@@ -26,10 +24,10 @@ namespace ExchangeTime
                 Left = SystemParameters.PrimaryScreenWidth - Width;
         }
 
-        private void MainWindowMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        private async void MainWindowMouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-			if (Properties.Settings.Default.Audio)
-				speech.AnnounceTime(Clock.SystemTime);
+            if (Properties.Settings.Default.Audio)
+            	await Speech.AnnounceTime(Clock.GetSystemZonedDateTime().LocalDateTime);
 
             new MsgBox(this)
             {
@@ -41,33 +39,19 @@ namespace ExchangeTime
 
         private void MainWindowMouseWheel(object sender, MouseWheelEventArgs e)
         {
-            if (e.Delta > 0)
-                Zoom(true);
-            else if (e.Delta < 0)
-                Zoom(false);
+            if (e.Delta != 0 && zoomFormats.Zoom(e.Delta > 0))
+                Repaint();
+            //Debug.WriteLine($"Delta: {e.Delta}.");
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.OemPlus || e.Key == Key.Add)
-                Zoom(true);
-            else if (e.Key == Key.OemMinus || e.Key == Key.Subtract)
-                Zoom(false);
-        }
-
-        private void Zoom(bool expand)
-        {
-            if (expand)
-            {
-                if (formatIndex != 0)
-                    formatIndex--;
-            }
-            else
-            {
-                if (formatIndex < formats.Count - 1)
-                    formatIndex++;
-            }
-            Repaint();
+            var plus = (e.Key == Key.OemPlus || e.Key == Key.Add);
+            var minus = (e.Key == Key.OemMinus || e.Key == Key.Subtract);
+            if (!plus && !minus)
+                return;
+            if (zoomFormats.Zoom(plus))
+                Repaint();
         }
 
         private void MainWindowMouseDown(object sender, MouseButtonEventArgs e)
@@ -75,7 +59,5 @@ namespace ExchangeTime
             if (e.ChangedButton != MouseButton.Middle)
                 return;
         }
-
-        public void Dispose() => speech.Dispose();
     }
 }

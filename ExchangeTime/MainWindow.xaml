@@ -16,6 +16,7 @@
         BorderThickness="2"
         Background="Black"
         BorderBrush="Gray"
+        Loaded="Window_Loaded"
         Closing ="MainWindow_Closing"
         MouseLeftButtonDown="MainWindowMouseLeftButtonDown"
         MouseLeftButtonUp = "MainWindowMouseLeftButtonUp"

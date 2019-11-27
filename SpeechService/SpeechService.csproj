@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Google.Cloud.TextToSpeech.V1" Version="1.1.0-beta01" />
+    <PackageReference Include="NetCoreAudio" Version="1.5.0" />
+    <PackageReference Include="NodaTime" Version="2.4.7" />
+  </ItemGroup>
+
+</Project>

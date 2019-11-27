@@ -7,11 +7,9 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
-#nullable enable
-
-namespace ExchangeTime.Utility
+namespace ExchangeTime
 {
-    public static class WpfEx
+    public static class TextUtilityExtension
     {
         public static Size GetTextSize(this TextBlock tb)
         {

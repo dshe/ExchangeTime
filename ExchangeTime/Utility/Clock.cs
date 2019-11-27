@@ -1,31 +1,30 @@
 ﻿using NodaTime;
-using System;
 
-#nullable enable
 
-namespace ExchangeTime.Utility
+namespace ExchangeTime
 {
-    internal static class Clock
+    public class Clock : IClock
     {
-        internal static readonly DateTimeZone SystemTimeZone = DateTimeZoneProviders.Tzdb.GetSystemDefault();
+        public static IDateTimeZoneProvider DateTimeZoneProvider => DateTimeZoneProviders.Tzdb;
+        public static DateTimeZone SystemTimeZone => DateTimeZoneProvider.GetZoneOrNull("America/New_York");
+        //DateTimeZoneProvider.GetSystemDefault();
 
-        internal static Instant CurrentInstant
-        {
-            get
-            {
-                return SystemClock.Instance.GetCurrentInstant();
-                /*
-                var ldt = new LocalDateTime(2020, 3, 17, 14, 30, 0);
-                var zone = SystemTimeZone;
-                var zdt = zone.AtStrictly(ldt);
-                return zdt.ToInstant();
-                */
-            }
-        }
+        public ZonedDateTime GetSystemZonedDateTime() =>
+            GetCurrentInstant().InZone(SystemTimeZone);
 
-        internal static ZonedDateTime SystemTime => CurrentInstant.InZone(SystemTimeZone);
-
-        internal static Instant Round(this Instant instant, long ticks) =>
+        private static Instant Round(Instant instant, long ticks) =>
             Instant.FromUnixTimeSeconds((instant.ToUnixTimeTicks() + ticks / 2) / ticks);
+
+        public Instant GetCurrentInstant()
+        {
+            var instant = SystemClock.Instance.GetCurrentInstant();
+            return Round(instant, NodaConstants.TicksPerSecond);
+            /*
+            var ldt = new LocalDateTime(2020, 3, 17, 14, 30, 0);
+            var zone = SystemTimeZone;
+            var zdt = zone.AtStrictly(ldt);
+            return zdt.ToInstant();
+            */
+        }
     }
 }
