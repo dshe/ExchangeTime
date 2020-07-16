@@ -33,11 +33,11 @@ namespace HolidayService
         {
             var key = MakeKey(country, region);
 
-            await Semaphore.WaitAsync();
+            await Semaphore.WaitAsync().ConfigureAwait(false);
 
             if (!Dictionary.TryGetValue(key, out var holidays))
             {
-                var json = await GetHolidays(country, region);
+                var json = await GetHolidays(country, region).ConfigureAwait(false);
                 var root = JsonDocument.Parse(json).RootElement;
                 if (root.ValueKind != JsonValueKind.Array)
                 {

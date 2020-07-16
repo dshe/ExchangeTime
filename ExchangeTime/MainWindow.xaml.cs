@@ -11,6 +11,7 @@ using System.Text.Json;
 using NodaTime;
 using HolidayService;
 using SpeechService;
+using System.Net;
 
 namespace ExchangeTime
 {
@@ -81,13 +82,21 @@ namespace ExchangeTime
             };
         }
 
-        private async void Window_Loaded(object sender, RoutedEventArgs e)
+        private async void Window_Loaded(object sender, RoutedEventArgs rea)
         {
-            foreach (var location in Locations)
+            try
             {
-                await Holidays.LoadHolidays(location.Country, location.Region);
-                await Task.Delay(100); // avoid error if too many requests
+                foreach (var location in Locations)
+                    await Holidays.LoadHolidays(location.Country, location.Region);
             }
+            catch (WebException e)
+            {
+                var response = (HttpWebResponse)e.Response;
+                if (response.StatusCode != HttpStatusCode.TooManyRequests)
+                    throw;
+                MessageBox.Show("Enrico Holiday Service: too many requests.", "warning", MessageBoxButton.OK);
+            }
+
             timer.Tick += Repaint;
             timer.Interval = TimeSpan.FromSeconds(1);
             timer.Start();

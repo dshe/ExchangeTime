@@ -35,9 +35,9 @@ namespace SpeechService
             var variable = "GOOGLE_APPLICATION_CREDENTIALS";
             var path = Environment.GetEnvironmentVariable(variable);
             if (path == null)
-                throw new InvalidOperationException($"{variable} environment valuable not set.");
+                throw new InvalidOperationException($"{variable} environment variable is not set.");
             if (!File.Exists(path))
-                throw new FileNotFoundException($"{path} set in {variable}.");
+                throw new FileNotFoundException($"{path} set in environment variable: {variable}.");
         }
 
         public async Task PlayAudioFile(string fileName)
@@ -50,7 +50,7 @@ namespace SpeechService
                 await player.Play(fileName).ConfigureAwait(false);
                 await tcs.Task.ConfigureAwait(false);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 throw;
             }
@@ -85,16 +85,18 @@ namespace SpeechService
             await TextToSpeechSemaphore.WaitAsync().ConfigureAwait(false);
             try
             {
+                // initiate the request to Google
+                var responseTask = Client.SynthesizeSpeechAsync(request);
+
                 if (!string.IsNullOrWhiteSpace(fileName))
                     await PlayWindowsMediaFile(fileName).ConfigureAwait(false);
 
-                // make the request to Google
-                var response = await Client.SynthesizeSpeechAsync(request).ConfigureAwait(false);
+                var response = await responseTask.ConfigureAwait(false);
 
                 using FileStream fs = File.Create(SpeechAudioFileName);
                 {
                     response.AudioContent.WriteTo(fs);
-                    fs.Close(); // required because dispose does not always close!
+                    fs.Close(); // required since dispose does not close!
                 }
 
                 await PlayAudioFile(SpeechAudioFileName).ConfigureAwait(false);

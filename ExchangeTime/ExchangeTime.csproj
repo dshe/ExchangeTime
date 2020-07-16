@@ -17,9 +17,6 @@
 
   <ItemGroup>
     <PackageReference Include="NodaTime" Version="3.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\HolidayService\HolidayService.csproj" />
     <ProjectReference Include="..\SpeechService\SpeechService.csproj" />
   </ItemGroup>

@@ -47,7 +47,7 @@ namespace HolidayService
                     return File.ReadAllText(fileName);
             }
 
-            var str = await Download(country, region, fromDate, toDate);
+            var str = await Download(country, region, fromDate, toDate).ConfigureAwait(false);
 
             var doc = JsonDocument.Parse(str).RootElement;
             if (doc.ValueKind == JsonValueKind.Array)
