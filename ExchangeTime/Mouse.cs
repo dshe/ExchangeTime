@@ -27,7 +27,7 @@ namespace ExchangeTime
         private async void MainWindowMouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (Properties.Settings.Default.Audio)
-            	await Speech.AnnounceTime(Clock.GetSystemZonedDateTime().LocalDateTime);
+                await Speech.AnnounceTime(Clock.GetSystemZonedDateTime());
 
             new MsgBox(this)
             {

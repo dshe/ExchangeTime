@@ -17,12 +17,11 @@ namespace ExchangeTime
             //Trace.Assert(a != null);
             if (singleInstance && !GlobalInstance.IsSingle())
             {
-                var msg = new MsgBox
+                new MsgBox
                 {
                     iconType = MsgBox.IconType.Error,
                     Title = "ExchangeTime"
-                };
-                msg.Show("Another instance is running!");
+                }.Show("Another instance is running!");
                 Environment.Exit(-1);
             }
             InitExceptionHandlers();
@@ -78,5 +77,4 @@ namespace ExchangeTime
             mutex.Dispose();
         }
     }
-
 }

@@ -21,7 +21,7 @@ namespace HolidayService
         private readonly Enrico Enrico;
         private readonly Dictionary<string, Dictionary<LocalDate, Holiday>> Dictionary = new Dictionary<string, Dictionary<LocalDate, Holiday>>();
         private string MakeKey(string country, string region) => country + "-" + region;
-        private SemaphoreSlim Semaphore = new SemaphoreSlim(1);
+        private readonly SemaphoreSlim Semaphore = new SemaphoreSlim(1);
 
         public Holidays(IClock clock)
         {

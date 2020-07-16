@@ -1,4 +1,6 @@
-﻿using NodaTime;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+using NodaTime;
 using NodaTime.Text;
 using System;
 using System.Diagnostics;
@@ -29,7 +31,7 @@ namespace HolidayService
             Clock = clock;
             ServicePointManager.UseNagleAlgorithm = false;
             ServicePointManager.Expect100Continue = false;
-            ServicePointManager.DefaultConnectionLimit = int.MaxValue;
+            //ServicePointManager.DefaultConnectionLimit = int.MaxValue;
             if (!Directory.Exists(FolderName))
                 Directory.CreateDirectory(FolderName);
             MaxAgeDays = maxAgeDays;
@@ -55,8 +57,12 @@ namespace HolidayService
             }
             // check for error: { "error":"Country 'usax' is not supported"}
             if (doc.ValueKind == JsonValueKind.Object && doc.TryGetProperty("error", out var val))
+            {
+                //Logger.LogCritical($"{val.GetString()}. Could not Parse: {str}.");
                 throw new InvalidDataException(val.GetString());
+            }
 
+            //Logger.LogCritical($"Unknown error. Could not parse: {str}.");
             throw new InvalidDataException($"Unknown error parsing: {str}.");
         }
 

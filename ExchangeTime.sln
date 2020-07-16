@@ -7,9 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExchangeTime", "ExchangeTim
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{59FF57CF-E68F-4B30-A9FC-0EB50DBA50E2}"
 	ProjectSection(SolutionItems) = preProject
+		notes.txt = notes.txt
 		Screencap1.png = Screencap1.png
 		Screencap2.png = Screencap2.png
-		XMLFile1.xml = XMLFile1.xml
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HolidayService", "HolidayService\HolidayService.csproj", "{A6CDEE0C-F551-41D9-933D-032757F97DFA}"

@@ -23,6 +23,8 @@ namespace HolidayService
 
         static async Task TestEnrico()
         {
+            //logger.Log(LogLevel.Information, "rrr");
+
             var holidayService = new Enrico(SystemClock.Instance, 1);
 
             var clock = SystemClock.Instance;
@@ -32,6 +34,11 @@ namespace HolidayService
             var to = now.Plus(Duration.FromDays(90)).Date;
 
             var str = await holidayService.GetHolidays("usa", "ny", from, to);
+
+            //ILogger logger = loggerFactory.CreateLogger<Program>();
+            //logger.LogInformation("Example log message");
+
+            //Log
         }
 
     }

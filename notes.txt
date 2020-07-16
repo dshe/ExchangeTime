@@ -1,0 +1,2 @@
+if google api is not setup property - silent failure
+

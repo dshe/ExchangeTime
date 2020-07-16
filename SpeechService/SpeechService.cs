@@ -7,27 +7,14 @@ using NodaTime;
 using Google.Cloud.TextToSpeech.V1;
 using NetCoreAudio;
 
-/*
-Google Cloud Text-to-Speech API. The SDK is installed.
-https://cloud.google.com/text-to-speech/
-Google services require registration!
-Monthly free tier = < 4 million characters.
-Use "Service Account Key".
-IAM and Admin => service accounts for project
-Download a "Service Account JSON file" and then set the 
-GOOGLE_APPLICATION_CREDENTIALS environment variable to refer to it.
-*/
-
 namespace SpeechService
 {
-
-    public partial class Speech
+    public class Speech
     {
-        private const string SpeechAudioFileName = "temp.mp3";
         private readonly VoiceSelectionParams Voice = new VoiceSelectionParams();
         private readonly AudioConfig Config = new AudioConfig();
         private readonly TextToSpeechClient Client = TextToSpeechClient.Create();
-        private readonly SemaphoreSlim Semaphore = new SemaphoreSlim(1);
+        private readonly SemaphoreSlim TextToSpeechSemaphore = new SemaphoreSlim(1);
 
         public Speech()
         {
@@ -36,23 +23,52 @@ namespace SpeechService
             Config.AudioEncoding = AudioEncoding.Mp3;
         }
 
+        private void CheckGoogle()
+        {
+            /*
+            Google Cloud Text-to-Speech API. The SDK must be installed.
+            https://cloud.google.com/text-to-speech/
+            Google services require registration! Monthly free tier: < 4 million characters.
+            Use "Service Account Key". IAM and Admin => service accounts for project
+            Download a "Service Account JSON file" and then set the environment variable to refer to it.
+            */
+            var variable = "GOOGLE_APPLICATION_CREDENTIALS";
+            var path = Environment.GetEnvironmentVariable(variable);
+            if (path == null)
+                throw new InvalidOperationException($"{variable} environment valuable not set.");
+            if (!File.Exists(path))
+                throw new FileNotFoundException($"{path} set in {variable}.");
+        }
+
         public async Task PlayAudioFile(string fileName)
         {
-            var tcs = new TaskCompletionSource<object?>();
-            var player = new Player();
-            player.PlaybackFinished += (_, __) => tcs.SetResult(null);
-            await player.Play(fileName).ConfigureAwait(false);
-            await tcs.Task.ConfigureAwait(false);
+            try
+            {
+                var player = new Player();
+                var tcs = new TaskCompletionSource<object?>();
+                player.PlaybackFinished += (_, __) => tcs.SetResult(null);
+                await player.Play(fileName).ConfigureAwait(false);
+                await tcs.Task.ConfigureAwait(false);
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
         }
 
         public async Task PlayWindowsMediaFile(string fileName)
         {
-            var path = $"/{Environment.SpecialFolder.Windows}/Media/{fileName}";
+            var windir = Environment.GetEnvironmentVariable("windir");
+            var path = $"{windir}\\Media\\{fileName}";
+            if (!File.Exists(path))
+                throw new FileNotFoundException(path);
             await PlayAudioFile(path).ConfigureAwait(false);
         }
 
         public async Task Speak(string text, string fileName = "")
         {
+            CheckGoogle();
+
             var input = new SynthesisInput() { Text = text };
             var request = new SynthesizeSpeechRequest()
             {
@@ -61,34 +77,45 @@ namespace SpeechService
                 AudioConfig = Config
             };
 
-            // make the request to Google
-            var response = Client.SynthesizeSpeech(request);
+            request.AudioConfig.AudioEncoding = AudioEncoding.Mp3;
+
+            const string SpeechAudioFileName = "temp.mp3";
 
             // limits entry to single thread
-            await Semaphore.WaitAsync().ConfigureAwait(false);
-
+            await TextToSpeechSemaphore.WaitAsync().ConfigureAwait(false);
             try
             {
                 if (!string.IsNullOrWhiteSpace(fileName))
                     await PlayWindowsMediaFile(fileName).ConfigureAwait(false);
 
-                using (var output = File.Create(SpeechAudioFileName))
+                // make the request to Google
+                var response = await Client.SynthesizeSpeechAsync(request).ConfigureAwait(false);
+
+                using FileStream fs = File.Create(SpeechAudioFileName);
                 {
-                    response.AudioContent.WriteTo(output);
+                    response.AudioContent.WriteTo(fs);
+                    fs.Close(); // required because dispose does not always close!
                 }
 
                 await PlayAudioFile(SpeechAudioFileName).ConfigureAwait(false);
             }
             finally
             {
-                Semaphore.Release();
+                TextToSpeechSemaphore.Release();
             }
+        }
+
+        public async Task AnnounceTime(ZonedDateTime zdt)
+        {
+            var tz = zdt.Zone;
+            var city = tz.Id.Split("/")[1];
+            await AnnounceTime(zdt.LocalDateTime, city).ConfigureAwait(false);
         }
 
         public async Task AnnounceTime(LocalDateTime dt, string locationName = "", string text = "")
         {
             var sb = new StringBuilder();
-            sb.Append($"It is now {dt.Date.ToString("MMMM d", null)} at {dt.ToString("h: mm", null)}");
+            sb.Append($"It is now {dt.Date.ToString("MMMM d", null)} at {dt.ToString("H: mm", null)}");
             if (!string.IsNullOrWhiteSpace(locationName))
                 sb.Append($"in {locationName}");
             sb.Append(". ");

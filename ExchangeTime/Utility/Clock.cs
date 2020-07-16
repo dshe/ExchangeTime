@@ -1,19 +1,12 @@
 ﻿using NodaTime;
 
-
 namespace ExchangeTime
 {
     public class Clock : IClock
     {
-        public static IDateTimeZoneProvider DateTimeZoneProvider => DateTimeZoneProviders.Tzdb;
-        public static DateTimeZone SystemTimeZone => DateTimeZoneProvider.GetZoneOrNull("America/New_York");
-        //DateTimeZoneProvider.GetSystemDefault();
-
-        public ZonedDateTime GetSystemZonedDateTime() =>
-            GetCurrentInstant().InZone(SystemTimeZone);
-
-        private static Instant Round(Instant instant, long ticks) =>
-            Instant.FromUnixTimeSeconds((instant.ToUnixTimeTicks() + ticks / 2) / ticks);
+        public static readonly IDateTimeZoneProvider DateTimeZoneProvider = DateTimeZoneProviders.Tzdb;
+        public static DateTimeZone SystemTimeZone => DateTimeZoneProvider.GetSystemDefault();
+        public ZonedDateTime GetSystemZonedDateTime() => GetCurrentInstant().InZone(SystemTimeZone);
 
         public Instant GetCurrentInstant()
         {
@@ -26,5 +19,7 @@ namespace ExchangeTime
             return zdt.ToInstant();
             */
         }
+        private static Instant Round(Instant instant, long ticks) =>
+            Instant.FromUnixTimeSeconds((instant.ToUnixTimeTicks() + ticks / 2) / ticks);
     }
 }

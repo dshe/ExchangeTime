@@ -23,8 +23,5 @@
     <Setting Name="Width" Type="System.Double" Scope="User">
       <Value Profile="(Default)">200</Value>
     </Setting>
-    <Setting Name="ASetting" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">asetting</Value>
-    </Setting>
   </Settings>
 </SettingsFile>

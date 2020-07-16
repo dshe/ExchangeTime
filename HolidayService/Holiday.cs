@@ -1,5 +1,4 @@
 ﻿using NodaTime;
-using NodaTime.Text;
 using System.Linq;
 using System.Text.Json;
 
@@ -14,7 +13,11 @@ namespace HolidayService
         {
             if (!json.TryGetProperty("observedOn", out var d))
                 d = json.GetProperty("date");
-            Date = new LocalDate(d.GetProperty("year").GetInt32(), d.GetProperty("month").GetInt32(), d.GetProperty("day").GetInt32());
+
+            Date = new LocalDate(
+                d.GetProperty("year").GetInt32(),
+                d.GetProperty("month").GetInt32(),
+                d.GetProperty("day").GetInt32());
 
             // get English name of holiday
             Name = json.GetProperty("name")

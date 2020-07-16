@@ -4,7 +4,7 @@ using System.Text.Json;
 
 namespace ExchangeTime
 {
-    class EarlyClose
+    internal class EarlyClose
     {
         private static readonly LocalDateTimePattern DateTimePattern = LocalDateTimePattern.CreateWithInvariantCulture("yyyy-MM-ddTHH:mm");
         internal readonly LocalDateTime DateTime;

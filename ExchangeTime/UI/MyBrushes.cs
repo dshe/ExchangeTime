@@ -20,9 +20,9 @@ namespace ExchangeTime
             {
                 return (SolidColorBrush)BrushConverter.ConvertFromString(color);
             }
-            catch
+            catch (Exception e)
             {
-                throw new Exception("Invalid color: " + color + ".");
+                throw new Exception("Invalid color: " + color + ".", e);
             }
         }
     }
