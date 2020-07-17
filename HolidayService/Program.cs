@@ -37,8 +37,6 @@ namespace HolidayService
 
             //ILogger logger = loggerFactory.CreateLogger<Program>();
             //logger.LogInformation("Example log message");
-
-            //Log
         }
 
     }

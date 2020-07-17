@@ -2,7 +2,6 @@
 using System.IO;
 using System.Text.Json;
 using System.Linq;
-using System;
 using System.Diagnostics;
 
 namespace ExchangeTime

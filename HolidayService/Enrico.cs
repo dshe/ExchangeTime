@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
-using NodaTime;
+﻿using NodaTime;
 using NodaTime.Text;
 using System;
 using System.Diagnostics;
@@ -8,7 +6,6 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Text.Json;
-using System.Threading;
 using System.Threading.Tasks;
 
 /*
