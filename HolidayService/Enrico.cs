@@ -85,5 +85,6 @@ namespace HolidayService
 
             return await HttpClient.GetStringAsync(url).ConfigureAwait(false);
         }
+
     }
 }

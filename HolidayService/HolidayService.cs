@@ -20,7 +20,7 @@ namespace HolidayService
         private readonly IClock Clock;
         private readonly Enrico Enrico;
         private readonly Dictionary<string, Dictionary<LocalDate, Holiday>> Dictionary = new Dictionary<string, Dictionary<LocalDate, Holiday>>();
-        private string MakeKey(string country, string region) => country + "-" + region;
+        private static string MakeKey(string country, string region) => country + "-" + region;
         private readonly SemaphoreSlim Semaphore = new SemaphoreSlim(1);
 
         public Holidays(IClock clock)
@@ -45,7 +45,18 @@ namespace HolidayService
                         throw new InvalidDataException(val.GetString());
                     throw new InvalidDataException($"Unknown error parsing: {root}.");
                 }
-                holidays = root.EnumerateArray().Select(j => new Holiday(j)).ToDictionary(h => h.Date, h => h);
+
+
+                // this can be done with linq extension
+                holidays = new Dictionary<LocalDate, Holiday>();
+                foreach (var j in root.EnumerateArray())
+                {
+                    var holiday = new Holiday(j);
+                    // there may be more thna one holiday on a particular date
+                    if (!holidays.ContainsKey(holiday.Date)) 
+                        holidays.Add(holiday.Date, holiday);
+                }
+
                 Dictionary.Add(key, holidays);
             }
 
