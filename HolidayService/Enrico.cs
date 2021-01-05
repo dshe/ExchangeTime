@@ -26,8 +26,8 @@ namespace HolidayService
         public Enrico(IClock clock, int maxAgeDays)
         {
             Clock = clock;
-            ServicePointManager.UseNagleAlgorithm = false;
-            ServicePointManager.Expect100Continue = false;
+            //ServicePointManager.UseNagleAlgorithm = false;
+            //ServicePointManager.Expect100Continue = false;
             //ServicePointManager.DefaultConnectionLimit = int.MaxValue;
             if (!Directory.Exists(FolderName))
                 Directory.CreateDirectory(FolderName);
@@ -81,7 +81,7 @@ namespace HolidayService
                 $"&region={region}" +
                 $"&holidayType=public_holiday";
 
-            Debug.WriteLine($"Downloading: {url}.");
+            //Logger.Write($"Downloading: {url}.");
 
             return await HttpClient.GetStringAsync(url).ConfigureAwait(false);
         }

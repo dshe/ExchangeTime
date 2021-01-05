@@ -4,8 +4,8 @@ namespace ExchangeTime
 {
     public class Clock : IClock
     {
-        public static readonly IDateTimeZoneProvider DateTimeZoneProvider = DateTimeZoneProviders.Tzdb;
-        public static DateTimeZone SystemTimeZone => DateTimeZoneProvider.GetSystemDefault();
+        public static IDateTimeZoneProvider DateTimeZoneProvider { get; } = DateTimeZoneProviders.Tzdb;
+        public static DateTimeZone SystemTimeZone { get; } = DateTimeZoneProvider.GetSystemDefault();
         public ZonedDateTime GetSystemZonedDateTime() => GetCurrentInstant().InZone(SystemTimeZone);
 
         public Instant GetCurrentInstant()

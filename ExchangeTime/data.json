@@ -43,8 +43,9 @@
   {
     "name": "Moscow", "country": "rus", "timezone": "Europe/Moscow", "color":"#535",
     "bars":[
-    { "start": "09:30", "end": "19:00", "type": "L", "label": "Moscow Stock Exchange TIME;MOEX TIME;MOEX;M"},
-    { "start": "19:00", "end": "23:00", "type": "S"}]
+    { "start": "09:30", "end": "10:00", "type": "S"},
+    { "start": "10:00", "end": "18:45", "type": "L", "label": "Moscow Stock Exchange TIME;MOEX TIME;MOEX;M"},
+    { "start": "18:45", "end": "23:50", "type": "S"}]
   },
   {
     "name": "Euronext", "country": "nld", "timezone": "Europe/Amsterdam", "color":"#145",

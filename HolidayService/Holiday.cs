@@ -1,4 +1,5 @@
 ﻿using NodaTime;
+using System.IO;
 using System.Linq;
 using System.Text.Json;
 
@@ -25,7 +26,7 @@ namespace HolidayService
                 .Where(x => x.GetProperty("lang").GetString() == "en")
                 .Single()
                 .GetProperty("text")
-                .GetString();
+                .GetString() ?? throw new InvalidDataException("Missing property: 'text'");
         }
     }
 }

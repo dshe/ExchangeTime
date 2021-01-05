@@ -16,7 +16,8 @@ namespace ExchangeTime
             SecondsPerPixel = json.GetProperty("secondsPerPixel").GetInt32();
             Major = json.GetProperty("major").GetInt32();
             Minor = json.GetProperty("minor").GetInt32();
-            MajorFormat = json.GetProperty("majorFormat").GetString();
+            MajorFormat = json.GetProperty("majorFormat").GetString()
+                ?? throw new InvalidDataException("Missing property: 'majorFormat'");
         }
     }
 
@@ -55,7 +56,7 @@ namespace ExchangeTime
                 Index = initialIndex;
             else
             {
-                Debug.WriteLine("Invalid zoom index.");
+                //Logger.Write("Invalid zoom index.");
                 //throw new IndexOutOfRangeException();
             }
         }

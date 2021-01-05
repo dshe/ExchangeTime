@@ -44,7 +44,7 @@ namespace ExchangeTime
             {
                 Application.Current.DispatcherUnhandledException += (sender, e) =>
                 {
-                    Debug.Write(e.Exception, "Dispatcher UnhandledException: Fatal Error: " + e.Exception.Message);
+                    //Logger.Write(e.Exception, "Dispatcher UnhandledException: Fatal Error: " + e.Exception.Message);
                     e.Handled = true; // ?
 
                     // new
@@ -73,9 +73,9 @@ namespace ExchangeTime
                 {
                     if (de == null)
                         throw new Exception("de is null.");
-                    Debug.WriteLine("{0}: {1}", de.Value.Key, de.Value);
+                    //Logger.Write("{0}: {1}", de.Value.Key, de.Value);
                 }
-                Debug.WriteLine(e, msg);
+                //Logger.Write(e, msg);
             }
         }
     }

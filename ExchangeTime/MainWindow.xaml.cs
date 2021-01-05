@@ -91,7 +91,9 @@ namespace ExchangeTime
             }
             catch (WebException e)
             {
-                var response = (HttpWebResponse)e.Response;
+                var response = (HttpWebResponse?)e.Response;
+                if (response == null)
+                    throw new Exception("No response object!");
                 if (response.StatusCode != HttpStatusCode.TooManyRequests)
                     throw;
                 MessageBox.Show("Enrico Holiday Service: too many requests.", "warning", MessageBoxButton.OK);

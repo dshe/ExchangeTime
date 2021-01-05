@@ -38,7 +38,7 @@ namespace ExchangeTime
         {
             if (e.Delta != 0 && zoomFormats.Zoom(e.Delta > 0))
                 Repaint();
-            //Debug.WriteLine($"Delta: {e.Delta}.");
+            //Logger.Write($"Delta: {e.Delta}.");
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e)

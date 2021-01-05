@@ -67,7 +67,8 @@ namespace HolidayService
             if (!Dictionary.TryGetValue(key, out var holidays))
                 return null;
 
-            return holidays.GetValueOrDefault(date, null);
+            //return holidays.GetValueOrDefault(date, null);
+            return holidays.GetValueOrDefault(date);
         }
 
     }
