@@ -8,7 +8,10 @@
 - double-click to exit
 - edit the file "data.json" to modify timeline data and schedule audio announcements
 - built with WPF on Net 5
-- dependencies: NodaTime, NetCoreAudio, GoogleCloud.TextToSpeech (requires registration)
+- dependencies: NodaTime, NetCoreAudio, GoogleCloud.TextToSpeech
+
+Text-To-Speech requires registration (free):
+https://cloud.google.com/text-to-speech
 
 <img src="/Screencap2.png" width="484" height="120">
 <img src="/Screencap1.png" width="484" height="120">
