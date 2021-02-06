@@ -11,7 +11,7 @@ namespace SpeechService
 
         public static async Task Main()
         {
-            await MySpeech.PlayWindowsMediaFile("Alarm03.wav");
+            await Speech.PlayWindowsMediaFile("Alarm03.wav");
 
             //await MySpeech.Speak("one");
             //await MySpeech.Speak("two");
@@ -23,7 +23,7 @@ namespace SpeechService
             var zone = NodaTime.DateTimeZoneProviders.Tzdb.GetSystemDefault();
             var now = instant.InZone(zone).LocalDateTime;
 
-            //await MySpeech.AnnounceTime(now, "Kuala Lumpur", "The KL stock exchange will open in 10 minutes.");
+            await MySpeech.AnnounceTime(now, "Kuala Lumpur", "The KL stock exchange will open in 10 minutes.");
         }
     }
 }

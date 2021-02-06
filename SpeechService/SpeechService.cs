@@ -6,41 +6,26 @@ using System.Threading;
 using NodaTime;
 using Google.Cloud.TextToSpeech.V1;
 using NetCoreAudio;
+/*
+Google Cloud Text-to-Speech API. The SDK must be installed.
+https://cloud.google.com/text-to-speech/
+Google services require registration! Monthly free tier: < 4 million characters.
+Use "Service Account Key". IAM and Admin => service accounts for project
+Download a "Service Account JSON file" and then set the environment variable to refer to it.
+"GOOGLE_APPLICATION_CREDENTIALS"
+*/
 
 namespace SpeechService
 {
     public class Speech
     {
-        private readonly VoiceSelectionParams Voice = new VoiceSelectionParams();
-        private readonly AudioConfig Config = new AudioConfig();
-        private readonly TextToSpeechClient Client = TextToSpeechClient.Create();
         private readonly SemaphoreSlim TextToSpeechSemaphore = new SemaphoreSlim(1);
+        private readonly VoiceSelectionParams Voice = new VoiceSelectionParams()
+            { LanguageCode = "en-US", SsmlGender = SsmlVoiceGender.Neutral };
+        private readonly AudioConfig Config = new AudioConfig() { AudioEncoding = AudioEncoding.Mp3 };
+        private readonly Lazy<TextToSpeechClient> Client = new Lazy<TextToSpeechClient>(() => TextToSpeechClient.Create());
 
-        public Speech()
-        {
-            Voice.LanguageCode = "en-US";
-            Voice.SsmlGender = SsmlVoiceGender.Neutral;
-            Config.AudioEncoding = AudioEncoding.Mp3;
-        }
-
-        private void CheckGoogle()
-        {
-            /*
-            Google Cloud Text-to-Speech API. The SDK must be installed.
-            https://cloud.google.com/text-to-speech/
-            Google services require registration! Monthly free tier: < 4 million characters.
-            Use "Service Account Key". IAM and Admin => service accounts for project
-            Download a "Service Account JSON file" and then set the environment variable to refer to it.
-            */
-            var variable = "GOOGLE_APPLICATION_CREDENTIALS";
-            var path = Environment.GetEnvironmentVariable(variable);
-            if (path == null)
-                throw new InvalidOperationException($"{variable} environment variable is not set.");
-            if (!File.Exists(path))
-                throw new FileNotFoundException($"{path} set in environment variable: {variable}.");
-        }
-
-        public async Task PlayAudioFile(string fileName)
+        public static async Task PlayAudioFile(string fileName)
         {
             try
             {
@@ -56,7 +41,7 @@ namespace SpeechService
             }
         }
 
-        public async Task PlayWindowsMediaFile(string fileName)
+        public static async Task PlayWindowsMediaFile(string fileName)
         {
             var windir = Environment.GetEnvironmentVariable("windir");
             var path = $"{windir}\\Media\\{fileName}";
@@ -67,8 +52,6 @@ namespace SpeechService
 
         public async Task Speak(string text, string fileName = "")
         {
-            CheckGoogle();
-
             var input = new SynthesisInput() { Text = text };
             var request = new SynthesizeSpeechRequest()
             {
@@ -86,7 +69,7 @@ namespace SpeechService
             try
             {
                 // initiate the request to Google
-                var responseTask = Client.SynthesizeSpeechAsync(request);
+                var responseTask = Client.Value.SynthesizeSpeechAsync(request);
 
                 if (!string.IsNullOrWhiteSpace(fileName))
                     await PlayWindowsMediaFile(fileName).ConfigureAwait(false);
