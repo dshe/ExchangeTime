@@ -14,16 +14,16 @@ namespace ExchangeTime
         internal readonly BarSize BarSize;
         internal Bar(JsonElement json)
         {
-            var start = json.GetProperty("start").GetString() ?? throw new InvalidDataException("Missing property: 'start'");
+            string start = json.GetProperty("start").GetString() ?? throw new InvalidDataException("Missing property: 'start'");
             Start = TimePattern.Parse(start).Value;
 
-            var end = json.GetProperty("end").GetString() ?? throw new InvalidDataException("Missing property: 'end'");
+            string end = json.GetProperty("end").GetString() ?? throw new InvalidDataException("Missing property: 'end'");
             End = TimePattern.Parse(end).Value;
 
-            var type = json.GetProperty("type").GetString() ?? throw new InvalidDataException("Missing property: 'type'");
+            string type = json.GetProperty("type").GetString() ?? throw new InvalidDataException("Missing property: 'type'");
             BarSize = (BarSize)Enum.Parse(typeof(BarSize), type);
 
-            var hasLabel = json.TryGetProperty("label", out var label);
+            bool hasLabel = json.TryGetProperty("label", out JsonElement label);
             if (BarSize == BarSize.L)
                 Label = label.GetString() ?? throw new InvalidDataException("Missing property: 'label'");
             else if (hasLabel)

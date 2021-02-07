@@ -15,7 +15,7 @@ namespace ExchangeTime
             //Starting with the .NET Framework 4, this event is not raised for exceptions that corrupt the state of the process, such as stack overflows or access violations, unless the event handler is security-critical and has the HandleProcessCorruptedStateExceptionsAttribute attribute.
             AppDomain.CurrentDomain.UnhandledException += (o, e) => // does not capture all exceptios; else does not capture when debugging
             {
-                var ex = (Exception)e.ExceptionObject;
+                Exception ex = (Exception)e.ExceptionObject;
                 LogFatalExceptions("AppDomain.UnhandledException", ex);
                 if (e.IsTerminating)
                     return;
@@ -58,11 +58,11 @@ namespace ExchangeTime
 
         private static void LogFatalExceptions(string msg, Exception e)
         {
-            var ae = e as AggregateException;
+            AggregateException? ae = e as AggregateException;
             if (ae != null) // from task
             {
                 ae = ae.Flatten();
-                foreach (var exception in ae.InnerExceptions)
+                foreach (Exception exception in ae.InnerExceptions)
                     LogFatalExceptions(msg, exception);
             }
             else

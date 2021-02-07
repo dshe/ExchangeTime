@@ -19,7 +19,7 @@ namespace ExchangeTime
         public static bool IsWeekend(this LocalDateTime dt, string country) =>
             country.IsIsrael() ? (dt.IsFriday() || dt.IsSaturday()) : (dt.IsSaturday() || dt.IsSunday());
 
-        public static int? DayOfWeekend(this LocalDateTime dt, string country)
+        public static int DayOfWeekend(this LocalDateTime dt, string country)
         {
             if (country.IsIsrael())
             {
@@ -35,8 +35,9 @@ namespace ExchangeTime
                 if (dt.IsSunday())
                     return 2;
             }
-            return null;
-        }
 
+            // not a weekend
+            return 0; 
+        }
     }
 }

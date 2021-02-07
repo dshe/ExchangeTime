@@ -12,9 +12,7 @@ namespace ExchangeTime
         internal readonly string Name;
         internal EarlyClose(JsonElement json)
         {
-            var date = json.GetProperty("date").GetString();
-            if (date == null)
-                throw new InvalidDataException("Missing property: 'date'");
+            string date = json.GetProperty("date").GetString() ?? throw new InvalidDataException("Missing property: 'date'");
             DateTime = DateTimePattern.Parse(date).Value;
             Name = json.GetProperty("name").GetString() ??
                 throw new InvalidDataException("Missing property: 'name'");

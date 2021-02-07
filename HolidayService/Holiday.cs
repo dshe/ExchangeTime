@@ -7,12 +7,12 @@ namespace HolidayService
 {
     public class Holiday
     {
-        public readonly LocalDate Date;
-        public readonly string Name;
+        public LocalDate Date { get; }
+        public string Name { get; }
 
         internal Holiday(JsonElement json)
         {
-            if (!json.TryGetProperty("observedOn", out var d))
+            if (!json.TryGetProperty("observedOn", out JsonElement d))
                 d = json.GetProperty("date");
 
             Date = new LocalDate(

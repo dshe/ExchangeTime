@@ -1,4 +1,5 @@
-﻿using NodaTime;
+﻿using Microsoft.Extensions.Logging;
+using NodaTime;
 using System;
 using System.Threading.Tasks;
 
@@ -8,13 +9,13 @@ namespace HolidayService
     {
         static readonly IClock Clock = SystemClock.Instance;
 
-        static async Task Main(string[] args)
+        static async Task Main()
         {
-            var holidays = new Holidays(Clock);
+            Holidays holidays = new(Clock);
 
             await holidays.LoadHolidays("usa", "ny");
 
-            var holiday = holidays.TryGetHoliday("usa", "ny", new LocalDate(2019, 12, 25));
+            Holiday? holiday = holidays.TryGetHoliday("usa", "ny", new LocalDate(2019, 12, 25));
             if (holiday != null)
                 Console.WriteLine(holiday.Name);
 
@@ -25,17 +26,15 @@ namespace HolidayService
         {
             //logger.Log(LogLevel.Information, "rrr");
 
-            var holidayService = new Enrico(SystemClock.Instance, 1);
+            Enrico holidayService = new(SystemClock.Instance, 1);
 
-            var clock = SystemClock.Instance;
+            ZonedDateTime now = Clock.GetCurrentInstant().InUtc();
+            LocalDate from = now.Minus(Duration.FromDays(30)).Date;
+            LocalDate to = now.Plus(Duration.FromDays(90)).Date;
 
-            var now = clock.GetCurrentInstant().InUtc();
-            var from = now.Minus(Duration.FromDays(30)).Date;
-            var to = now.Plus(Duration.FromDays(90)).Date;
+            string str = await holidayService.GetHolidays("usa", "ny", from, to);
 
-            var str = await holidayService.GetHolidays("usa", "ny", from, to);
-
-            //ILogger logger = loggerFactory.CreateLogger<Program>();
+            //ILogger logger = new LoggerFactory().CreateLogger<Program>();
             //logger.LogInformation("Example log message");
         }
 

@@ -19,32 +19,25 @@ namespace SpeechService
 {
     public class Speech
     {
-        private readonly SemaphoreSlim TextToSpeechSemaphore = new SemaphoreSlim(1);
-        private readonly VoiceSelectionParams Voice = new VoiceSelectionParams()
-            { LanguageCode = "en-US", SsmlGender = SsmlVoiceGender.Neutral };
-        private readonly AudioConfig Config = new AudioConfig() { AudioEncoding = AudioEncoding.Mp3 };
-        private readonly Lazy<TextToSpeechClient> Client = new Lazy<TextToSpeechClient>(() => TextToSpeechClient.Create());
+        private readonly SemaphoreSlim TextToSpeechSemaphore = new(1);
+        private readonly VoiceSelectionParams Voice = new() { LanguageCode = "en-US", SsmlGender = SsmlVoiceGender.Neutral };
+        private readonly Lazy<TextToSpeechClient> Client = new(() => TextToSpeechClient.Create());
 
         public static async Task PlayAudioFile(string fileName)
         {
-            try
-            {
-                var player = new Player();
-                var tcs = new TaskCompletionSource<object?>();
-                player.PlaybackFinished += (_, __) => tcs.SetResult(null);
-                await player.Play(fileName).ConfigureAwait(false);
-                await tcs.Task.ConfigureAwait(false);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            if (!File.Exists(fileName))
+                throw new FileNotFoundException(fileName);
+            TaskCompletionSource<object?> tcs = new();
+            Player player = new();
+            player.PlaybackFinished += (_, __) => tcs.SetResult(null);
+            await player.Play(fileName).ConfigureAwait(false);
+            await tcs.Task.ConfigureAwait(false);
         }
 
         public static async Task PlayWindowsMediaFile(string fileName)
         {
-            var windir = Environment.GetEnvironmentVariable("windir");
-            var path = $"{windir}\\Media\\{fileName}";
+            string windir = Environment.GetEnvironmentVariable("windir") ?? throw new InvalidOperationException("Windows directory not found.");
+            string path = $"{windir}\\Media\\{fileName}";
             if (!File.Exists(path))
                 throw new FileNotFoundException(path);
             await PlayAudioFile(path).ConfigureAwait(false);
@@ -52,30 +45,30 @@ namespace SpeechService
 
         public async Task Speak(string text, string fileName = "")
         {
-            var input = new SynthesisInput() { Text = text };
-            var request = new SynthesizeSpeechRequest()
+            if (string.IsNullOrWhiteSpace(text))
+                throw new InvalidOperationException("No text to speak.");
+
+            SynthesisInput input = new() { Text = text };
+            SynthesizeSpeechRequest request = new()
             {
                 Input = input,
                 Voice = Voice,
-                AudioConfig = Config
+                AudioConfig = new() { AudioEncoding = AudioEncoding.Mp3 }
             };
-
-            request.AudioConfig.AudioEncoding = AudioEncoding.Mp3;
-
-            const string SpeechAudioFileName = "temp.mp3";
 
             // limits entry to single thread
             await TextToSpeechSemaphore.WaitAsync().ConfigureAwait(false);
             try
             {
                 // initiate the request to Google
-                var responseTask = Client.Value.SynthesizeSpeechAsync(request);
+                Task<SynthesizeSpeechResponse> responseTask = Client.Value.SynthesizeSpeechAsync(request);
 
                 if (!string.IsNullOrWhiteSpace(fileName))
                     await PlayWindowsMediaFile(fileName).ConfigureAwait(false);
 
-                var response = await responseTask.ConfigureAwait(false);
+                SynthesizeSpeechResponse response = await responseTask.ConfigureAwait(false);
 
+                const string SpeechAudioFileName = "temp.mp3";
                 using FileStream fs = File.Create(SpeechAudioFileName);
                 {
                     response.AudioContent.WriteTo(fs);
@@ -90,23 +83,20 @@ namespace SpeechService
             }
         }
 
-        public async Task AnnounceTime(ZonedDateTime zdt)
+        public async Task AnnounceTime(ZonedDateTime zdt, string text = "")
         {
-            var tz = zdt.Zone;
-            var city = tz.Id.Split("/")[1];
-            await AnnounceTime(zdt.LocalDateTime, city).ConfigureAwait(false);
+            string city = zdt.Zone.Id.Split("/")[1];
+            await AnnounceTime(zdt.LocalDateTime, city, text).ConfigureAwait(false);
         }
 
         public async Task AnnounceTime(LocalDateTime dt, string locationName = "", string text = "")
         {
-            var sb = new StringBuilder();
-            sb.Append($"It is now {dt.Date.ToString("MMMM d", null)} at {dt.ToString("H: mm", null)}");
+            StringBuilder sb = new($"It is now {dt.Date.ToString("MMMM d", null)} at {dt.ToString("H: mm", null)}");
             if (!string.IsNullOrWhiteSpace(locationName))
                 sb.Append($"in {locationName}");
             sb.Append(". ");
             if (!string.IsNullOrWhiteSpace(text))
                 sb.Append(text + ".");
-
             await Speak(sb.ToString(), "Alarm01.wav").ConfigureAwait(false);
         }
     }

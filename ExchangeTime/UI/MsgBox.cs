@@ -9,8 +9,8 @@ namespace ExchangeTime
     public class MsgBox
     {
         public enum IconType { Information, Question, Warning, Error };
-        private readonly Window window = new Window();
-        private Image? image = null;
+        private readonly Window window = new();
+        private Image? image;
         public MsgBox(Window? owner = null)
         {
             if (owner != null)
@@ -30,7 +30,7 @@ namespace ExchangeTime
         {
             set
             {
-                var path = $"//ExchangeTime;Component/Resources/{Enum.GetName(typeof(IconType), value)}48.png";
+                string path = $"//ExchangeTime;Component/Resources/{Enum.GetName(typeof(IconType), value)}48.png";
                 image = new Image
                 {
                     Source = new BitmapImage(new Uri(path, UriKind.Relative)),
@@ -43,7 +43,7 @@ namespace ExchangeTime
         public string? Show(string message = "")
         {
             string? result = null;
-            var grid = new Grid();
+            Grid grid = new();
             //grid.ShowGridLines = true;
             grid.RowDefinitions.Add(new RowDefinition());
             grid.RowDefinitions.Add(new RowDefinition());
@@ -57,7 +57,7 @@ namespace ExchangeTime
             }
             if (message != "")
             {
-                var tb = new TextBlock
+                TextBlock tb = new()
                 {
                     Text = message,
                     HorizontalAlignment = HorizontalAlignment.Left,
@@ -72,7 +72,7 @@ namespace ExchangeTime
             }
             if (Buttons != "")
             {
-                var tb = new TextBlock
+                TextBlock tb = new()
                 {
                     Background = window.Background,
                     Padding = new Thickness(5)
@@ -82,7 +82,7 @@ namespace ExchangeTime
                 Grid.SetRow(tb, 1);
                 Grid.SetColumn(tb, 0);
 
-                var panel = new StackPanel
+                StackPanel panel = new()
                 {
                     Background = tb.Background,
                     Orientation = Orientation.Horizontal
@@ -91,10 +91,10 @@ namespace ExchangeTime
                 Grid.SetRow(panel, 1);
                 Grid.SetColumn(panel, 1);
 
-                var buttonText = Buttons.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries); //string[] buttonText = Buttons.Split(';');
-                for (var i = 0; i < buttonText.Length; i++)
+                string[] buttonText = Buttons.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                for (int i = 0; i < buttonText.Length; i++)
                 {
-                    var button = new Button
+                    Button button = new()
                     {
                         Padding = new Thickness(3),
                         Margin = new Thickness(6),

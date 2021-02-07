@@ -13,18 +13,18 @@ namespace ExchangeTime
     {
         public static Size GetTextSize(this TextBlock tb)
         {
-            var typeface = new Typeface(tb.FontFamily, tb.FontStyle, tb.FontWeight, tb.FontStretch);
-            var m_dpiInfo = VisualTreeHelper.GetDpi(tb);
-            var pixelsPerDip = m_dpiInfo.PixelsPerDip;
-            var formattedText = new FormattedText(tb.Text, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, typeface, tb.FontSize, Brushes.Black, null, TextFormattingMode.Display, pixelsPerDip);
-            return new Size(formattedText.Width, formattedText.Height);
+            Typeface typeface = new(tb.FontFamily, tb.FontStyle, tb.FontWeight, tb.FontStretch);
+            DpiScale m_dpiInfo = VisualTreeHelper.GetDpi(tb);
+            double pixelsPerDip = m_dpiInfo.PixelsPerDip;
+            FormattedText formattedText = new(tb.Text, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, typeface, tb.FontSize, Brushes.Black, null, TextFormattingMode.Display, pixelsPerDip);
+            return new(formattedText.Width, formattedText.Height);
         }
 
         public static void FitText(this TextBlock tb)
         {
             //Logger.LogInfo(tb.Text +" " + GetTextWidth(tb) + " " + tb.Width);
-            var strings = tb.Text.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries); // "Saturday;Sat" -> "Sat"
-            foreach (var s in strings)
+            string[] strings = tb.Text.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries); // "Saturday;Sat" -> "Sat"
+            foreach (string s in strings)
             {
                 tb.Text = s;
                 if (tb.GetTextSize().Width < tb.Width - 1)

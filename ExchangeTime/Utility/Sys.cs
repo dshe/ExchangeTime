@@ -13,8 +13,6 @@ namespace ExchangeTime
         {
             if (Thread.CurrentThread.Name == null)
                 Thread.CurrentThread.Name = "MainThread";
-            //var a = Assembly.GetCallingAssembly();
-            //Trace.Assert(a != null);
             if (singleInstance && !GlobalInstance.IsSingle())
             {
                 new MsgBox
@@ -39,16 +37,14 @@ namespace ExchangeTime
             if (mutex != null)
                 return true;
 
-            var processName = Process.GetCurrentProcess().ProcessName;
-            var version = Assembly.GetExecutingAssembly().GetName().Version;
-            if (version == null)
-                throw new Exception("Version is null");
-            var mutexId = $"Global\\{{{processName}:{version}}}";
+            string processName = Process.GetCurrentProcess().ProcessName;
+            Version version = Assembly.GetExecutingAssembly().GetName().Version ?? throw new Exception("Version is null");
+            string mutexId = $"Global\\{{{processName}:{version}}}";
 
             mutex = new Mutex(false, mutexId);
 
-            var allowEveryoneRule = new MutexAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null), MutexRights.FullControl, AccessControlType.Allow);
-            var securitySettings = new MutexSecurity();
+            MutexAccessRule allowEveryoneRule = new(new SecurityIdentifier(WellKnownSidType.WorldSid, null), MutexRights.FullControl, AccessControlType.Allow);
+            MutexSecurity securitySettings = new();
             securitySettings.AddAccessRule(allowEveryoneRule);
             mutex.SetAccessControl(securitySettings);
 

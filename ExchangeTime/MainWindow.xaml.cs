@@ -23,12 +23,12 @@ namespace ExchangeTime
         private readonly Holidays Holidays;
         private readonly int width, height;
         private readonly ZoomFormat zoomFormats;
-		private readonly Canvas canvas = new Canvas();
+		private readonly Canvas canvas = new();
         private readonly TextBlock centerHeader, leftHeader, rightHeader;
         private readonly List<Location> Locations;
 
-        private readonly DispatcherTimer timer = new DispatcherTimer();
-        private readonly Speech Speech = new Speech();
+        private readonly DispatcherTimer timer = new();
+        private readonly Speech Speech = new();
 
         public MainWindow()
 		{
@@ -46,7 +46,7 @@ namespace ExchangeTime
 				Properties.Settings.Default.Save(); // save user settings
 			}
 
-            using var stream = File.OpenRead(dataFileName);
+            using FileStream stream = File.OpenRead(dataFileName);
             Locations = JsonDocument
                 .Parse(stream)
                 .RootElement
@@ -69,31 +69,26 @@ namespace ExchangeTime
             Repaint();
         }
 
-        private TextBlock CreateTopTextBlock(TextAlignment ta)
+        private TextBlock CreateTopTextBlock(TextAlignment ta) => new()
         {
-            return new TextBlock
-            {
-                Width = width,
-                VerticalAlignment = VerticalAlignment.Top,
-                FontSize = FontSize + 1,
-                TextAlignment = ta,
-                Foreground = MyBrushes.Gray224,
-                Background = (ta == TextAlignment.Center) ? MyBrushes.Gray48 : Brushes.Transparent
-            };
-        }
+            Width = width,
+            VerticalAlignment = VerticalAlignment.Top,
+            FontSize = FontSize + 1,
+            TextAlignment = ta,
+            Foreground = MyBrushes.Gray224,
+            Background = (ta == TextAlignment.Center) ? MyBrushes.Gray48 : Brushes.Transparent
+        };
 
         private async void Window_Loaded(object sender, RoutedEventArgs rea)
         {
             try
             {
-                foreach (var location in Locations)
+                foreach (Location location in Locations)
                     await Holidays.LoadHolidays(location.Country, location.Region);
             }
             catch (WebException e)
             {
-                var response = (HttpWebResponse?)e.Response;
-                if (response == null)
-                    throw new Exception("No response object!");
+                HttpWebResponse response = (HttpWebResponse?)e.Response ?? throw new Exception("No response object!");
                 if (response.StatusCode != HttpStatusCode.TooManyRequests)
                     throw;
                 MessageBox.Show("Enrico Holiday Service: too many requests.", "warning", MessageBoxButton.OK);
@@ -112,8 +107,8 @@ namespace ExchangeTime
 
         private async void Repaint(object? sender = null, EventArgs? e = null)
         {
-            var instant = Clock.GetCurrentInstant();
-            var local = Clock.GetSystemZonedDateTime();
+            Instant instant = Clock.GetCurrentInstant();
+            ZonedDateTime local = Clock.GetSystemZonedDateTime();
 
             centerHeader.Text = local.ToString("dddd, MMMM d, yyyy", null);
             rightHeader.Text = local.ToString("H:mm:ss ", null);
@@ -123,7 +118,7 @@ namespace ExchangeTime
             canvas.Children.Add(leftHeader);
             canvas.Children.Add(rightHeader);
 
-            var originSeconds = instant.ToUnixTimeSeconds() - zoomFormats.SecondsPerPixel * width / 3;
+            long originSeconds = instant.ToUnixTimeSeconds() - zoomFormats.SecondsPerPixel * width / 3;
 
             DrawTicks(originSeconds);
             DrawAllBars(originSeconds);
@@ -133,8 +128,8 @@ namespace ExchangeTime
 
         private int DateToPixels(long originSeconds, ZonedDateTime dt)
         {
-            var seconds = dt.ToInstant().ToUnixTimeSeconds();
-            var px = (seconds - originSeconds) / zoomFormats.SecondsPerPixel;
+            long seconds = dt.ToInstant().ToUnixTimeSeconds();
+            long px = (seconds - originSeconds) / zoomFormats.SecondsPerPixel;
             return Convert.ToInt32(px);
         }
 
@@ -143,17 +138,17 @@ namespace ExchangeTime
             if (!Properties.Settings.Default.Audio)
                 return;
 
-            foreach (var location in Locations.Where(loc => loc.Notifications.Any()))
+            foreach (Location location in Locations.Where(loc => loc.Notifications.Any()))
             {
-                var dt = instant.InZone(location.TimeZone).LocalDateTime;
+                LocalDateTime dt = instant.InZone(location.TimeZone).LocalDateTime;
 
                 // don't notify on weekends
                 if (dt.IsWeekend(location.Country))
                     continue;
 
                 // don't notify on holidays
-                var holiday = Holidays.TryGetHoliday(location.Country, location.Region, dt.Date);
-                var earlyClose =  location.EarlyCloses.Where(x => x.DateTime.Date == dt.Date).SingleOrDefault();
+                Holiday? holiday = Holidays.TryGetHoliday(location.Country, location.Region, dt.Date);
+                EarlyClose? earlyClose =  location.EarlyCloses.Where(x => x.DateTime.Date == dt.Date).SingleOrDefault();
 
                 if (holiday != null && earlyClose == null)
                     continue;
@@ -166,7 +161,7 @@ namespace ExchangeTime
                 //  N          Y          <= earlyClose
                 //  N          N          Yes
 
-                foreach (var notification in location.Notifications)
+                foreach (Notification notification in location.Notifications)
                 {
                     if (dt.TimeOfDay == notification.Time)
                         await Speech.AnnounceTime(dt, location.Name, notification.Text).ConfigureAwait(false);

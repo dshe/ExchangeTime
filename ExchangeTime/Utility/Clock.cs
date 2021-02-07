@@ -10,12 +10,12 @@ namespace ExchangeTime
 
         public Instant GetCurrentInstant()
         {
-            var instant = SystemClock.Instance.GetCurrentInstant();
+            Instant instant = SystemClock.Instance.GetCurrentInstant();
             return Round(instant, NodaConstants.TicksPerSecond);
             /*
-            var ldt = new LocalDateTime(2020, 3, 17, 14, 30, 0);
-            var zone = SystemTimeZone;
-            var zdt = zone.AtStrictly(ldt);
+            LocalDateTime ldt = new(2020, 3, 17, 14, 30, 0);
+            DateTimeZone zone = SystemTimeZone;
+            ZonedDateTime zdt = zone.AtStrictly(ldt);
             return zdt.ToInstant();
             */
         }

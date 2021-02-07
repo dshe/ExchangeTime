@@ -43,8 +43,8 @@ namespace ExchangeTime
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
-            var plus = (e.Key == Key.OemPlus || e.Key == Key.Add);
-            var minus = (e.Key == Key.OemMinus || e.Key == Key.Subtract);
+            bool plus = (e.Key == Key.OemPlus || e.Key == Key.Add);
+            bool minus = (e.Key == Key.OemMinus || e.Key == Key.Subtract);
             if (!plus && !minus)
                 return;
             if (zoomFormats.Zoom(plus))

@@ -10,11 +10,10 @@ namespace ExchangeTime
         private static readonly LocalTimePattern TimePattern = LocalTimePattern.CreateWithInvariantCulture("HH:mm:ss");
         internal readonly LocalTime Time;
         internal readonly string Text;
-        internal Notification(JsonElement json, DateTimeZone timeZone)
+        internal Notification(JsonElement json)
         {
-            var time = json.GetProperty("time").GetString() ?? throw new InvalidDataException("Missing property: 'time'");
+            string time = json.GetProperty("time").GetString() ?? throw new InvalidDataException("Missing property: 'time'");
             Time = TimePattern.Parse(time).Value;
-
             Text = json.GetProperty("text").GetString() ?? throw new InvalidDataException("Missing property: 'text'");
         }
     }

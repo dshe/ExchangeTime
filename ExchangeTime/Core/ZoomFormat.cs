@@ -44,9 +44,9 @@ namespace ExchangeTime
 
         internal ZoomFormat(int initialIndex)
         {
-            using var stream = File.OpenRead(DataFileName);
+            using FileStream fs = File.OpenRead(DataFileName);
             FormatList = JsonDocument
-                .Parse(stream)
+                .Parse(fs)
                 .RootElement
                 .EnumerateArray()
                 .Select(j => new Format(j))
