@@ -1,4 +1,4 @@
-## ExchangeTime&nbsp;&nbsp;[![Build status](https://ci.appveyor.com/api/projects/status/g1e21bjel4ikkq15?svg=true)](https://ci.appveyor.com/project/dshe/exchangetime) [![License](https://img.shields.io/badge/license-Apache%202.0-7755BB.svg)](https://opensource.org/licenses/Apache-2.0)
+## ExchangeTime&nbsp;&nbsp;[![Build status](https://ci.appveyor.com/api/projects/status/g1e21bjel4ikkq15?svg=true)](https://ci.appveyor.com/project/dshe/exchangetime) [![Version](https://img.shields.io/badge/version-2.1.0-orange)] [![License](https://img.shields.io/badge/license-Apache%202.0-7755BB.svg)](https://opensource.org/licenses/Apache-2.0)
 
 ***A small Windows 10 desktop application which displays a timeline indicating periods when financial exchanges are open***
 - the gold vertical line represents the current time
