@@ -2,11 +2,10 @@
 using System.IO;
 using System.Text.Json;
 using System.Linq;
-using System.Diagnostics;
+using Microsoft.Extensions.Logging;
 
 namespace ExchangeTime
 {
-    // http://www.convertcsv.com/csv-to-json.htm
     internal class Format
     {
         internal readonly int SecondsPerPixel, Major, Minor;
@@ -56,7 +55,8 @@ namespace ExchangeTime
                 Index = initialIndex;
             else
             {
-                //Logger.Write("Invalid zoom index.");
+                var logger = App.MyLoggerFactory.CreateLogger("ZoomFormat");
+                logger.LogWarning("Invalid zoom index.");
                 //throw new IndexOutOfRangeException();
             }
         }

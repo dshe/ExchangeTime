@@ -1,4 +1,7 @@
-﻿using System.Windows;
+﻿using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -6,6 +9,7 @@ namespace ExchangeTime
 {
     public sealed partial class MainWindow
     {
+        private int AudioLocker;
         private void MainWindowMouseDoubleClick(object sender, MouseButtonEventArgs e) => Close();
         private void MainWindowMouseLeftButtonDown(object sender, MouseButtonEventArgs e) => DragMove();
         private void MainWindowMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -23,22 +27,33 @@ namespace ExchangeTime
 
         private async void MainWindowMouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (Properties.Settings.Default.Audio)
-                await Speech.AnnounceTime(Clock.GetSystemZonedDateTime());
+            if (Interlocked.CompareExchange(ref AudioLocker, 1, 0) == 0)
+            {
+                await ShowMessage().ConfigureAwait(false);
+                AudioLocker = 0;
+            }
+        }
 
+        private async Task ShowMessage()
+        {
+            Task task = Task.CompletedTask;
+            if (Properties.Settings.Default.Audio)
+                task = Speech.AnnounceTime(Clock.GetSystemZonedDateTime());
+            var version = Assembly.GetEntryAssembly()?.GetName()?.Version?.ToString() ?? "";
             new MsgBox(this)
             {
-                iconType = MsgBox.IconType.Information,
+                MsgBoxIconType = MsgBox.IconType.Information,
                 Background = Brushes.LightGray,
-                Title = "ExchangeTime"
+                Title = "ExchangeTime " + version
             }.Show("Zoom: mouse wheel\nQuit: double-click left mouse button");
+
+            await task.ConfigureAwait(false);
         }
 
         private void MainWindowMouseWheel(object sender, MouseWheelEventArgs e)
         {
             if (e.Delta != 0 && zoomFormats.Zoom(e.Delta > 0))
                 Repaint();
-            //Logger.Write($"Delta: {e.Delta}.");
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e)

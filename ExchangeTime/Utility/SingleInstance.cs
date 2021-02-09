@@ -1,38 +1,36 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Diagnostics;
 using System.Reflection;
-using System.Security.AccessControl;
-using System.Security.Principal;
 using System.Threading;
 
-namespace ExchangeTime
+namespace ExchangeTime.Utility
 {
-    public static partial class Sys
-    {
-        public static void Init(bool singleInstance = false)
-        {
-            if (Thread.CurrentThread.Name == null)
-                Thread.CurrentThread.Name = "MainThread";
-            if (singleInstance && !GlobalInstance.IsSingle())
-            {
-                new MsgBox
-                {
-                    iconType = MsgBox.IconType.Error,
-                    Title = "ExchangeTime"
-                }.Show("Another instance is running!");
-                Environment.Exit(-1);
-            }
-            InitExceptionHandlers();
-        }
-
-        public static void Exit() =>  GlobalInstance.DisposeMutex(); // automatically disposed when the process ends; probably
-    }
-
-    public static class GlobalInstance
+    public static class SingleInstance
     {
         private static Mutex? mutex = null;
         private static bool hasMutexHandle;
-        internal static bool IsSingle()
+
+        public static void Check()
+        {
+            if (Thread.CurrentThread.Name == null)
+                Thread.CurrentThread.Name = "MainThread";
+            if (!IsSingle())
+            {
+                var msg = "Another instance is running!";
+                var logger = App.MyLoggerFactory.CreateLogger("SingleInstance");
+                logger.LogCritical(msg);
+
+                new MsgBox
+                {
+                    MsgBoxIconType = MsgBox.IconType.Error,
+                    Title = "ExchangeTime"
+                }.Show(msg);
+                Environment.Exit(-1);
+            }
+        }
+
+        private static bool IsSingle()
         {
             if (mutex != null)
                 return true;
@@ -42,11 +40,6 @@ namespace ExchangeTime
             string mutexId = $"Global\\{{{processName}:{version}}}";
 
             mutex = new Mutex(false, mutexId);
-
-            MutexAccessRule allowEveryoneRule = new(new SecurityIdentifier(WellKnownSidType.WorldSid, null), MutexRights.FullControl, AccessControlType.Allow);
-            MutexSecurity securitySettings = new();
-            securitySettings.AddAccessRule(allowEveryoneRule);
-            mutex.SetAccessControl(securitySettings);
 
             try
             {

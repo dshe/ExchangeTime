@@ -6,6 +6,7 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using NodaTime;
 using HolidayService;
+using ExchangeTime.Utility;
 
 namespace ExchangeTime
 {

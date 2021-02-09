@@ -26,18 +26,19 @@ namespace ExchangeTime
         public SolidColorBrush ForeGround { set { window.Foreground = value; } }
         public SolidColorBrush Background { set { window.Background = value; } }
         public string Buttons { get; set; } = "";
-        public IconType iconType
+        public IconType MsgBoxIconType
         {
             set
             {
-                string path = $"//ExchangeTime;Component/Resources/{Enum.GetName(typeof(IconType), value)}48.png";
+                string file = $"{Enum.GetName(typeof(IconType), value)}48.png";
+                Uri uri = new($"pack://application:,,,/UI/MessageBox/{file}");
+                BitmapImage bmi = new (uri);
                 image = new Image
                 {
-                    Source = new BitmapImage(new Uri(path, UriKind.Relative)),
+                    Source = bmi,
                     Stretch = Stretch.None,
                     Margin = new Thickness(10)
                 };
-                // must specify dll;//image.Source = new BitmapImage(new Uri("pack://application:,,," + path));
             }
         }
         public string? Show(string message = "")
@@ -49,6 +50,7 @@ namespace ExchangeTime
             grid.RowDefinitions.Add(new RowDefinition());
             grid.ColumnDefinitions.Add(new ColumnDefinition());
             grid.ColumnDefinitions.Add(new ColumnDefinition());
+
             if (image != null)
             {
                 grid.Children.Add(image);
@@ -62,7 +64,7 @@ namespace ExchangeTime
                     Text = message,
                     HorizontalAlignment = HorizontalAlignment.Left,
                     VerticalAlignment = VerticalAlignment.Center,
-                    Margin = new Thickness(5)
+                    Margin = new Thickness(10),
                 };
                 if (FontSize > 0)
                     tb.FontSize = FontSize;
@@ -117,5 +119,4 @@ namespace ExchangeTime
             return result;
         }
     }
-
 }

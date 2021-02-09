@@ -1,18 +1,14 @@
 ﻿using NodaTime;
-using System;
 
-namespace ExchangeTime
+namespace ExchangeTime.Utility
 {
     public static class DateTimeExtenstions
     {
-        public static bool IsFriday(this LocalDateTime dt) =>
-            dt.DayOfWeek == IsoDayOfWeek.Friday;
+        public static bool IsFriday(this LocalDateTime dt) => dt.DayOfWeek == IsoDayOfWeek.Friday;
 
-        public static bool IsSaturday(this LocalDateTime dt) =>
-            dt.DayOfWeek == IsoDayOfWeek.Saturday;
+        public static bool IsSaturday(this LocalDateTime dt) => dt.DayOfWeek == IsoDayOfWeek.Saturday;
 
-        public static bool IsSunday(this LocalDateTime dt) =>
-            dt.DayOfWeek == IsoDayOfWeek.Sunday;
+        public static bool IsSunday(this LocalDateTime dt) => dt.DayOfWeek == IsoDayOfWeek.Sunday;
 
         public static bool IsIsrael(this string name) => (name == "Israel" || name == "isr");
 
@@ -36,8 +32,7 @@ namespace ExchangeTime
                     return 2;
             }
 
-            // not a weekend
-            return 0; 
+            return 0; // not a weekend
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using NodaTime;
 
-namespace ExchangeTime
+namespace ExchangeTime.Utility
 {
     public class Clock : IClock
     {

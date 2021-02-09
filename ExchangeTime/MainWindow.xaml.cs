@@ -12,6 +12,7 @@ using NodaTime;
 using HolidayService;
 using SpeechService;
 using System.Net;
+using ExchangeTime.Utility;
 
 namespace ExchangeTime
 {
@@ -33,7 +34,7 @@ namespace ExchangeTime
         public MainWindow()
 		{
             Clock = new Clock();
-            Holidays = new Holidays(Clock);
+            Holidays = new Holidays(Clock, App.MyLoggerFactory);
 
             InitializeComponent();
 
@@ -46,9 +47,8 @@ namespace ExchangeTime
 				Properties.Settings.Default.Save(); // save user settings
 			}
 
-            using FileStream stream = File.OpenRead(dataFileName);
             Locations = JsonDocument
-                .Parse(stream)
+                .Parse(File.ReadAllText(dataFileName))
                 .RootElement
                 .GetProperty("locations")
                 .EnumerateArray()
@@ -107,19 +107,19 @@ namespace ExchangeTime
 
         private async void Repaint(object? sender = null, EventArgs? e = null)
         {
-            Instant instant = Clock.GetCurrentInstant();
-            ZonedDateTime local = Clock.GetSystemZonedDateTime();
+            ZonedDateTime zdt = Clock.GetSystemZonedDateTime();
 
-            centerHeader.Text = local.ToString("dddd, MMMM d, yyyy", null);
-            rightHeader.Text = local.ToString("H:mm:ss ", null);
+            centerHeader.Text = zdt.ToString("dddd, MMMM d, yyyy", null);
+            rightHeader.Text = zdt.ToString("H:mm:ss ", null);
 
             canvas.Children.Clear();
             canvas.Children.Add(centerHeader);
             canvas.Children.Add(leftHeader);
             canvas.Children.Add(rightHeader);
 
-            long originSeconds = instant.ToUnixTimeSeconds() - zoomFormats.SecondsPerPixel * width / 3;
+            Instant instant = zdt.ToInstant();
 
+            long originSeconds = instant.ToUnixTimeSeconds() - zoomFormats.SecondsPerPixel * width / 3;
             DrawTicks(originSeconds);
             DrawAllBars(originSeconds);
             DrawCursor();
