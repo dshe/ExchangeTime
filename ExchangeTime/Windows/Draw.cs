@@ -8,7 +8,7 @@ using NodaTime;
 using HolidayService;
 using ExchangeTime.Utility;
 
-namespace ExchangeTime
+namespace ExchangeTime.Windows
 {
     public partial class MainWindow : Window
     {

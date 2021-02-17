@@ -50,15 +50,14 @@
   {
     "name": "Euronext", "country": "nld", "timezone": "Europe/Amsterdam", "color":"#145",
     "bars": [
+    { "start": "08:00", "end": "09:00", "type": "S"},
     { "start": "09:00", "end": "17:30", "type": "L", "label": "Euronext Exchange TIME;Euronext TIME;Euronext;E"},
-    { "start": "17:30", "end": "17:40", "type": "S"}]
+    { "start": "17:30", "end": "22:00", "type": "S"}]
   },
   {   
     "name": "London","country": "gbr", "region": "eng", "timezone": "Europe/London", "color":"#249",
     "bars": [
-    { "start": "07:00", "end": "08:00", "type": "S"},
-    { "start": "08:00", "end": "16:30", "type": "L", "label": "London Stock Exchange TIME;LSE TIME;LSE;L"},
-    { "start": "16:30", "end": "17:15", "type": "S"}],
+      { "start": "08:00", "end": "16:50", "type": "L", "label": "London Stock Exchange TIME;LSE TIME;LSE;L"}],
     "earlycloses":[
      { "date": "2018-12-24T12:30", "name": "Christmas"}, 
      { "date": "2018-12-31T12:30", "name": "New Year"},

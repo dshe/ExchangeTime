@@ -6,6 +6,7 @@ using System.Threading;
 using NodaTime;
 using Google.Cloud.TextToSpeech.V1;
 using NetCoreAudio;
+using Microsoft.Extensions.Logging;
 /*
 Google Cloud Text-to-Speech API. The SDK must be installed.
 https://cloud.google.com/text-to-speech/
@@ -19,12 +20,16 @@ namespace SpeechService
 {
     public class Speech
     {
+        private readonly ILogger Logger;
         private readonly SemaphoreSlim TextToSpeechSemaphore = new(1);
         private readonly VoiceSelectionParams Voice = new() { LanguageCode = "en-US", SsmlGender = SsmlVoiceGender.Neutral };
         private readonly Lazy<TextToSpeechClient> Client = new(() => TextToSpeechClient.Create());
 
-        public static async Task PlayAudioFile(string fileName)
+        public Speech(ILogger<Speech> logger) => Logger = logger;
+
+        public async Task PlayAudioFile(string fileName)
         {
+            Logger.LogInformation($"Playing audfio file: {fileName}.");
             if (!File.Exists(fileName))
                 throw new FileNotFoundException(fileName);
             TaskCompletionSource<object?> tcs = new();
@@ -34,17 +39,16 @@ namespace SpeechService
             await tcs.Task.ConfigureAwait(false);
         }
 
-        public static async Task PlayWindowsMediaFile(string fileName)
+        public async Task PlayWindowsMediaFile(string fileName)
         {
             string windir = Environment.GetEnvironmentVariable("windir") ?? throw new InvalidOperationException("Windows directory not found.");
             string path = $"{windir}\\Media\\{fileName}";
-            if (!File.Exists(path))
-                throw new FileNotFoundException(path);
             await PlayAudioFile(path).ConfigureAwait(false);
         }
 
         public async Task Speak(string text, string fileName = "")
         {
+            Logger.LogInformation($"Speaking: {text}.");
             if (string.IsNullOrWhiteSpace(text))
                 throw new InvalidOperationException("No text to speak.");
 
@@ -63,7 +67,7 @@ namespace SpeechService
                 // initiate the request to Google
                 Task<SynthesizeSpeechResponse> responseTask = Client.Value.SynthesizeSpeechAsync(request);
 
-                if (!string.IsNullOrWhiteSpace(fileName))
+                if (fileName != "")
                     await PlayWindowsMediaFile(fileName).ConfigureAwait(false);
 
                 SynthesizeSpeechResponse response = await responseTask.ConfigureAwait(false);

@@ -5,24 +5,20 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
-/*
-get all holidays 2 weeks back and 4 weeks ahead
-*/
+// get all holidays 2 weeks back and 4 weeks ahead
 
 namespace HolidayService
 {
     public class Holidays
     {
-        private readonly ILogger Logger;
         private readonly Enrico Enrico;
         private readonly Dictionary<string, Dictionary<LocalDate, Holiday>> Dictionary = new();
         private static string MakeKey(string country, string region) => country + "-" + region;
         private readonly SemaphoreSlim Semaphore = new(1);
 
-        public Holidays(IClock clock, ILoggerFactory loggerFactory)
+        public Holidays(ILogger<Holidays> logger, IClock clock)
         {
-            Logger = loggerFactory.CreateLogger("HolidayService");
-            Enrico = new Enrico(clock, Logger);
+            Enrico = new Enrico(logger, clock);
         }
 
         public async Task LoadHolidays(string country, string region)

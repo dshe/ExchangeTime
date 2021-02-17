@@ -5,7 +5,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace ExchangeTime
+namespace ExchangeTime.Windows
 {
     public sealed partial class MainWindow
     {
@@ -37,7 +37,7 @@ namespace ExchangeTime
         private async Task ShowMessage()
         {
             Task task = Task.CompletedTask;
-            if (Properties.Settings.Default.Audio)
+            if (Settings.Value.AudioEnable)
                 task = Speech.AnnounceTime(Clock.GetSystemZonedDateTime());
             var version = Assembly.GetEntryAssembly()?.GetName()?.Version?.ToString() ?? "";
             new MsgBox(this)

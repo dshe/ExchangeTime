@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using System;
 using System.Diagnostics;
 using System.Reflection;
@@ -13,12 +14,10 @@ namespace ExchangeTime.Utility
 
         public static void Check()
         {
-            if (Thread.CurrentThread.Name == null)
-                Thread.CurrentThread.Name = "MainThread";
             if (!IsSingle())
             {
                 var msg = "Another instance is running!";
-                var logger = App.MyLoggerFactory.CreateLogger("SingleInstance");
+                var logger = NullLogger.Instance; // App.MyLoggerFactory.CreateLogger("SingleInstance");
                 logger.LogCritical(msg);
 
                 new MsgBox
@@ -35,6 +34,8 @@ namespace ExchangeTime.Utility
             if (mutex != null)
                 return true;
 
+            var ddxx = Assembly.GetExecutingAssembly().Location;
+
             string processName = Process.GetCurrentProcess().ProcessName;
             Version version = Assembly.GetExecutingAssembly().GetName().Version ?? throw new Exception("Version is null");
             string mutexId = $"Global\\{{{processName}:{version}}}";
@@ -43,7 +44,7 @@ namespace ExchangeTime.Utility
 
             try
             {
-                hasMutexHandle = mutex.WaitOne(0, false);
+                hasMutexHandle = mutex.WaitOne(3000, false);
                 if (!hasMutexHandle)
                 {
                     DisposeMutex();

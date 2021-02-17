@@ -23,10 +23,10 @@ namespace HolidayService
         private readonly ILogger Logger;
         private readonly LocalDatePattern DatePattern = LocalDatePattern.CreateWithInvariantCulture("dd-MM-yyyy");
         private readonly HttpClient HttpClient = new() { Timeout = new TimeSpan(0, 1, 10) };
-        public Enrico(IClock clock, ILogger logger)
+        public Enrico(ILogger logger, IClock clock)
         {
-            Clock = clock;
             Logger = logger;
+            Clock = clock;
             if (!Directory.Exists(FolderName))
                 Directory.CreateDirectory(FolderName);
         }
@@ -79,7 +79,7 @@ namespace HolidayService
                 $"&region={region}" +
                 $"&holidayType=public_holiday";
 
-            //Logger.Write($"Downloading: {url}.");
+            Logger.LogInformation($"Downloading: {url}.");
 
             string str = await HttpClient.GetStringAsync(url).ConfigureAwait(false);
 

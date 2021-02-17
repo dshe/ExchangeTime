@@ -13,39 +13,41 @@ using HolidayService;
 using SpeechService;
 using System.Net;
 using ExchangeTime.Utility;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Jot;
 
-namespace ExchangeTime
+namespace ExchangeTime.Windows
 {
     public partial class MainWindow : Window
     {
+        private readonly IOptions<AppSettings> Settings;
         private const string dataFileName = "data.json";
         private const int Y1Hours = 15, Y1Ticks = 27;
         private readonly Clock Clock;
         private readonly Holidays Holidays;
         private readonly int width, height;
-        private readonly ZoomFormat zoomFormats;
+        private readonly ZoomFormat zoomFormats = new ZoomFormat();
 		private readonly Canvas canvas = new();
         private readonly TextBlock centerHeader, leftHeader, rightHeader;
         private readonly List<Location> Locations;
-
         private readonly DispatcherTimer timer = new();
-        private readonly Speech Speech = new();
+        private readonly Speech Speech;
 
-        public MainWindow()
+        public MainWindow(ILogger<MainWindow> logger, IOptions<AppSettings> settings, Tracker tracker, Clock clock, Holidays holidays, Speech speech)
 		{
-            Clock = new Clock();
-            Holidays = new Holidays(Clock, App.MyLoggerFactory);
+            Settings = settings;
+            Clock = clock;
+            Holidays = holidays;
+            Speech = speech;
+
+            tracker.Configure<MainWindow>()
+                 .Id(w => w.Name)
+                 .Properties(w => new { w.Left, w.Top, w.zoomFormats.Index })
+                 .PersistOn(nameof(Closing));
+            tracker.Track(this);
 
             InitializeComponent();
-
-			if (Properties.Settings.Default.UpgradeSettings)
-			{
-				Properties.Settings.Default.Upgrade(); // retrieve the setting from the previous installation (if possible)
-				//changing either the company or the applications name will prevent future upgrades(?)
-				Properties.Settings.Default.UpgradeSettings = false; // this property; save will set the user property UpgradeSettings to false
-				//Properties.Settings.Default.FilePath = Properties.Settings.Default.FilePath; // force save HolidaysFilePath setting to user.config (useful if no HolidaysFilePath not set by user yet)
-				Properties.Settings.Default.Save(); // save user settings
-			}
 
             Locations = JsonDocument
                 .Parse(File.ReadAllText(dataFileName))
@@ -64,7 +66,6 @@ namespace ExchangeTime
             leftHeader = CreateTopTextBlock(TextAlignment.Left);
             leftHeader.Text = " " + Clock.SystemTimeZone.Id;
 
-            zoomFormats = new ZoomFormat(Properties.Settings.Default.ZoomLevel);
             AddChild(canvas);
             Repaint();
         }
@@ -99,12 +100,6 @@ namespace ExchangeTime
             timer.Start();
         }
 
-        private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-		{
-			Properties.Settings.Default.ZoomLevel = zoomFormats.Index;
-			Properties.Settings.Default.Save(); // save user settings (position)
-        }
-
         private async void Repaint(object? sender = null, EventArgs? e = null)
         {
             ZonedDateTime zdt = Clock.GetSystemZonedDateTime();
@@ -135,8 +130,8 @@ namespace ExchangeTime
 
         private async Task Notify(Instant instant)
         {
-            if (!Properties.Settings.Default.Audio)
-                return;
+            if (!Settings.Value.AudioEnable)
+                 return;
 
             foreach (Location location in Locations.Where(loc => loc.Notifications.Any()))
             {

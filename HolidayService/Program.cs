@@ -5,28 +5,29 @@ using System;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-Holidays holidays = new(SystemClock.Instance, NullLoggerFactory.Instance);
-
-await holidays.LoadHolidays("usa", "ny");
-
-Holiday? holiday = holidays.TryGetHoliday("usa", "ny", new LocalDate(2019, 12, 25));
-if (holiday != null)
-    Console.WriteLine(holiday.Name);
-
-await TestEnrico();
-
-static async Task TestEnrico()
+class Program
 {
-    //logger.Log(LogLevel.Information, "rrr");
+    static Holidays holidays = new(NullLogger<Holidays>.Instance, SystemClock.Instance);
 
-    Enrico holidayService = new(SystemClock.Instance, NullLogger.Instance);
+    static async void Main(string[] args)
+    {
+        await holidays.LoadHolidays("usa", "ny");
 
-    ZonedDateTime now = SystemClock.Instance.GetCurrentInstant().InUtc();
-    LocalDate from = now.Minus(Duration.FromDays(30)).Date;
-    LocalDate to = now.Plus(Duration.FromDays(90)).Date;
+        Holiday? holiday = holidays.TryGetHoliday("usa", "ny", new LocalDate(2019, 12, 25));
+        if (holiday != null)
+            Console.WriteLine(holiday.Name);
 
-    JsonDocument json = await holidayService.GetHolidays("usa", "ny");
+        await TestEnrico();
 
-    //ILogger logger = new LoggerFactory().CreateLogger<Program>();
-    //logger.LogInformation("Example log message");
+    }
+    static async Task TestEnrico()
+    {
+        Enrico holidayService = new(NullLogger.Instance, SystemClock.Instance);
+
+        ZonedDateTime now = SystemClock.Instance.GetCurrentInstant().InUtc();
+        LocalDate from = now.Minus(Duration.FromDays(30)).Date;
+        LocalDate to = now.Plus(Duration.FromDays(90)).Date;
+
+        JsonDocument json = await holidayService.GetHolidays("usa", "ny");
+    }
 }

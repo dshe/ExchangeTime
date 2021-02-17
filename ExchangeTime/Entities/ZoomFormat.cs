@@ -3,6 +3,7 @@ using System.IO;
 using System.Text.Json;
 using System.Linq;
 using Microsoft.Extensions.Logging;
+using System;
 
 namespace ExchangeTime
 {
@@ -24,8 +25,15 @@ namespace ExchangeTime
     {
         private const string DataFileName = "zooms.json";
         private readonly List<Format> FormatList;
-        internal int Index { get; private set; }
-        private Format Format => FormatList[Index];
+        private int index = 3;
+        internal int Index { get => index; set
+            {
+                if (value < 0 || value >= FormatList.Count)
+                    throw new IndexOutOfRangeException();
+                index = value;
+            }
+        }
+        private Format Format => FormatList[index];
         internal int SecondsPerPixel => Format.SecondsPerPixel;
         internal int Major => Format.Major;
         internal int Minor => Format.Minor;
@@ -41,7 +49,7 @@ namespace ExchangeTime
             return false;
         }
 
-        internal ZoomFormat(int initialIndex)
+        internal ZoomFormat()
         {
             using FileStream fs = File.OpenRead(DataFileName);
             FormatList = JsonDocument
@@ -50,15 +58,6 @@ namespace ExchangeTime
                 .EnumerateArray()
                 .Select(j => new Format(j))
                 .ToList();
-
-            if (initialIndex >= 0 && initialIndex < FormatList.Count)
-                Index = initialIndex;
-            else
-            {
-                var logger = App.MyLoggerFactory.CreateLogger("ZoomFormat");
-                logger.LogWarning("Invalid zoom index.");
-                //throw new IndexOutOfRangeException();
-            }
         }
     }
 }

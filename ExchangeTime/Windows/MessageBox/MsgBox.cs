@@ -31,7 +31,7 @@ namespace ExchangeTime
             set
             {
                 string file = $"{Enum.GetName(typeof(IconType), value)}48.png";
-                Uri uri = new($"pack://application:,,,/UI/MessageBox/{file}");
+                Uri uri = new($"pack://application:,,,/Windows/MessageBox/{file}");
                 BitmapImage bmi = new (uri);
                 image = new Image
                 {
@@ -45,11 +45,11 @@ namespace ExchangeTime
         {
             string? result = null;
             Grid grid = new();
+            grid.RowDefinitions.Add(new RowDefinition());
+            grid.RowDefinitions.Add(new RowDefinition());
+            grid.ColumnDefinitions.Add(new ColumnDefinition());
+            grid.ColumnDefinitions.Add(new ColumnDefinition());
             //grid.ShowGridLines = true;
-            grid.RowDefinitions.Add(new RowDefinition());
-            grid.RowDefinitions.Add(new RowDefinition());
-            grid.ColumnDefinitions.Add(new ColumnDefinition());
-            grid.ColumnDefinitions.Add(new ColumnDefinition());
 
             if (image != null)
             {

@@ -1,108 +1,140 @@
-﻿using ExchangeTime.Utility;
+﻿using ExchangeTime.Windows;
+using ExchangeTime.Utility;
+using HolidayService;
+using Jot;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Logging.EventLog;
+using NodaTime;
+using SpeechService;
 using System;
-using System.Collections;
+using System.IO;
 using System.Reflection;
+using System.Runtime.ExceptionServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace ExchangeTime
 {
     public partial class App : Application
     {
-        public static readonly ILoggerFactory MyLoggerFactory;
-        private readonly ILogger Logger;
-
-        static App()
-        {
-            MyLoggerFactory = LoggerFactory.Create(builder =>
-               builder.AddFile("application.log", append: true));
-        }
+        private IHost MyHost = NullHost.Instance;
+        private ILogger Logger { get; set; } = NullLogger.Instance; // will be set after generic host initialization
+        private Mutex? Mutex;
 
         public App()
         {
-            Logger = MyLoggerFactory.CreateLogger("App");
-            Logger.LogInformation(Assembly.GetExecutingAssembly().FullName);
+            AppDomain.CurrentDomain.FirstChanceException += (object? sender, FirstChanceExceptionEventArgs e) =>
+                Logger.LogWarning($"First Chance Exception\n{e}");
 
-            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
-            Dispatcher.UnhandledException += Dispatcher_UnhandledException;
-        }
-
-        // AppDomain.CurrentDomain.FirstChanceException
-        // Starting with the .NET Framework 4, this event is not raised for exceptions that corrupt the state of the process, such as stack overflows or access violations, unless the event handler is security-critical and has the HandleProcessCorruptedStateExceptionsAttribute attribute.
-        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs args)
-        {
-            Output("CurrentDomain_UnhandledException");
-            if (args.ExceptionObject is Exception exception)
-                Output(exception);
-            //if (e.IsTerminating)
-            //    return;
-            //if (Application.Current != null)
-            //    Application.Current.Shutdown();
-            //else
-            //    Environment.Exit(0);
-        }
-
-        // Occurs when finalizer is run during a Garbage Collection. Non-deterministic.
-        private void TaskScheduler_UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs args)
-        {
-            Output("TaskScheduler_UnobservedTaskException");
-            Output(args.Exception);
-            //if (Application.Current != null)
-            //    Application.Current.Shutdown();
-            //else
-            //    Environment.Exit(0);
-        }
-
-        // WPF Application
-        private void Dispatcher_UnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs args)
-        {
-            Output("Dispatcher_UnhandledException");
-            Output(args.Exception);
-            //MessageBox.Show(e.Exception.Message, "ExchangeTime: Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            //if (!e.Dispatcher.HasShutdownStarted)
-            //    Application.Current.Shutdown();
-        }
-
-        private void Output(Exception e)
-        {
-            AggregateException? ae = e as AggregateException;
-            if (ae != null) // from task
+            // This event is invoked whenever there is an unhandled exception in the default AppDomain.
+            // It is invoked for exceptions on any thread that was created on the AppDomain. 
+            AppDomain.CurrentDomain.UnhandledException += (object sender, UnhandledExceptionEventArgs args) =>
             {
-                ae = ae.Flatten();
-                foreach (Exception exception in ae.InnerExceptions)
-                    Output(exception);
-            }
-            else
-            {
-                if (e.InnerException != null)
-                    Output(e.InnerException);
-                foreach (DictionaryEntry? de in e.Data)
-                {
-                    if (de == null)
-                        throw new Exception("de is null.");
-                    Output($"{de.Value.Key}: {de.Value}");
-                }
-                Output(e);
-            }
-        }
+                Exception e = args.ExceptionObject as Exception ?? new($"AppDomainUnhandledException: Unknown exceptionObject: {args.ExceptionObject}");
+                ProcessException($"Current AppDomain Unhandled Exception (IsTerminating = {args.IsTerminating})", e);
+            };
 
-        private void Output(string message)
-        {
-            Logger.Log(LogLevel.Critical, message);
+            // This method is invoked whenever there is an unhandled exception on a delegate
+            // that was posted to be executed on the UI-thread (Dispatcher) of a WPF application.
+            Current.DispatcherUnhandledException += (object sender, DispatcherUnhandledExceptionEventArgs args) =>
+            {
+                ProcessException("Dispatcher Unhandled Exception", args.Exception);
+                args.Handled = true;
+            };
+
+            // The method gets called for any unhandled exception on the Dispatcher.
+            // When e.RequestCatch is set to true, the exception is caught by the Dispatcher
+            // and the DispatcherUnhandledException event will be invoked.
+            Current.Dispatcher.UnhandledExceptionFilter += (object sender, DispatcherUnhandledExceptionFilterEventArgs args) =>
+            {
+                args.RequestCatch = true;
+            };
+
+            // This method is called when a faulted task, which has the exception object set, 
+            // gets collected by the GC. This is useful to track Exceptions in asnync methods
+            // where the caller forgets to await the returning task.
+            // Note: StackTrace is always null.
+            TaskScheduler.UnobservedTaskException += (object? sender, UnobservedTaskExceptionEventArgs args) =>
+            {
+                args.SetObserved();
+                ProcessException("Unobserved Task Exception", args.Exception);
+            };
+
+            void ProcessException(string message, Exception e)
+            {
+                Logger.LogCritical($"{message}\n{e}\n");
+                Current.Dispatcher.BeginInvoke(new Action(() => new ExceptionWindow(e).Show()));
+            }
+
         }
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            SingleInstance.Check();
-			base.OnStartup(e);
+            string name = $"{Assembly.GetExecutingAssembly().GetType().GUID}";
+            Mutex = new Mutex(true, name, out bool createdNew);
+            if (!createdNew)
+            {
+                var message = "Another instance is running!";
+                MessageBox.Show(message);
+                Logger.LogCritical($"{message}\n{e}\n");
+                Current.Shutdown();
+                return;
+            }
+
+            MyHost = new HostBuilder()
+                .UseContentRoot(Directory.GetCurrentDirectory())
+                .ConfigureAppConfiguration((ctx, config) => {
+                    config.AddJsonFile("appsettings.json", optional: false);
+                })
+                .ConfigureLogging((ctx, logging) => {
+                    logging.Configure(options => options.ActivityTrackingOptions = ActivityTrackingOptions.SpanId | ActivityTrackingOptions.TraceId | ActivityTrackingOptions.ParentId);
+                    logging.SetMinimumLevel(LogLevel.Trace);
+                    logging.AddDebug();
+                    logging.AddEventLog();
+                    logging.AddFilter<EventLogLoggerProvider>(level => level >= LogLevel.Warning);
+                    logging.AddEventSourceLogger();
+                    logging.AddFile("application.log", config =>
+                    {
+                        config.Append = true;
+                        config.FileSizeLimitBytes = 1_000_000;
+                    });
+                    logging.AddConfiguration(ctx.Configuration.GetSection("Logging"));
+                })
+                .ConfigureServices((ctx, services) => {
+                    services.Configure<AppSettings>(ctx.Configuration);
+                    var clock = new Clock();
+                    services.AddSingleton(clock);
+                    services.AddSingleton<IClock>(clock);
+                    services.AddSingleton<Speech>();
+                    services.AddSingleton<Holidays>();
+                    services.AddSingleton<MainWindow>();
+                    services.AddSingleton(new Tracker());
+                })
+                .UseDefaultServiceProvider((ctx, options) => {
+                    bool isDevelopment = ctx.HostingEnvironment.IsDevelopment();
+                    options.ValidateScopes = isDevelopment;
+                    options.ValidateOnBuild = isDevelopment;
+                })
+                .Build();
+
+            Logger = MyHost.Services.GetRequiredService<ILogger<App>>();
+            Logger.LogDebug(Assembly.GetExecutingAssembly().FullName);
+
+            base.OnStartup(e); // ?
+            MyHost.Services.GetRequiredService<MainWindow>().Show();
         }
 
         protected override void OnExit(ExitEventArgs e)
-		{
-            SingleInstance.DisposeMutex();
-			base.OnExit(e);
-		}
+        {
+            MyHost.Dispose();
+            Mutex?.Dispose();
+            base.OnExit(e);
+        }
     }
 }
