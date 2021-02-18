@@ -17,9 +17,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Jot;
 
-namespace ExchangeTime.Windows
+namespace ExchangeTime
 {
-    public partial class MainWindow : Window
+    public sealed partial class MainWindow : Window
     {
         private readonly IOptions<AppSettings> Settings;
         private const string dataFileName = "data.json";
@@ -27,7 +27,7 @@ namespace ExchangeTime.Windows
         private readonly Clock Clock;
         private readonly Holidays Holidays;
         private readonly int width, height;
-        private readonly ZoomFormat zoomFormats = new ZoomFormat();
+        private readonly ZoomFormats zoomFormats = new ZoomFormats();
 		private readonly Canvas canvas = new();
         private readonly TextBlock centerHeader, leftHeader, rightHeader;
         private readonly List<Location> Locations;
@@ -62,23 +62,23 @@ namespace ExchangeTime.Windows
             height = Convert.ToInt32(Height - 2 * BorderThickness.Top);
 
             centerHeader = CreateTopTextBlock(TextAlignment.Center);
-            rightHeader = CreateTopTextBlock(TextAlignment.Right);
-            leftHeader = CreateTopTextBlock(TextAlignment.Left);
+            rightHeader  = CreateTopTextBlock(TextAlignment.Right);
+            leftHeader   = CreateTopTextBlock(TextAlignment.Left);
             leftHeader.Text = " " + Clock.SystemTimeZone.Id;
 
             AddChild(canvas);
             Repaint();
-        }
 
-        private TextBlock CreateTopTextBlock(TextAlignment ta) => new()
-        {
-            Width = width,
-            VerticalAlignment = VerticalAlignment.Top,
-            FontSize = FontSize + 1,
-            TextAlignment = ta,
-            Foreground = MyBrushes.Gray224,
-            Background = (ta == TextAlignment.Center) ? MyBrushes.Gray48 : Brushes.Transparent
-        };
+            TextBlock CreateTopTextBlock(TextAlignment ta) => new()
+            {
+                Width = width,
+                VerticalAlignment = VerticalAlignment.Top,
+                FontSize = FontSize + 1,
+                TextAlignment = ta,
+                Foreground = MyBrushes.Gray224,
+                Background = (ta == TextAlignment.Center) ? MyBrushes.Gray48 : Brushes.Transparent
+            };
+        }
 
         private async void Window_Loaded(object sender, RoutedEventArgs rea)
         {
@@ -118,50 +118,8 @@ namespace ExchangeTime.Windows
             DrawTicks(originSeconds);
             DrawAllBars(originSeconds);
             DrawCursor();
-            await Notify(instant);
-        }
-
-        private int DateToPixels(long originSeconds, ZonedDateTime dt)
-        {
-            long seconds = dt.ToInstant().ToUnixTimeSeconds();
-            long px = (seconds - originSeconds) / zoomFormats.SecondsPerPixel;
-            return Convert.ToInt32(px);
-        }
-
-        private async Task Notify(Instant instant)
-        {
-            if (!Settings.Value.AudioEnable)
-                 return;
-
-            foreach (Location location in Locations.Where(loc => loc.Notifications.Any()))
-            {
-                LocalDateTime dt = instant.InZone(location.TimeZone).LocalDateTime;
-
-                // don't notify on weekends
-                if (dt.IsWeekend(location.Country))
-                    continue;
-
-                // don't notify on holidays
-                Holiday? holiday = Holidays.TryGetHoliday(location.Country, location.Region, dt.Date);
-                EarlyClose? earlyClose =  location.EarlyCloses.Where(x => x.DateTime.Date == dt.Date).SingleOrDefault();
-
-                if (holiday != null && earlyClose == null)
-                    continue;
-                if (earlyClose != null && dt.TimeOfDay > earlyClose.DateTime.TimeOfDay)
-                    continue;
-
-                // holiday   earlyClose   Notify
-                //  Y          N          No
-                //  Y          Y          <= earlyClose
-                //  N          Y          <= earlyClose
-                //  N          N          Yes
-
-                foreach (Notification notification in location.Notifications)
-                {
-                    if (dt.TimeOfDay == notification.Time)
-                        await Speech.AnnounceTime(dt, location.Name, notification.Text).ConfigureAwait(false);
-                }
-            }
+            if (Settings.Value.AudioEnable)
+                await Notify(instant);
         }
     }
 }

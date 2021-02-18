@@ -7,67 +7,69 @@ using System.Windows.Shapes;
 using NodaTime;
 using HolidayService;
 using ExchangeTime.Utility;
+using System;
+using System.Threading.Tasks;
 
-namespace ExchangeTime.Windows
+namespace ExchangeTime
 {
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
         private void DrawTicks(long originSeconds)
         {
             long first = originSeconds - (originSeconds % zoomFormats.Minor) + zoomFormats.Minor;
             for (long s = first; s - first < width * zoomFormats.SecondsPerPixel; s += zoomFormats.Minor)
                 DrawTick(originSeconds, s);
-        }
 
-        private void DrawTick(long originSeconds, long s)
-        {
-            long px = (s - originSeconds) / zoomFormats.SecondsPerPixel;
-            if (s % zoomFormats.Major == 0)
-                DrawMajorTick(px, s);
-            else
-                DrawMinorTick(px);
-        }
+            void DrawTick(long originSeconds, long s)
+            {
+                long px = (s - originSeconds) / zoomFormats.SecondsPerPixel;
+                if (s % zoomFormats.Major == 0)
+                    DrawMajorTick(px, s);
+                else
+                    DrawMinorTick(px);
 
-        private void DrawMajorTick(long px, long s)
-        {
-            TextBlock tb = new()
-            {
-                Foreground = MyBrushes.Gray128,
-                Text = Instant.FromUnixTimeSeconds(s).InZone(Clock.SystemTimeZone).ToString(zoomFormats.MajorFormat, null),
-                TextAlignment = TextAlignment.Center
-            };
-            Size size = tb.GetTextSize();
-            tb.Width = size.Width + 4;
-            tb.Height = size.Height;
-            double halfWidth = tb.Width / 2;
-            if (px >= halfWidth && width - px >= halfWidth)
-            {
-                Canvas.SetTop(tb, Y1Hours);
-                Canvas.SetLeft(tb, px - halfWidth);
-                canvas.Children.Add(tb);
+                void DrawMajorTick(long px, long s)
+                {
+                    TextBlock tb = new()
+                    {
+                        Foreground = MyBrushes.Gray128,
+                        Text = Instant.FromUnixTimeSeconds(s).InZone(Clock.SystemTimeZone).ToString(zoomFormats.MajorFormat, null),
+                        TextAlignment = TextAlignment.Center
+                    };
+                    Size size = tb.GetTextSize();
+                    tb.Width = size.Width + 4;
+                    tb.Height = size.Height;
+                    double halfWidth = tb.Width / 2;
+                    if (px >= halfWidth && width - px >= halfWidth)
+                    {
+                        Canvas.SetTop(tb, Y1Hours);
+                        Canvas.SetLeft(tb, px - halfWidth);
+                        canvas.Children.Add(tb);
+                    }
+                    canvas.Children.Add(new Line
+                    {
+                        X1 = px,
+                        X2 = px,
+                        Y1 = Y1Ticks, // top + text height
+                        Y2 = height,  // straight line
+                        Stroke = MyBrushes.Gray96,
+                        StrokeThickness = 1
+                    });
+                }
+
+                void DrawMinorTick(long px)
+                {
+                    canvas.Children.Add(new Line
+                    {
+                        X1 = px,
+                        X2 = px,
+                        Y1 = Y1Ticks + 2,
+                        Y2 = height,
+                        StrokeThickness = 1,
+                        Stroke = MyBrushes.Gray48
+                    });
+                }
             }
-            canvas.Children.Add(new Line
-            {
-                X1 = px,
-                X2 = px,
-                Y1 = Y1Ticks, // top + text height
-                Y2 = height,  // straight line
-                Stroke = MyBrushes.Gray96,
-                StrokeThickness = 1
-            });
-        }
-
-        private void DrawMinorTick(long px)
-        {
-            canvas.Children.Add(new Line
-            {
-                X1 = px,
-                X2 = px,
-                Y1 = Y1Ticks + 2,
-                Y2 = height,
-                StrokeThickness = 1,
-                Stroke = MyBrushes.Gray48
-            });
         }
 
         private void DrawAllBars(long originSeconds)
@@ -191,6 +193,13 @@ namespace ExchangeTime.Windows
             Canvas.SetTop(tb, y1);
             Canvas.SetLeft(tb, x1);
             canvas.Children.Add(tb);
+
+            int DateToPixels(long originSeconds, ZonedDateTime dt)
+            {
+                long seconds = dt.ToInstant().ToUnixTimeSeconds();
+                long px = (seconds - originSeconds) / zoomFormats.SecondsPerPixel;
+                return Convert.ToInt32(px);
+            }
         }
 
         private void DrawCursor()
@@ -204,6 +213,39 @@ namespace ExchangeTime.Windows
                 Stroke = Brushes.Gold,
                 StrokeThickness = 1
             });
+        }
+
+        private async Task Notify(Instant instant)
+        {
+            foreach (Location location in Locations.Where(loc => loc.Notifications.Any()))
+            {
+                LocalDateTime dt = instant.InZone(location.TimeZone).LocalDateTime;
+
+                // don't notify on weekends
+                if (dt.IsWeekend(location.Country))
+                    continue;
+
+                // don't notify on holidays
+                Holiday? holiday = Holidays.TryGetHoliday(location.Country, location.Region, dt.Date);
+                EarlyClose? earlyClose = location.EarlyCloses.Where(x => x.DateTime.Date == dt.Date).SingleOrDefault();
+
+                if (holiday != null && earlyClose == null)
+                    continue;
+                if (earlyClose != null && dt.TimeOfDay > earlyClose.DateTime.TimeOfDay)
+                    continue;
+
+                // holiday   earlyClose   Notify
+                //  Y          N          No
+                //  Y          Y          <= earlyClose
+                //  N          Y          <= earlyClose
+                //  N          N          Yes
+
+                foreach (Notification notification in location.Notifications)
+                {
+                    if (dt.TimeOfDay == notification.Time)
+                        await Speech.AnnounceTime(dt, location.Name, notification.Text).ConfigureAwait(false);
+                }
+            }
         }
     }
 }

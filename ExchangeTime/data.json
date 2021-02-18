@@ -12,8 +12,7 @@
     "bars": [
     { "start": "09:00", "end": "11:30", "type": "L", "label": "Tokyo Stock Exchange TIME;TSE TIME;TSE;T"},
     { "start": "11:30", "end": "12:30", "type": "M"},
-    { "start": "12:30", "end": "15:00", "type": "L", "label": "Tokyo Stock Exchange TIME;TSE TIME;TSE;T"},
-    { "start": "16:30", "end": "05:30", "type": "S"}]
+    { "start": "12:30", "end": "15:00", "type": "L", "label": "Tokyo Stock Exchange TIME;TSE TIME;TSE;T"}]
   },
   {
     "name": "Singapore", "country": "sgp", "timezone": "Asia/Singapore", "color":"#990",
@@ -22,30 +21,31 @@
     { "start": "09:00", "end": "12:00", "type": "L", "label": "Singapore Stock Exchange TIME;SGX TIME;SGX;S"},
     { "start": "12:00", "end": "13:00", "type": "M"},
     { "start": "13:00", "end": "17:00", "type": "L", "label": "Singapore Stock Exchange TIME;SGX TIME;SGX;S"},
-    { "start": "17:00", "end": "02:00", "type": "S"}]
+    { "start": "17:00", "end": "17:16", "type": "S"}]
   },
   {
     "name": "Hong Kong", "country": "hkg", "timezone": "Asia/Hong_Kong", "color":"#360",
     "bars":[
-    { "start": "09:15", "end": "09:30", "type": "S"},
+    { "start": "09:00", "end": "09:30", "type": "S"},
     { "start": "09:30", "end": "12:00", "type": "L", "label": "Hong Kong Stock Exchange TIME;HKEX TIME;HKEX;HK;H"},
     { "start": "12:00", "end": "13:00", "type": "M"},
     { "start": "13:00", "end": "16:00", "type": "L", "label": "Hong Kong Stock Exchange TIME;HKEX TIME;HKEX;HK;H"},
-    { "start": "16:00", "end": "16:15", "type": "S"}]
+    { "start": "16:00", "end": "16:10", "type": "S"}]
   },
     {
     "name": "Israel", "country": "isr", "timezone": "Asia/Jerusalem", "color":"#065",
     "bars":[
-    { "start": "09:00", "end": "09:46", "type": "M"},
-    { "start": "09:46", "end": "17:14", "type": "L", "label": "Tel-Aviv Stock Exchange TIME;TASE TIME;TASE;T"},
-    { "start": "17:14", "end": "17:45", "type": "M"}]
+    { "start": "09:00", "end": "09:10", "type": "S"},
+    { "start": "10:00", "end": "17:14", "type": "L", "label": "Tel-Aviv Stock Exchange TIME;TASE TIME;TASE;T"},
+    { "start": "17:14", "end": "17:25", "type": "M"}]
   },
   {
     "name": "Moscow", "country": "rus", "timezone": "Europe/Moscow", "color":"#535",
     "bars":[
-    { "start": "09:30", "end": "10:00", "type": "S"},
-    { "start": "10:00", "end": "18:45", "type": "L", "label": "Moscow Stock Exchange TIME;MOEX TIME;MOEX;M"},
-    { "start": "18:45", "end": "23:50", "type": "S"}]
+    { "start": "09:50", "end": "10:00", "type": "M"},
+    { "start": "10:00", "end": "18:40", "type": "L", "label": "Moscow Stock Exchange TIME;MOEX TIME;MOEX;M"},
+    { "start": "18:40", "end": "18:50", "type": "M"},
+    { "start": "19:05", "end": "23:50", "type": "S"}]
   },
   {
     "name": "Euronext", "country": "nld", "timezone": "Europe/Amsterdam", "color":"#145",

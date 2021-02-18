@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace ExchangeTime
+namespace ExchangeTime.Utility
 {
     public static class TextUtilityExtension
     {

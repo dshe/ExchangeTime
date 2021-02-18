@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Media;
 
-namespace ExchangeTime
+namespace ExchangeTime.Utility
 {
     internal static class MyBrushes
     {

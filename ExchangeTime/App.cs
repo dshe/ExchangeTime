@@ -1,5 +1,4 @@
-﻿using ExchangeTime.Windows;
-using ExchangeTime.Utility;
+﻿using ExchangeTime.Utility;
 using HolidayService;
 using Jot;
 using Microsoft.Extensions.Configuration;
@@ -14,7 +13,6 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
@@ -24,15 +22,14 @@ namespace ExchangeTime
     public partial class App : Application
     {
         private IHost MyHost = NullHost.Instance;
-        private ILogger Logger { get; set; } = NullLogger.Instance; // will be set after generic host initialization
-        private Mutex? Mutex;
+        private ILogger Logger = NullLogger.Instance; // will be set after generic host initialization
 
-        public App()
+        public App() // the base class constructor is called first
         {
             AppDomain.CurrentDomain.FirstChanceException += (object? sender, FirstChanceExceptionEventArgs e) =>
                 Logger.LogWarning($"First Chance Exception\n{e}");
 
-            // This event is invoked whenever there is an unhandled exception in the default AppDomain.
+            // Invoked whenever there is an unhandled exception in the default AppDomain.
             // It is invoked for exceptions on any thread that was created on the AppDomain. 
             AppDomain.CurrentDomain.UnhandledException += (object sender, UnhandledExceptionEventArgs args) =>
             {
@@ -40,7 +37,7 @@ namespace ExchangeTime
                 ProcessException($"Current AppDomain Unhandled Exception (IsTerminating = {args.IsTerminating})", e);
             };
 
-            // This method is invoked whenever there is an unhandled exception on a delegate
+            // Invoked whenever there is an unhandled exception on a delegate
             // that was posted to be executed on the UI-thread (Dispatcher) of a WPF application.
             Current.DispatcherUnhandledException += (object sender, DispatcherUnhandledExceptionEventArgs args) =>
             {
@@ -48,7 +45,7 @@ namespace ExchangeTime
                 args.Handled = true;
             };
 
-            // The method gets called for any unhandled exception on the Dispatcher.
+            // Invoved for any unhandled exception on the Dispatcher.
             // When e.RequestCatch is set to true, the exception is caught by the Dispatcher
             // and the DispatcherUnhandledException event will be invoked.
             Current.Dispatcher.UnhandledExceptionFilter += (object sender, DispatcherUnhandledExceptionFilterEventArgs args) =>
@@ -56,9 +53,8 @@ namespace ExchangeTime
                 args.RequestCatch = true;
             };
 
-            // This method is called when a faulted task, which has the exception object set, 
-            // gets collected by the GC. This is useful to track Exceptions in asnync methods
-            // where the caller forgets to await the returning task.
+            // Involed when a faulted task, which has the exception object set, gets collected by the GC.
+            // This is useful to track Exceptions in asnync methods where the caller forgets to await the returning task.
             // Note: StackTrace is always null.
             TaskScheduler.UnobservedTaskException += (object? sender, UnobservedTaskExceptionEventArgs args) =>
             {
@@ -71,22 +67,10 @@ namespace ExchangeTime
                 Logger.LogCritical($"{message}\n{e}\n");
                 Current.Dispatcher.BeginInvoke(new Action(() => new ExceptionWindow(e).Show()));
             }
-
         }
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            string name = $"{Assembly.GetExecutingAssembly().GetType().GUID}";
-            Mutex = new Mutex(true, name, out bool createdNew);
-            if (!createdNew)
-            {
-                var message = "Another instance is running!";
-                MessageBox.Show(message);
-                Logger.LogCritical($"{message}\n{e}\n");
-                Current.Shutdown();
-                return;
-            }
-
             MyHost = new HostBuilder()
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .ConfigureAppConfiguration((ctx, config) => {
@@ -133,7 +117,6 @@ namespace ExchangeTime
         protected override void OnExit(ExitEventArgs e)
         {
             MyHost.Dispose();
-            Mutex?.Dispose();
             base.OnExit(e);
         }
     }

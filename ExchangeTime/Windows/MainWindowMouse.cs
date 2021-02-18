@@ -5,9 +5,9 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace ExchangeTime.Windows
+namespace ExchangeTime
 {
-    public sealed partial class MainWindow
+    public partial class MainWindow
     {
         private int AudioLocker;
         private void MainWindowMouseDoubleClick(object sender, MouseButtonEventArgs e) => Close();
@@ -32,22 +32,22 @@ namespace ExchangeTime.Windows
                 await ShowMessage().ConfigureAwait(false);
                 AudioLocker = 0;
             }
-        }
 
-        private async Task ShowMessage()
-        {
-            Task task = Task.CompletedTask;
-            if (Settings.Value.AudioEnable)
-                task = Speech.AnnounceTime(Clock.GetSystemZonedDateTime());
-            var version = Assembly.GetEntryAssembly()?.GetName()?.Version?.ToString() ?? "";
-            new MsgBox(this)
+            async Task ShowMessage()
             {
-                MsgBoxIconType = MsgBox.IconType.Information,
-                Background = Brushes.LightGray,
-                Title = "ExchangeTime " + version
-            }.Show("Zoom: mouse wheel\nQuit: double-click left mouse button");
+                Task task = Task.CompletedTask;
+                if (Settings.Value.AudioEnable)
+                    task = Speech.AnnounceTime(Clock.GetSystemZonedDateTime());
+                var version = Assembly.GetEntryAssembly()?.GetName()?.Version?.ToString() ?? "";
+                new MsgBox(this)
+                {
+                    MsgBoxIconType = MsgBox.IconType.Information,
+                    Background = Brushes.LightGray,
+                    Title = "ExchangeTime " + version
+                }.Show("Zoom: mouse wheel\nQuit: double-click left mouse button");
 
-            await task.ConfigureAwait(false);
+                await task.ConfigureAwait(false);
+            }
         }
 
         private void MainWindowMouseWheel(object sender, MouseWheelEventArgs e)
