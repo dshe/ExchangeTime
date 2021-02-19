@@ -110,7 +110,6 @@ namespace ExchangeTime
             Logger = MyHost.Services.GetRequiredService<ILogger<App>>();
             Logger.LogDebug(Assembly.GetExecutingAssembly().FullName);
 
-            base.OnStartup(e); // ?
             MyHost.Services.GetRequiredService<MainWindow>().Show();
         }
 

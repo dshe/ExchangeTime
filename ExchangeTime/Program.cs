@@ -11,17 +11,13 @@ namespace ExchangeTime
         static void Main(string[] args)
         {
             string name = $"{Assembly.GetExecutingAssembly().GetType().GUID}";
-            Mutex mutex = new Mutex(true, name, out bool createdNew);
-            try
+
+            using Mutex mutex = new(true, name, out bool createdNew);
             {
                 if (createdNew)
                     new App().Run();
                 else
                     MessageBox.Show("Another instance is running!");
-            }
-            finally
-            {
-                mutex.Dispose();
             }
         }
     }

@@ -38,7 +38,7 @@ namespace ExchangeTime
                 Task task = Task.CompletedTask;
                 if (Settings.Value.AudioEnable)
                     task = Speech.AnnounceTime(Clock.GetSystemZonedDateTime());
-                var version = Assembly.GetEntryAssembly()?.GetName()?.Version?.ToString() ?? "";
+                string version = Assembly.GetEntryAssembly()?.GetName()?.Version?.ToString() ?? "";
                 new MsgBox(this)
                 {
                     MsgBoxIconType = MsgBox.IconType.Information,
@@ -50,12 +50,14 @@ namespace ExchangeTime
             }
         }
 
+        // Zoom using mouse wheel
         private void MainWindowMouseWheel(object sender, MouseWheelEventArgs e)
         {
             if (e.Delta != 0 && zoomFormats.Zoom(e.Delta > 0))
                 Repaint();
         }
 
+        // Zoom using +/- keys
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
             bool plus = (e.Key == Key.OemPlus || e.Key == Key.Add);
