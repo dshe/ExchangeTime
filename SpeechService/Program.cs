@@ -4,9 +4,9 @@ using SpeechService;
 
 class Program
 {
-    static Speech MySpeech = new(NullLogger<Speech>.Instance);
+    static readonly Speech MySpeech = new(NullLogger<Speech>.Instance);
 
-    static async void Main(string[] args)
+    static async void Main()
     {
         await MySpeech.PlayWindowsMediaFile("Alarm03.wav");
 

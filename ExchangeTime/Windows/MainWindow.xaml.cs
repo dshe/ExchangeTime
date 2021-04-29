@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -21,25 +20,29 @@ namespace ExchangeTime
 {
     public sealed partial class MainWindow : Window
     {
-        private readonly IOptions<AppSettings> Settings;
-        private const string dataFileName = "data.json";
         private const int Y1Hours = 15, Y1Ticks = 27;
-        private readonly Clock Clock;
+        private readonly DateTimeZone TimeZone = DateTimeZoneProviders.Bcl.GetSystemDefault();
+        private readonly ILogger Logger;
+        private readonly IClock Clock;
+        private readonly IOptions<AppSettings> Settings;
         private readonly Holidays Holidays;
+        private readonly Speech Speech;
         private readonly int width, height;
-        private readonly ZoomFormats zoomFormats = new ZoomFormats();
+        private readonly ZoomFormats zoomFormats = new();
 		private readonly Canvas canvas = new();
         private readonly TextBlock centerHeader, leftHeader, rightHeader;
         private readonly List<Location> Locations;
         private readonly DispatcherTimer timer = new();
-        private readonly Speech Speech;
 
-        public MainWindow(ILogger<MainWindow> logger, IOptions<AppSettings> settings, Tracker tracker, Clock clock, Holidays holidays, Speech speech)
-		{
-            Settings = settings;
+        public MainWindow(ILogger<MainWindow> logger, IClock clock, IOptions<AppSettings> settings, Tracker tracker, Holidays holidays, Speech speech)
+        {
+            Logger = logger;
             Clock = clock;
+            Settings = settings;
             Holidays = holidays;
             Speech = speech;
+
+            InitializeComponent();
 
             tracker.Configure<MainWindow>()
                  .Id(w => w.Name)
@@ -47,10 +50,8 @@ namespace ExchangeTime
                  .PersistOn(nameof(Closing));
             tracker.Track(this);
 
-            InitializeComponent();
-
             Locations = JsonDocument
-                .Parse(File.ReadAllText(dataFileName))
+                .Parse(File.ReadAllText(settings.Value.DataFilePath))
                 .RootElement
                 .GetProperty("locations")
                 .EnumerateArray()
@@ -61,10 +62,10 @@ namespace ExchangeTime
             Height = Locations.Count * 11 + 32;
             height = Convert.ToInt32(Height - 2 * BorderThickness.Top);
 
+            leftHeader = CreateTopTextBlock(TextAlignment.Left);
+            leftHeader.Text = " " + TimeZone.Id;
             centerHeader = CreateTopTextBlock(TextAlignment.Center);
             rightHeader  = CreateTopTextBlock(TextAlignment.Right);
-            leftHeader   = CreateTopTextBlock(TextAlignment.Left);
-            leftHeader.Text = " " + Clock.SystemTimeZone.Id;
 
             AddChild(canvas);
             Repaint();
@@ -102,8 +103,7 @@ namespace ExchangeTime
 
         private async void Repaint(object? sender = null, EventArgs? e = null)
         {
-            ZonedDateTime zdt = Clock.GetSystemZonedDateTime();
-
+            ZonedDateTime zdt = Clock.GetCurrentInstant().InZone(TimeZone);
             centerHeader.Text = zdt.ToString("dddd, MMMM d, yyyy", null);
             rightHeader.Text = zdt.ToString("H:mm:ss ", null);
 

@@ -19,19 +19,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Windows\MsgBox\Error48.png" />
-    <None Remove="Windows\MsgBox\Information48.png" />
-    <None Remove="Windows\MsgBox\Question48.png" />
-    <None Remove="Windows\MsgBox\Warning48.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Resource Include="Windows\MsgBox\Information48.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-  </ItemGroup>
-
-  <ItemGroup>
+    <None Include="worm64.png" Pack="true" PackagePath="" />
     <PackageReference Include="Jot" Version="2.1.8" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
     <PackageReference Include="NodaTime" Version="3.0.5" />
@@ -53,6 +41,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Windows\MsgBox\Error48.png" />
+    <None Remove="Windows\MsgBox\Information48.png" />
+    <None Remove="Windows\MsgBox\Question48.png" />
+    <None Remove="Windows\MsgBox\Warning48.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Windows\MsgBox\Information48.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Windows\MsgBox\Error48.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>

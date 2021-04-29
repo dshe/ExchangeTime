@@ -37,7 +37,7 @@ namespace ExchangeTime
             {
                 Task task = Task.CompletedTask;
                 if (Settings.Value.AudioEnable)
-                    task = Speech.AnnounceTime(Clock.GetSystemZonedDateTime());
+                    task = Speech.AnnounceTime(Clock.GetCurrentInstant().InZone(TimeZone));
                 string version = Assembly.GetEntryAssembly()?.GetName()?.Version?.ToString() ?? "";
                 new MsgBox(this)
                 {
@@ -62,9 +62,7 @@ namespace ExchangeTime
         {
             bool plus = (e.Key == Key.OemPlus || e.Key == Key.Add);
             bool minus = (e.Key == Key.OemMinus || e.Key == Key.Subtract);
-            if (!plus && !minus)
-                return;
-            if (zoomFormats.Zoom(plus))
+            if ((plus || minus) && zoomFormats.Zoom(plus))
                 Repaint();
         }
 

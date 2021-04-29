@@ -17,13 +17,13 @@ namespace HolidayService
             if (!json.TryGetProperty("observedOn", out JsonElement d))
                 d = json.GetProperty("date");
 
-            var date = new LocalDate(
-                d.GetProperty("year").GetInt32(),
+            LocalDate date = new(
+                d.GetProperty("year") .GetInt32(),
                 d.GetProperty("month").GetInt32(),
-                d.GetProperty("day").GetInt32());
+                d.GetProperty("day")  .GetInt32());
 
             // get English name of holiday
-            var name = json.GetProperty("name")
+            string name = json.GetProperty("name")
                 .EnumerateArray()
                 .Where(x => x.GetProperty("lang").GetString() == "en")
                 .Single()

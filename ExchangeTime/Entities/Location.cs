@@ -30,7 +30,7 @@ namespace ExchangeTime
                     Region = r.GetString()!;
 
                 string tz = json.GetProperty("timezone").GetString() ?? throw new InvalidDataException("Missing property: 'timezone'");
-                TimeZone = Clock.DateTimeZoneProvider.GetZoneOrNull(tz) ?? throw new Exception($"Invalid timezone: {tz}.");
+                TimeZone = DateTimeZoneProviders.Tzdb.GetZoneOrNull(tz) ?? throw new Exception($"Invalid timezone: {tz}.");
 
                 // optional
                 string color = "grey";

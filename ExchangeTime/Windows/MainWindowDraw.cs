@@ -33,7 +33,7 @@ namespace ExchangeTime
                     TextBlock tb = new()
                     {
                         Foreground = MyBrushes.Gray128,
-                        Text = Instant.FromUnixTimeSeconds(s).InZone(Clock.SystemTimeZone).ToString(zoomFormats.MajorFormat, null),
+                        Text = Instant.FromUnixTimeSeconds(s).InZone(TimeZone).ToString(zoomFormats.MajorFormat, null),
                         TextAlignment = TextAlignment.Center
                     };
                     Size size = tb.GetTextSize();
@@ -103,7 +103,7 @@ namespace ExchangeTime
 
                 EarlyClose? earlyClose = location.EarlyCloses.Where(x => x.DateTime.Date == dt.Date).SingleOrDefault();
                 Holiday? holiday = Holidays.TryGetHoliday(location.Country, location.Region, dt.Date);
-                if (holiday != null && earlyClose == null)
+                if (holiday is not null && earlyClose is null)
                 {
                     DrawBar(originSeconds, location, dt, dt.PlusDays(1), BarSize.Holiday, "Holiday: " + holiday.Name + ";Holiday;H", y);
                     continue;
@@ -113,7 +113,7 @@ namespace ExchangeTime
                 {
                     LocalDateTime start = dt.Date + bar.Start;
                     LocalDateTime end = dt.Date + bar.End;
-                    if (earlyClose != null)
+                    if (earlyClose is not null)
                     {
                         if (earlyClose.DateTime.TimeOfDay <= bar.Start)
                             continue;
@@ -229,9 +229,9 @@ namespace ExchangeTime
                 Holiday? holiday = Holidays.TryGetHoliday(location.Country, location.Region, dt.Date);
                 EarlyClose? earlyClose = location.EarlyCloses.Where(x => x.DateTime.Date == dt.Date).SingleOrDefault();
 
-                if (holiday != null && earlyClose == null)
+                if (holiday is not null && earlyClose is null)
                     continue;
-                if (earlyClose != null && dt.TimeOfDay > earlyClose.DateTime.TimeOfDay)
+                if (earlyClose is not null && dt.TimeOfDay > earlyClose.DateTime.TimeOfDay)
                     continue;
 
                 // holiday   earlyClose   Notify

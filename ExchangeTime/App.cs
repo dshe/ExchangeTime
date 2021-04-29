@@ -1,16 +1,13 @@
-﻿using ExchangeTime.Utility;
-using HolidayService;
+﻿using HolidayService;
 using Jot;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Logging.EventLog;
 using NodaTime;
 using SpeechService;
 using System;
-using System.IO;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
@@ -21,36 +18,56 @@ namespace ExchangeTime
 {
     public partial class App : Application
     {
-        private IHost MyHost = NullHost.Instance;
-        private ILogger Logger = NullLogger.Instance; // will be set after generic host initialization
+        private readonly IHost MyHost;
+        private readonly ILogger Logger;
 
         public App() // the base class constructor is called first
         {
-            AppDomain.CurrentDomain.FirstChanceException += (object? sender, FirstChanceExceptionEventArgs e) =>
-                Logger.LogWarning($"First Chance Exception\n{e}");
+            MyHost = new HostBuilder()
+                .ConfigureAppConfiguration((ctx, config) => config
+                    .SetBasePath(ctx.HostingEnvironment.ContentRootPath)
+                    .AddJsonFile($"appsettings.json", optional: false))
+                .ConfigureLogging((ctx, logging) => logging
+                    .Configure(options => options.ActivityTrackingOptions = ActivityTrackingOptions.SpanId | ActivityTrackingOptions.TraceId | ActivityTrackingOptions.ParentId)
+                    .SetMinimumLevel(LogLevel.Trace)
+                    .AddDebug()
+                    .AddEventLog()
+                    .AddFilter<EventLogLoggerProvider>(level => level >= LogLevel.Warning)
+                    .AddEventSourceLogger()
+                    .AddFile("application.log", config =>
+                    {
+                        config.Append = true;
+                        config.FileSizeLimitBytes = 1_000_000;
+                    })
+                    .AddConfiguration(ctx.Configuration.GetSection("Logging")))
+                .ConfigureServices((ctx, services) => services
+                    .Configure<AppSettings>(ctx.Configuration)
+                    .AddSingleton<IClock>(SystemClock.Instance)
+                    .AddSingleton<Speech>()
+                    .AddSingleton<Holidays>()
+                    .AddSingleton<MainWindow>()
+                    .AddSingleton(new Tracker()))
+                .UseDefaultServiceProvider((ctx, options) => {
+                    bool isDevelopment = ctx.HostingEnvironment.IsDevelopment();
+                    options.ValidateScopes = ctx.HostingEnvironment.IsDevelopment();
+                    options.ValidateOnBuild = ctx.HostingEnvironment.IsDevelopment();
+                })
+                .Build();
+
+            Logger = MyHost.Services.GetRequiredService<ILogger<App>>();
+            Logger.LogDebug(Assembly.GetExecutingAssembly().FullName);
+
+            AppDomain.CurrentDomain.FirstChanceException += (object? sender, FirstChanceExceptionEventArgs args) =>
+                Logger.LogInformation(args.Exception, $"CurrentDomainFirstChanceException: {args.Exception.Message}");
 
             // Invoked whenever there is an unhandled exception in the default AppDomain.
-            // It is invoked for exceptions on any thread that was created on the AppDomain. 
+            // It is invoked for exceptions on any thread that was created on the AppDomain.
             AppDomain.CurrentDomain.UnhandledException += (object sender, UnhandledExceptionEventArgs args) =>
             {
-                Exception e = args.ExceptionObject as Exception ?? new($"AppDomainUnhandledException: Unknown exceptionObject: {args.ExceptionObject}");
-                ProcessException($"Current AppDomain Unhandled Exception (IsTerminating = {args.IsTerminating})", e);
-            };
-
-            // Invoked whenever there is an unhandled exception on a delegate
-            // that was posted to be executed on the UI-thread (Dispatcher) of a WPF application.
-            Current.DispatcherUnhandledException += (object sender, DispatcherUnhandledExceptionEventArgs args) =>
-            {
-                ProcessException("Dispatcher Unhandled Exception", args.Exception);
-                args.Handled = true;
-            };
-
-            // Invoved for any unhandled exception on the Dispatcher.
-            // When e.RequestCatch is set to true, the exception is caught by the Dispatcher
-            // and the DispatcherUnhandledException event will be invoked.
-            Current.Dispatcher.UnhandledExceptionFilter += (object sender, DispatcherUnhandledExceptionFilterEventArgs args) =>
-            {
-                args.RequestCatch = true;
+                if (args.ExceptionObject is Exception exception)
+                    Logger.LogCritical(exception, $"CurrentDomainUnhandledException: {exception.Message}");
+                else
+                    Logger.LogCritical("CurrentDomainUnhandledException.");
             };
 
             // Involed when a faulted task, which has the exception object set, gets collected by the GC.
@@ -59,62 +76,40 @@ namespace ExchangeTime
             TaskScheduler.UnobservedTaskException += (object? sender, UnobservedTaskExceptionEventArgs args) =>
             {
                 args.SetObserved();
-                ProcessException("Unobserved Task Exception", args.Exception);
+                Logger.LogError(args.Exception, $"TaskSchedulerUnobservedTaskException: {args.Exception.Message}");
+                DisplayException(args.Exception);
             };
 
-            void ProcessException(string message, Exception e)
+            // Invoved for any unhandled exception on the Dispatcher.
+            // When e.RequestCatch is set to true, the exception is caught by the Dispatcher
+            // and the DispatcherUnhandledException event will be invoked.
+            Dispatcher.UnhandledExceptionFilter += (object sender, DispatcherUnhandledExceptionFilterEventArgs args) =>
             {
-                Logger.LogCritical($"{message}\n{e}\n");
+                args.RequestCatch = true;
+            };
+
+            // Invoked whenever there is an unhandled exception on a delegate
+            // that was posted to be executed on the UI-thread (Dispatcher) of a WPF application.
+            Dispatcher.UnhandledException += (object sender, DispatcherUnhandledExceptionEventArgs args) =>
+            {
+                args.Handled = true;
+                Logger.LogCritical(args.Exception, $"DispatcherUnhandledException: {args.Exception.Message}");
+                DisplayException(args.Exception);
+            };
+
+            void DisplayException(Exception e) =>
                 Current.Dispatcher.BeginInvoke(new Action(() => new ExceptionWindow(e).Show()));
-            }
         }
 
-        protected override void OnStartup(StartupEventArgs e)
+        protected override async void OnStartup(StartupEventArgs e)
         {
-            MyHost = new HostBuilder()
-                .UseContentRoot(Directory.GetCurrentDirectory())
-                .ConfigureAppConfiguration((ctx, config) => {
-                    config.AddJsonFile("appsettings.json", optional: false);
-                })
-                .ConfigureLogging((ctx, logging) => {
-                    logging.Configure(options => options.ActivityTrackingOptions = ActivityTrackingOptions.SpanId | ActivityTrackingOptions.TraceId | ActivityTrackingOptions.ParentId);
-                    logging.SetMinimumLevel(LogLevel.Trace);
-                    logging.AddDebug();
-                    logging.AddEventLog();
-                    logging.AddFilter<EventLogLoggerProvider>(level => level >= LogLevel.Warning);
-                    logging.AddEventSourceLogger();
-                    logging.AddFile("application.log", config =>
-                    {
-                        config.Append = true;
-                        config.FileSizeLimitBytes = 1_000_000;
-                    });
-                    logging.AddConfiguration(ctx.Configuration.GetSection("Logging"));
-                })
-                .ConfigureServices((ctx, services) => {
-                    services.Configure<AppSettings>(ctx.Configuration);
-                    var clock = new Clock();
-                    services.AddSingleton(clock);
-                    services.AddSingleton<IClock>(clock);
-                    services.AddSingleton<Speech>();
-                    services.AddSingleton<Holidays>();
-                    services.AddSingleton<MainWindow>();
-                    services.AddSingleton(new Tracker());
-                })
-                .UseDefaultServiceProvider((ctx, options) => {
-                    bool isDevelopment = ctx.HostingEnvironment.IsDevelopment();
-                    options.ValidateScopes = isDevelopment;
-                    options.ValidateOnBuild = isDevelopment;
-                })
-                .Build();
-
-            Logger = MyHost.Services.GetRequiredService<ILogger<App>>();
-            Logger.LogDebug(Assembly.GetExecutingAssembly().FullName);
-
+            await MyHost.StartAsync();
             MyHost.Services.GetRequiredService<MainWindow>().Show();
         }
 
-        protected override void OnExit(ExitEventArgs e)
+        protected override async void OnExit(ExitEventArgs e)
         {
+            await MyHost.StopAsync();
             MyHost.Dispose();
             base.OnExit(e);
         }

@@ -8,12 +8,11 @@ namespace ExchangeTime
 {
     public class MsgBox
     {
-        public enum IconType { Information, Question, Warning, Error };
         private readonly Window window = new();
         private Image? image;
         public MsgBox(Window? owner = null)
         {
-            if (owner != null)
+            if (owner is not null)
             {
                 window.Owner = owner;
                 window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
@@ -21,14 +20,15 @@ namespace ExchangeTime
             window.ResizeMode = ResizeMode.NoResize;
             window.SizeToContent = SizeToContent.WidthAndHeight;
         }
-        public string Title { set { window.Title = value; } }
-        public double FontSize { get; set; }
-        public SolidColorBrush ForeGround { set { window.Foreground = value; } }
-        public SolidColorBrush Background { set { window.Background = value; } }
-        public string Buttons { get; set; } = "";
+        public string Title { init { window.Title = value; } }
+        public double FontSize { get; init; }
+        public SolidColorBrush ForeGround { init { window.Foreground = value; } }
+        public SolidColorBrush Background { init { window.Background = value; } }
+        public string Buttons { get; init; } = "";
+        public enum IconType { Information, Question, Warning, Error };
         public IconType MsgBoxIconType
         {
-            set
+            init
             {
                 string file = $"{Enum.GetName(typeof(IconType), value)}48.png";
                 Uri uri = new($"pack://application:,,,/Windows/MessageBox/{file}");
@@ -51,7 +51,7 @@ namespace ExchangeTime
             grid.ColumnDefinitions.Add(new ColumnDefinition());
             //grid.ShowGridLines = true;
 
-            if (image != null)
+            if (image is not null)
             {
                 grid.Children.Add(image);
                 Grid.SetRow(image, 0);

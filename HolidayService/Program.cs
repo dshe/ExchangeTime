@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 
 class Program
 {
-    static Holidays holidays = new(NullLogger<Holidays>.Instance, SystemClock.Instance);
+    static readonly Holidays holidays = new(NullLogger<Holidays>.Instance, SystemClock.Instance);
 
-    static async void Main(string[] args)
+    static async void Main()
     {
         await holidays.LoadHolidays("usa", "ny");
 
         Holiday? holiday = holidays.TryGetHoliday("usa", "ny", new LocalDate(2019, 12, 25));
-        if (holiday != null)
+        if (holiday is not null)
             Console.WriteLine(holiday.Name);
 
         await TestEnrico();

@@ -41,7 +41,7 @@ namespace HolidayService
                 Period age = today - LocalDate.FromDateTime(File.GetLastWriteTimeUtc(fileName));
                 if (age.Days < MaxAgeDays)
                 {
-                    var txt = File.ReadAllText(fileName);
+                    string txt = File.ReadAllText(fileName);
                     return JsonDocument.Parse(txt);
                 }
             }
@@ -84,7 +84,7 @@ namespace HolidayService
             string str = await HttpClient.GetStringAsync(url).ConfigureAwait(false);
 
             JsonDocument json = JsonDocument.Parse(str);
-            var root = json.RootElement;
+            JsonElement root = json.RootElement;
 
             if (root.ValueKind == JsonValueKind.Array) // format is correct
                 return json;
