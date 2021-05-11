@@ -14,6 +14,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 
+// changed build action for this file from 'ApplicationDefinition' to 'C# compiler'
+
 namespace ExchangeTime
 {
     public partial class App : Application
@@ -21,7 +23,7 @@ namespace ExchangeTime
         private readonly IHost MyHost;
         private readonly ILogger Logger;
 
-        public App() // the base class constructor is called first
+        public App() // base class constructor is called first
         {
             MyHost = new HostBuilder()
                 .ConfigureAppConfiguration((ctx, config) => config
@@ -29,15 +31,15 @@ namespace ExchangeTime
                     .AddJsonFile($"appsettings.json", optional: false))
                 .ConfigureLogging((ctx, logging) => logging
                     .Configure(options => options.ActivityTrackingOptions = ActivityTrackingOptions.SpanId | ActivityTrackingOptions.TraceId | ActivityTrackingOptions.ParentId)
-                    .SetMinimumLevel(LogLevel.Trace)
+                    .SetMinimumLevel(LogLevel.Warning)
                     .AddDebug()
                     .AddEventLog()
                     .AddFilter<EventLogLoggerProvider>(level => level >= LogLevel.Warning)
                     .AddEventSourceLogger()
-                    .AddFile("application.log", config =>
+                    .AddFile("application.log", config => // NReco.Logging dependency
                     {
                         config.Append = true;
-                        config.FileSizeLimitBytes = 1_000_000;
+                        config.FileSizeLimitBytes = 10_000_000;
                     })
                     .AddConfiguration(ctx.Configuration.GetSection("Logging")))
                 .ConfigureServices((ctx, services) => services
@@ -48,14 +50,13 @@ namespace ExchangeTime
                     .AddSingleton<MainWindow>()
                     .AddSingleton(new Tracker()))
                 .UseDefaultServiceProvider((ctx, options) => {
-                    bool isDevelopment = ctx.HostingEnvironment.IsDevelopment();
-                    options.ValidateScopes = ctx.HostingEnvironment.IsDevelopment();
+                    options.ValidateScopes  = ctx.HostingEnvironment.IsDevelopment();
                     options.ValidateOnBuild = ctx.HostingEnvironment.IsDevelopment();
                 })
                 .Build();
 
             Logger = MyHost.Services.GetRequiredService<ILogger<App>>();
-            Logger.LogDebug(Assembly.GetExecutingAssembly().FullName);
+            Logger.LogInformation(Assembly.GetExecutingAssembly().FullName);
 
             AppDomain.CurrentDomain.FirstChanceException += (object? sender, FirstChanceExceptionEventArgs args) =>
                 Logger.LogInformation(args.Exception, $"CurrentDomainFirstChanceException: {args.Exception.Message}");

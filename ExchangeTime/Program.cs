@@ -7,17 +7,18 @@ namespace ExchangeTime
 {
     class Program
     {
-        [STAThread]
-        static void Main(string[] args)
-        {
-            string name = $"{Assembly.GetExecutingAssembly().GetType().GUID}";
+        private static readonly string Name = $"{Assembly.GetExecutingAssembly().GetType().GUID}";
 
-            using Mutex mutex = new(true, name, out bool createdNew);
+        [STAThread]
+        static int Main()
+        {
+            using Mutex mutex = new(true, Name, out bool createdNew);
             {
                 if (createdNew)
-                    new App().Run();
-                else
-                    MessageBox.Show("Another instance is running!");
+                    return new App().Run();
+
+                MessageBox.Show("Another instance is running!");
+                return -1;
             }
         }
     }

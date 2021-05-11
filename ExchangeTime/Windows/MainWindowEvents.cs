@@ -38,7 +38,7 @@ namespace ExchangeTime
                 Task task = Task.CompletedTask;
                 if (Settings.Value.AudioEnable)
                     task = Speech.AnnounceTime(Clock.GetCurrentInstant().InZone(TimeZone));
-                string version = Assembly.GetEntryAssembly()?.GetName()?.Version?.ToString() ?? "";
+                string version = Assembly.GetEntryAssembly()?.GetName()?.Version?.ToString() ?? "?";
                 new MsgBox(this)
                 {
                     MsgBoxIconType = MsgBox.IconType.Information,

@@ -32,8 +32,9 @@ namespace ExchangeTime
                 string tz = json.GetProperty("timezone").GetString() ?? throw new InvalidDataException("Missing property: 'timezone'");
                 TimeZone = DateTimeZoneProviders.Tzdb.GetZoneOrNull(tz) ?? throw new Exception($"Invalid timezone: {tz}.");
 
-                // optional
                 string color = "grey";
+
+                // optional
                 if (json.TryGetProperty("color", out JsonElement colorJson))
                     color = colorJson.GetString() ?? color;
 

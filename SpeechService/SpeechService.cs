@@ -29,7 +29,7 @@ namespace SpeechService
 
         public async Task PlayAudioFile(string fileName)
         {
-            Logger.LogInformation($"Playing audfio file: {fileName}.");
+            Logger.LogInformation($"Playing audio file: {fileName}.");
             if (!File.Exists(fileName))
                 throw new FileNotFoundException(fileName);
             TaskCompletionSource<object?> tcs = new();

@@ -4,16 +4,10 @@ namespace ExchangeTime.Utility
 {
     public static class DateTimeExtenstions
     {
-        public static bool IsFriday(this LocalDateTime dt) => dt.DayOfWeek == IsoDayOfWeek.Friday;
-
-        public static bool IsSaturday(this LocalDateTime dt) => dt.DayOfWeek == IsoDayOfWeek.Saturday;
-
-        public static bool IsSunday(this LocalDateTime dt) => dt.DayOfWeek == IsoDayOfWeek.Sunday;
-
-        public static bool IsIsrael(this string name) => (name == "Israel" || name == "isr");
-
-        public static bool IsWeekend(this LocalDateTime dt, string country) =>
-            country.IsIsrael() ? (dt.IsFriday() || dt.IsSaturday()) : (dt.IsSaturday() || dt.IsSunday());
+        private static bool IsIsrael(this string name) => (name == "Israel" || name == "isr");
+        private static bool IsFriday(this LocalDateTime dt) => dt.DayOfWeek == IsoDayOfWeek.Friday;
+        private static bool IsSaturday(this LocalDateTime dt) => dt.DayOfWeek == IsoDayOfWeek.Saturday;
+        private static bool IsSunday(this LocalDateTime dt) => dt.DayOfWeek == IsoDayOfWeek.Sunday;
 
         public static int DayOfWeekend(this LocalDateTime dt, string country)
         {
@@ -23,16 +17,16 @@ namespace ExchangeTime.Utility
                     return 1;
                 if (dt.IsSaturday())
                     return 2;
+                return 0; // not a weekend
             }
-            else
-            {
-                if (dt.IsSaturday())
-                    return 1;
-                if (dt.IsSunday())
-                    return 2;
-            }
-
+            if (dt.IsSaturday())
+                return 1;
+            if (dt.IsSunday())
+                return 2;
             return 0; // not a weekend
         }
+
+        public static bool IsWeekend(this LocalDateTime dt, string country) =>
+            dt.DayOfWeekend(country) != 0;
     }
 }
