@@ -7,7 +7,7 @@
 - right-click to announce the current time
 - double-click to exit
 - edit the file "data.json" to modify timeline data and schedule audio announcements
-- built with WPF on Net 5
+- built with WPF on .NET 5.0
 
 Google Text-To-Speech requires registration (free):
 https://cloud.google.com/text-to-speech
