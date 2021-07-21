@@ -35,23 +35,46 @@ namespace HolidayService
         {
             const int MaxAgeDays = 10;
             string fileName = MakeFileName(country, region);
+
             if (File.Exists(fileName))
             {
                 LocalDate today = Clock.GetCurrentInstant().InUtc().Date;
                 Period age = today - LocalDate.FromDateTime(File.GetLastWriteTimeUtc(fileName));
                 if (age.Days < MaxAgeDays)
-                {
-                    string txt = File.ReadAllText(fileName);
-                    return JsonDocument.Parse(txt);
-                }
+                    return ReadJson();
             }
-            JsonDocument json = await Download(country, region).ConfigureAwait(false);
-            JavaScriptEncoder customEncoder = JavaScriptEncoder.Create(new TextEncoderSettings(UnicodeRanges.All));
-            JsonSerializerOptions jso = new() { WriteIndented = true, Encoder = customEncoder };
-            string str = JsonSerializer.Serialize(json, jso);
-            File.WriteAllText(fileName, str);
-            return json;
+
+            try
+            {
+                JsonDocument json = await DownloadJson().ConfigureAwait(false);
+                SaveJson(json);
+                return json;
+            }
+            catch (HttpRequestException)
+            {
+                if (File.Exists(fileName))
+                    return ReadJson();
+                throw;
+            }
+
+            async Task<JsonDocument> DownloadJson() => await Download(country, region).ConfigureAwait(false);
+
+            void SaveJson(JsonDocument json)
+            {
+                JavaScriptEncoder customEncoder = JavaScriptEncoder.Create(new TextEncoderSettings(UnicodeRanges.All));
+                JsonSerializerOptions jso = new() { WriteIndented = true, Encoder = customEncoder };
+                string str = JsonSerializer.Serialize(json, jso);
+                File.WriteAllText(fileName, str);
+            }
+
+            JsonDocument ReadJson()
+            {
+                string txt = File.ReadAllText(fileName);
+                return JsonDocument.Parse(txt);
+            }
+
         }
+
 
         private static string MakeFileName(string country, string region)
         {

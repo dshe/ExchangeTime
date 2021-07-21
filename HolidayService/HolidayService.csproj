@@ -4,7 +4,9 @@
     <OutputType>Library</OutputType>
     <TargetFramework>net5.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <RootNamespace>HolidaysService</RootNamespace>    
+    <RootNamespace>HolidaysService</RootNamespace>
+    <DebugType>embedded</DebugType>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
 
   <ItemGroup>

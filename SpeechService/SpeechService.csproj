@@ -5,10 +5,12 @@
     <TargetFramework>net5.0</TargetFramework>
     <Nullable>enable</Nullable>
     <RootNamespace>SpeechService</RootNamespace>
+    <DebugType>embedded</DebugType>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Google.Cloud.TextToSpeech.V1" Version="2.1.0" />
+    <PackageReference Include="Google.Cloud.TextToSpeech.V1" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
     <PackageReference Include="NetCoreAudio" Version="1.6.3" />
     <PackageReference Include="NodaTime" Version="3.0.5" />
