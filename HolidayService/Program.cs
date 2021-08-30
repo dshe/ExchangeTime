@@ -17,9 +17,10 @@ class Program
         if (holiday is not null)
             Console.WriteLine(holiday.Name);
 
-        await TestEnrico();
-
+        //await TestEnrico();
     }
+
+    /*
     static async Task TestEnrico()
     {
         Enrico holidayService = new(NullLogger.Instance, SystemClock.Instance);
@@ -30,4 +31,5 @@ class Program
 
         JsonDocument json = await holidayService.GetHolidays("usa", "ny");
     }
+    */
 }

@@ -31,8 +31,9 @@ namespace ExchangeTime
             init
             {
                 string file = $"{Enum.GetName(typeof(IconType), value)}48.png";
-                Uri uri = new($"pack://application:,,,/Windows/MessageBox/{file}");
-                BitmapImage bmi = new (uri);
+                Uri uri = new($"pack://application:,,,/Windows/MsgBox/{file}");
+
+                BitmapImage bmi = new(uri);
                 image = new Image
                 {
                     Source = bmi,

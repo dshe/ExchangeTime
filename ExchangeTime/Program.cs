@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection;
 using System.Threading;
 using System.Windows;
 
@@ -7,7 +6,7 @@ namespace ExchangeTime
 {
     class Program
     {
-        private static readonly string Name = $"{Assembly.GetExecutingAssembly().GetType().GUID}";
+        private static readonly string Name = "sYMhtkCo1ECwkg8AimtkMg";
 
         [STAThread]
         static int Main()

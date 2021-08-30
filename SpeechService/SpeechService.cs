@@ -89,7 +89,9 @@ namespace SpeechService
 
         public async Task AnnounceTime(ZonedDateTime zdt, string text = "")
         {
-            string city = zdt.Zone.Id.Split("/")[1];
+            string city = zdt.Zone.Id;
+            if (city.Contains("/"))
+                city = city.Split("/")[1];
             await AnnounceTime(zdt.LocalDateTime, city, text).ConfigureAwait(false);
         }
 

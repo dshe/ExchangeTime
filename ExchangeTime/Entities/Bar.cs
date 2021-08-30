@@ -21,7 +21,7 @@ namespace ExchangeTime
             End = TimePattern.Parse(end).Value;
 
             string type = json.GetProperty("type").GetString() ?? throw new InvalidDataException("Missing property: 'type'");
-            BarSize = (BarSize)Enum.Parse(typeof(BarSize), type);
+            BarSize = Enum.Parse<BarSize>(type);
 
             bool hasLabel = json.TryGetProperty("label", out JsonElement label);
             if (BarSize == BarSize.L)
