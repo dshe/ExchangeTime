@@ -6,10 +6,10 @@
 - anchor the window to the edge of the screen by dragging it beyond the edge
 - right-click to announce the current time
 - double-click to exit
-- edit the file "data.json" to modify timeline data and schedule audio announcements
+- edit the file "data.json" to modify timelines and schedule audio announcements
 - built with WPF on .NET 5
 
-Google Text-To-Speech requires registration (free):
+Google Text-To-Speech requires registration:
 https://cloud.google.com/text-to-speech
 
 <img src="/Screencap2.png" width="484" height="120">
