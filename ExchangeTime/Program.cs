@@ -13,11 +13,13 @@ namespace ExchangeTime
         {
             using Mutex mutex = new(true, Name, out bool createdNew);
             {
-                if (createdNew)
-                    return new App().Run();
+                if (!createdNew)
+				{
+                    MessageBox.Show("Another instance is running!");
+                    return -1;
+                }
 
-                MessageBox.Show("Another instance is running!");
-                return -1;
+                return new App().Run();
             }
         }
     }

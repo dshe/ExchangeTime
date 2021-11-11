@@ -13,16 +13,8 @@ namespace ExchangeTime.Utility
 
         private static readonly BrushConverter BrushConverter = new();
 
-        internal static SolidColorBrush CreateBrush(string color)
-        {
-            try
-            {
-                return (SolidColorBrush)BrushConverter.ConvertFromString(color);
-            }
-            catch (Exception e)
-            {
-                throw new("Invalid color: " + color + ".", e);
-            }
-        }
+        internal static SolidColorBrush CreateBrush(string color) =>
+            BrushConverter.ConvertFromString(color) as SolidColorBrush ??
+                throw new("Could not convert to SolidColorBrush: " + color + ".");
     }
 }

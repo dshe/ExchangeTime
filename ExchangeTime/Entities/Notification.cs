@@ -12,9 +12,9 @@ namespace ExchangeTime
         internal readonly string Text;
         internal Notification(JsonElement json)
         {
-            string time = json.GetProperty("time").GetString() ?? throw new InvalidDataException("Missing property: 'time'");
+            string time = json.GetProperty("time").GetString() ?? throw new InvalidDataException("Missing property: 'time'.");
             Time = TimePattern.Parse(time).Value;
-            Text = json.GetProperty("text").GetString() ?? throw new InvalidDataException("Missing property: 'text'");
+            Text = json.GetProperty("text").GetString() ?? throw new InvalidDataException("Missing property: 'text'.");
         }
     }
 }

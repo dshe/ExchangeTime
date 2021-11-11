@@ -1,0 +1,98 @@
+[
+  {
+    "secondsPerPixel": 1,
+    "major": 60,
+    "minor": 15,
+    "majorFormat": "H:mm"
+  },
+  {
+    "secondsPerPixel": 2,
+    "major": 300,
+    "minor": 60,
+    "majorFormat": "H:mm"
+  },
+  {
+    "secondsPerPixel": 3,
+    "major": 300,
+    "minor": 60,
+    "majorFormat": "H:mm"
+  },
+  {
+    "secondsPerPixel": 5,
+    "major": 300,
+    "minor": 60,
+    "majorFormat": "H:mm"
+  },
+  {
+    "secondsPerPixel": 10,
+    "major": 900,
+    "minor": 60,
+    "majorFormat": "H:mm"
+  },
+  {
+    "secondsPerPixel": 15,
+    "major": 900,
+    "minor": 300,
+    "majorFormat": "H:mm"
+  },
+  {
+    "secondsPerPixel": 30,
+    "major": 3600,
+    "minor": 300,
+    "majorFormat": "H:mm"
+  },
+  {
+    "secondsPerPixel": 60,
+    "major": 3600,
+    "minor": 900,
+    "majorFormat": "H:mm"
+  },
+  {
+    "secondsPerPixel": 100,
+    "major": 10800,
+    "minor": 3600,
+    "majorFormat": "H:mm"
+  },
+  {
+    "secondsPerPixel": 180,
+    "major": 21600,
+    "minor": 3600,
+    "majorFormat": "H:mm"
+  },
+  {
+    "secondsPerPixel": 300,
+    "major": 86400,
+    "minor": 3600,
+    "majorFormat": "dddd MMMM d"
+  },
+  {
+    "secondsPerPixel": 600,
+    "major": 86400,
+    "minor": 10800,
+    "majorFormat": "dddd MMM d"
+  },
+  {
+    "secondsPerPixel": 900,
+    "major": 86400,
+    "minor": 10800,
+    "majorFormat": "ddd MMM d"
+  },
+  {
+    "secondsPerPixel": 1800,
+    "major": 86400,
+    "minor": 86400,
+    "majorFormat": " MMM d"
+  },
+  {
+    "secondsPerPixel": 3600,
+    "major": 86400,
+    "minor": 86400,
+    "majorFormat": "dd"
+  },
+  {
+    "secondsPerPixel": 7200,
+    "major": 604800,
+    "minor": 604800,
+    "majorFormat": "MMM d"
+  }
+]

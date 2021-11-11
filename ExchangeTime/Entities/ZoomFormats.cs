@@ -54,7 +54,7 @@ namespace ExchangeTime
             Major = json.GetProperty("major").GetInt32();
             Minor = json.GetProperty("minor").GetInt32();
             MajorFormat = json.GetProperty("majorFormat").GetString()
-                ?? throw new InvalidDataException("Missing property: 'majorFormat'");
+                ?? throw new InvalidDataException("Missing property: 'majorFormat'.");
         }
     }
 }
