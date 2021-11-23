@@ -1,8 +1,6 @@
-﻿using Microsoft.Extensions.Logging.Abstractions;
-using NodaTime;
-using SpeechService;
-
-class Program
+﻿
+/*
+public static class Program
 {
     static readonly Speech MySpeech = new(NullLogger<Speech>.Instance);
 
@@ -23,3 +21,4 @@ class Program
         await MySpeech.AnnounceTime(now, "Kuala Lumpur", "The KL stock exchange will open in 10 minutes.");
     }
 }
+*/

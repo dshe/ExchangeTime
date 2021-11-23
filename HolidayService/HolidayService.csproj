@@ -7,6 +7,8 @@
     <RootNamespace>HolidaysService</RootNamespace>
     <DebugType>embedded</DebugType>
     <DebugSymbols>true</DebugSymbols>
+	<AnalysisMode>All</AnalysisMode>
+	<NoWarn>CA1848</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

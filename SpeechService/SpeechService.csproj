@@ -7,10 +7,12 @@
     <RootNamespace>SpeechService</RootNamespace>
     <DebugType>embedded</DebugType>
     <DebugSymbols>true</DebugSymbols>
+	<AnalysisMode>All</AnalysisMode>
+	<NoWarn>CA1848</NoWarn>	  
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Google.Cloud.TextToSpeech.V1" Version="2.3.0" />
+    <PackageReference Include="Google.Cloud.TextToSpeech.V1" Version="2.4.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
     <PackageReference Include="NetCoreAudio" Version="1.6.3" />
     <PackageReference Include="NodaTime" Version="3.0.9" />

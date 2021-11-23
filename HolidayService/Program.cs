@@ -1,11 +1,6 @@
-﻿using Microsoft.Extensions.Logging.Abstractions;
-using HolidayService;
-using NodaTime;
-using System;
-using System.Text.Json;
-using System.Threading.Tasks;
-
-class Program
+﻿
+/*
+public class Program
 {
     static readonly Holidays holidays = new(NullLogger<Holidays>.Instance, SystemClock.Instance);
 
@@ -20,7 +15,7 @@ class Program
         //await TestEnrico();
     }
 
-    /*
+
     static async Task TestEnrico()
     {
         Enrico holidayService = new(NullLogger.Instance, SystemClock.Instance);
@@ -31,5 +26,6 @@ class Program
 
         JsonDocument json = await holidayService.GetHolidays("usa", "ny");
     }
-    */
+
 }
+*/

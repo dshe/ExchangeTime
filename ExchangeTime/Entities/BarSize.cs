@@ -1,12 +1,11 @@
-﻿namespace ExchangeTime
+﻿namespace ExchangeTime;
+
+internal enum BarSize
 {
-    internal enum BarSize
-    {
-        L,
-        M,
-        S,
-        Holiday,
-        Weekend
-    };
-}
+    L,
+    M,
+    S,
+    Holiday,
+    Weekend
+};
 
