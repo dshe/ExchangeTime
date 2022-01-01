@@ -100,9 +100,8 @@ public partial class MainWindow
             if (dayOfWeekend == 1 || dayOfWeekend == 2)
                 continue;
 
-            EarlyClose? earlyClose = location.EarlyCloses.Where(x => x.DateTime.Date == dt.Date).SingleOrDefault();
-            Holiday? holiday = Holidays.TryGetHoliday(location.Country, location.Region, dt.Date);
-            if (holiday is not null && earlyClose is null)
+            EarlyClose earlyClose = location.EarlyCloses.Where(x => x.DateTime.Date == dt.Date).SingleOrDefault(EarlyClose.Undefined);
+            if (Holidays.TryGetHoliday(location.Country, location.Region, dt.Date, out Holiday holiday) && !earlyClose.IsValid)
             {
                 DrawBar(originSeconds, location, dt, dt.PlusDays(1), BarSize.Holiday, "Holiday: " + holiday.Name + ";Holiday;H", y);
                 continue;
@@ -112,7 +111,7 @@ public partial class MainWindow
             {
                 LocalDateTime start = dt.Date + bar.Start;
                 LocalDateTime end = dt.Date + bar.End;
-                if (earlyClose is not null)
+                if (earlyClose.IsValid)
                 {
                     if (earlyClose.DateTime.TimeOfDay <= bar.Start)
                         continue;
@@ -228,12 +227,10 @@ public partial class MainWindow
                 continue;
 
             // don't notify on holidays
-            Holiday? holiday = Holidays.TryGetHoliday(location.Country, location.Region, dt.Date);
-            EarlyClose? earlyClose = location.EarlyCloses.Where(x => x.DateTime.Date == dt.Date).SingleOrDefault();
-
-            if (holiday is not null && earlyClose is null)
+            EarlyClose earlyClose = location.EarlyCloses.Where(x => x.DateTime.Date == dt.Date).SingleOrDefault(EarlyClose.Undefined);
+            if (Holidays.TryGetHoliday(location.Country, location.Region, dt.Date, out Holiday holiday) && !earlyClose.IsValid)
                 continue;
-            if (earlyClose is not null && dt.TimeOfDay > earlyClose.DateTime.TimeOfDay)
+            if (earlyClose.IsValid && dt.TimeOfDay > earlyClose.DateTime.TimeOfDay)
                 continue;
 
             // holiday   earlyClose   Notify

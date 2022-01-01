@@ -19,19 +19,19 @@ public class MsgBox
         window.ResizeMode = ResizeMode.NoResize;
         window.SizeToContent = SizeToContent.WidthAndHeight;
     }
-    public string Title { init { window.Title = value; } }
+    public string Title { get => window.Title; init => window.Title = value; }
     public double FontSize { get; init; }
-    public SolidColorBrush ForeGround { init { window.Foreground = value; } }
-    public SolidColorBrush Background { init { window.Background = value; } }
+    public Brush ForeGround { get => window.Foreground; init => window.Foreground = value; }
+    public Brush Background { get => window.Background; init => window.Background = value; }
     public string Buttons { get; init; } = "";
     public enum IconType { Information, Question, Warning, Error };
     public IconType MsgBoxIconType
     {
+        get => IconType.Error;
         init
         {
             string file = $"{Enum.GetName(typeof(IconType), value)}48.png";
             Uri uri = new($"pack://application:,,,/Windows/MsgBox/{file}");
-
             BitmapImage bmi = new(uri);
             image = new Image
             {

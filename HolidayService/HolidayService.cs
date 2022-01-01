@@ -4,11 +4,9 @@ using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-
-// get all holidays 2 weeks back and 4 weeks ahead
-
 namespace HolidayService;
 
+// get all holidays 2 weeks back and 4 weeks ahead
 public class Holidays
 {
     private readonly Enrico Enrico;
@@ -40,13 +38,14 @@ public class Holidays
         }
     }
 
-    public Holiday? TryGetHoliday(string country, string region, LocalDate date)
+    public bool TryGetHoliday(string country, string region, LocalDate date, out Holiday holiday)
     {
         string key = MakeKey(country, region);
 
-        if (!Dictionary.TryGetValue(key, out Dictionary<LocalDate, Holiday>? holidays))
-            return null;
+        if (Dictionary.TryGetValue(key, out Dictionary<LocalDate, Holiday>? holidays) && holidays.TryGetValue(date, out holiday))
+            return true;
 
-        return holidays?.GetValueOrDefault(date);
+        holiday = Holiday.Undefined;
+        return false;
     }
 }

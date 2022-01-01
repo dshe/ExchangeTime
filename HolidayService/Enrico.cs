@@ -8,13 +8,11 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
 using System.Threading.Tasks;
-
+namespace HolidayService;
 /*
 Enrico Service 2.0: http://kayaposoft.com/enrico/json/
 (alternative: Calendarific: 1000 API Requests/Month)
 */
-
-namespace HolidayService;
 
 internal class Enrico
 {
@@ -74,7 +72,6 @@ internal class Enrico
         }
 
     }
-
 
     private static string MakeFileName(string country, string region)
     {

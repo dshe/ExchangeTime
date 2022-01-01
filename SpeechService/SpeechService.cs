@@ -8,6 +8,7 @@ using Google.Cloud.TextToSpeech.V1;
 using NetCoreAudio;
 using Microsoft.Extensions.Logging;
 using System.Globalization;
+namespace SpeechService;
 /*
 Google Cloud Text-to-Speech API. The SDK must be installed.
 https://cloud.google.com/text-to-speech/
@@ -16,8 +17,6 @@ Use "Service Account Key". IAM and Admin => service accounts for project
 Download a "Service Account JSON file" and then set the environment variable to refer to it.
 "GOOGLE_APPLICATION_CREDENTIALS"
 */
-
-namespace SpeechService;
 
 public class Speech
 {

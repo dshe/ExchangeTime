@@ -28,11 +28,12 @@ public partial class App : Application
                 .AddJsonFile($"appsettings.json", optional: false))
             .ConfigureLogging((ctx, logging) => logging
                 .Configure(options => options.ActivityTrackingOptions = ActivityTrackingOptions.SpanId | ActivityTrackingOptions.TraceId | ActivityTrackingOptions.ParentId)
-                .SetMinimumLevel(LogLevel.Warning)
+                .SetMinimumLevel(LogLevel.Information)
                 .AddDebug()
                 .AddEventLog()
                 .AddFilter<EventLogLoggerProvider>(level => level >= LogLevel.Warning)
                 .AddEventSourceLogger()
+                .AddEventLog() 
                 .AddFile("application.log", config => // NReco.Logging dependency
                 {
                     config.Append = true;

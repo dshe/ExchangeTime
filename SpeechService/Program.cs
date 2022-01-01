@@ -4,7 +4,7 @@ public static class Program
 {
     static readonly Speech MySpeech = new(NullLogger<Speech>.Instance);
 
-    static async void Main()
+    static async Task Main()
     {
         await MySpeech.PlayWindowsMediaFile("Alarm03.wav");
 

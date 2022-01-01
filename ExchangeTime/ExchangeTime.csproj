@@ -12,16 +12,16 @@
     <RepositoryType></RepositoryType>
     <PackageTags>ExchangeTime</PackageTags>
     <Authors>DavidS</Authors>
-	<Version>3.0.1</Version>
-    <AssemblyVersion>3.0.1</AssemblyVersion>
-    <FileVersion>3.0.1</FileVersion>
+	<Version>3.0.2</Version>
+    <AssemblyVersion>3.0.2</AssemblyVersion>
+    <FileVersion>3.0.2</FileVersion>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <StartupObject></StartupObject>
     <DebugType>embedded</DebugType>
     <DebugSymbols>true</DebugSymbols>
     <SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
 	<AnalysisMode>All</AnalysisMode>
-	<NoWarn>CA1848;CA2254;CA1044;CA1014</NoWarn>
+	<NoWarn>CA1848;CA2254</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -29,7 +29,7 @@
     <PackageReference Include="Jot" Version="2.1.11" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0" />
     <PackageReference Include="NodaTime" Version="3.0.9" />
-    <PackageReference Include="NReco.Logging.File" Version="1.1.2" />
+    <PackageReference Include="NReco.Logging.File" Version="1.1.3" />
     <ProjectReference Include="..\HolidayService\HolidayService.csproj" />
     <ProjectReference Include="..\SpeechService\SpeechService.csproj" />
   </ItemGroup>

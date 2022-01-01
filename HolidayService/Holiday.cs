@@ -4,14 +4,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
-
 namespace HolidayService;
 
-public class Holiday
+public readonly struct Holiday : IEquatable<Holiday>
 {
     public LocalDate Date { get; }
     public string Name { get; }
     private Holiday(LocalDate date, string name) => (Date, Name) = (date, name);
+    public bool IsValid => Date != default;
 
     private static Holiday Create(JsonElement json)
     {
@@ -45,4 +45,17 @@ public class Holiday
             .Select(g => g.First())
             .ToDictionary(h => h.Date, h => h);
     }
+
+    public override int GetHashCode() =>
+        EqualityComparer<LocalDate>.Default.GetHashCode(Date) * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Name);
+
+    public override bool Equals(object? obj) => obj is Holiday holiday && Equals(holiday);
+
+    public bool Equals(Holiday other) =>
+        EqualityComparer<LocalDate>.Default.Equals(Date, other.Date) &&
+        EqualityComparer<string>.Default.Equals(Name, other.Name);
+
+    public static bool operator ==(Holiday left, Holiday right) => left.Equals(right);
+    public static bool operator !=(Holiday left, Holiday right) => !(left == right);
+    public static Holiday Undefined { get; }
 }

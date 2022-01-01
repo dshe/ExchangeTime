@@ -51,7 +51,7 @@
     "name": "Euronext", "country": "nld", "timezone": "Europe/Amsterdam", "color":"#145",
     "bars": [
     { "start": "08:00", "end": "09:00", "type": "S"},
-    { "start": "09:00", "end": "17:30", "type": "L", "label": "Euronext Exchange TIME;Euronext TIME;Euronext;E"},
+    { "start": "09:00", "end": "17:30", "type": "L", "label": "Euronext Exchange TIME;Euronext TIME;Euronext;Eur;E"},
     { "start": "17:30", "end": "22:00", "type": "S"}]
   },
   {   
