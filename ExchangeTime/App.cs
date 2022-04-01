@@ -33,7 +33,6 @@ public partial class App : Application
                 .AddEventLog()
                 .AddFilter<EventLogLoggerProvider>(level => level >= LogLevel.Warning)
                 .AddEventSourceLogger()
-                .AddEventLog() 
                 .AddFile("application.log", config => // NReco.Logging dependency
                 {
                     config.Append = true;
