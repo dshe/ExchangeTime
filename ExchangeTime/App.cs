@@ -6,12 +6,12 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.EventLog;
 using NodaTime;
-using SpeechService;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
+using ExchangeTime.Utility;
 namespace ExchangeTime;
 // changed build action for this file from 'ApplicationDefinition' to 'C# compiler'
 
@@ -42,7 +42,7 @@ public partial class App : Application
             .ConfigureServices((ctx, services) => services
                 .Configure<AppSettings>(ctx.Configuration)
                 .AddSingleton<IClock>(SystemClock.Instance)
-                .AddSingleton<Speech>()
+                .AddSingleton<AudioService>()
                 .AddSingleton<Holidays>()
                 .AddSingleton<MainWindow>()
                 .AddSingleton(new Tracker()))

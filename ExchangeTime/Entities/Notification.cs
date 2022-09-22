@@ -2,10 +2,9 @@
 using System.Text.Json;
 using NodaTime;
 using NodaTime.Text;
-
 namespace ExchangeTime;
 
-internal class Notification
+internal sealed class Notification
 {
     private static readonly LocalTimePattern TimePattern = LocalTimePattern.CreateWithInvariantCulture("HH:mm:ss");
     internal readonly LocalTime Time;

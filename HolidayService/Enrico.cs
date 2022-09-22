@@ -14,7 +14,7 @@ Enrico Service 2.0: http://kayaposoft.com/enrico/json/
 (alternative: Calendarific: 1000 API Requests/Month)
 */
 
-internal class Enrico
+internal sealed class Enrico
 {
     private const string FolderName = "Holidays";
     private readonly IClock Clock;

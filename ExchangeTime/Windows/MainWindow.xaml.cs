@@ -8,13 +8,11 @@ using System.IO;
 using System.Text.Json;
 using NodaTime;
 using HolidayService;
-using SpeechService;
 using System.Net;
 using ExchangeTime.Utility;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Jot;
-
 namespace ExchangeTime;
 
 public sealed partial class MainWindow : Window
@@ -25,21 +23,21 @@ public sealed partial class MainWindow : Window
     private readonly IClock Clock;
     private readonly IOptions<AppSettings> Settings;
     private readonly Holidays Holidays;
-    private readonly Speech Speech;
+    private readonly AudioService AudioService;
     private readonly int width, height;
     private readonly ZoomFormats zoomFormats = new();
     private readonly Canvas canvas = new();
     private readonly TextBlock centerHeader, leftHeader, rightHeader;
     private readonly List<Location> Locations;
     private readonly DispatcherTimer timer = new();
-
-    public MainWindow(ILogger<MainWindow> logger, IClock clock, IOptions<AppSettings> settings, Tracker tracker, Holidays holidays, Speech speech)
+    
+    public MainWindow(ILogger<MainWindow> logger, IClock clock, IOptions<AppSettings> settings, Tracker tracker, Holidays holidays, AudioService audioService)
     {
         Logger = logger;
         Clock = clock;
         Settings = settings;
         Holidays = holidays;
-        Speech = speech;
+        AudioService = audioService;
 
         InitializeComponent();
 

@@ -5,7 +5,7 @@ using System.Text.Json;
 
 namespace ExchangeTime;
 
-internal class Bar
+internal sealed class Bar
 {
     private static readonly LocalTimePattern TimePattern = LocalTimePattern.CreateWithInvariantCulture("HH:mm");
     internal readonly string Label = "";

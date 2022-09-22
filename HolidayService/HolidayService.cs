@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace HolidayService;
 
 // get all holidays 2 weeks back and 4 weeks ahead
-public class Holidays
+public sealed class Holidays
 {
     private readonly Enrico Enrico;
     private readonly Dictionary<string, Dictionary<LocalDate, Holiday>> Dictionary = new();

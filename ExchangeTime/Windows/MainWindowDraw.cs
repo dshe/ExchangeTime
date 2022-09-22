@@ -8,10 +8,9 @@ using NodaTime;
 using HolidayService;
 using ExchangeTime.Utility;
 using System.Threading.Tasks;
-
 namespace ExchangeTime;
 
-public partial class MainWindow
+public sealed partial class MainWindow
 {
     private void DrawTicks(long originSeconds)
     {
@@ -241,8 +240,9 @@ public partial class MainWindow
 
             foreach (Notification notification in location.Notifications)
             {
-                if (dt.TimeOfDay == notification.Time)
-                    await Speech.AnnounceTime(dt, location.Name, notification.Text).ConfigureAwait(false);
+                if (dt.TimeOfDay != notification.Time)
+                    continue;
+                await AudioService.AnnounceTime(dt, location.Name, notification.Text).ConfigureAwait(false);
             }
         }
     }

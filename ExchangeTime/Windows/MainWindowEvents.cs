@@ -4,10 +4,9 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-
 namespace ExchangeTime;
 
-public partial class MainWindow
+public sealed partial class MainWindow
 {
     private int AudioLocker;
     private void MainWindowMouseDoubleClick(object sender, MouseButtonEventArgs e) => Close();
@@ -37,7 +36,9 @@ public partial class MainWindow
         {
             Task task = Task.CompletedTask;
             if (Settings.Value.AudioEnable)
-                task = Speech.AnnounceTime(Clock.GetCurrentInstant().InZone(TimeZone));
+            {
+                task = AudioService.AnnounceTime(Clock.GetCurrentInstant().InZone(TimeZone));
+            }
             string version = Assembly.GetEntryAssembly()?.GetName()?.Version?.ToString() ?? "?";
             new MsgBox(this)
             {

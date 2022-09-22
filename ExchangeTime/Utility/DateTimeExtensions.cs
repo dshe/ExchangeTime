@@ -1,5 +1,4 @@
 ﻿using NodaTime;
-
 namespace ExchangeTime.Utility;
 
 public static class DateTimeExtenstions

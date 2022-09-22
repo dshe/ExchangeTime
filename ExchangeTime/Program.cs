@@ -1,6 +1,5 @@
 ﻿using System.Threading;
 using System.Windows;
-
 namespace ExchangeTime;
 
 class Program

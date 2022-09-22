@@ -2,10 +2,9 @@
 using System.IO;
 using System.Text.Json;
 using System.Linq;
-
 namespace ExchangeTime;
 
-internal class ZoomFormats
+internal sealed class ZoomFormats
 {
     private readonly List<ZoomFormat> Formats;
     internal ZoomFormats()

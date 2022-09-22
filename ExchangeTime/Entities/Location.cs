@@ -5,10 +5,9 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Windows.Media;
-
 namespace ExchangeTime;
 
-internal class Location
+internal sealed class Location
 {
     internal readonly string Name, Country, Region = "";
     internal readonly DateTimeZone TimeZone;
