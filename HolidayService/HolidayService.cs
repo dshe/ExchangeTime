@@ -1,13 +1,13 @@
 ﻿using Microsoft.Extensions.Logging;
-using NodaTime;
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+
 namespace HolidayService;
 
 // get all holidays 2 weeks back and 4 weeks ahead
-public sealed class Holidays
+public sealed class Holidays : IDisposable
 {
     private readonly Enrico Enrico;
     private readonly Dictionary<string, Dictionary<LocalDate, Holiday>> Dictionary = new();
@@ -47,5 +47,11 @@ public sealed class Holidays
 
         holiday = Holiday.Undefined;
         return false;
+    }
+
+    public void Dispose()
+    {
+        Enrico.Dispose();
+        Semaphore.Dispose();
     }
 }

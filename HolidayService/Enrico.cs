@@ -1,26 +1,25 @@
 ﻿using Microsoft.Extensions.Logging;
-using NodaTime;
 using NodaTime.Text;
-using System;
 using System.IO;
 using System.Net.Http;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
 using System.Threading.Tasks;
+
 namespace HolidayService;
 /*
 Enrico Service 2.0: http://kayaposoft.com/enrico/json/
 (alternative: Calendarific: 1000 API Requests/Month)
 */
 
-internal sealed class Enrico
+internal sealed class Enrico : IDisposable
 {
     private const string FolderName = "Holidays";
     private readonly IClock Clock;
     private readonly ILogger Logger;
     private readonly LocalDatePattern DatePattern = LocalDatePattern.CreateWithInvariantCulture("dd-MM-yyyy");
-    private readonly HttpClient HttpClient = new() { Timeout = new TimeSpan(0, 1, 10) };
+    private readonly HttpClient HttpClient = new() { Timeout = TimeSpan.FromSeconds( 30) };
     public Enrico(ILogger logger, IClock clock)
     {
         Logger = logger;
@@ -119,5 +118,10 @@ internal sealed class Enrico
         }
 
         throw new InvalidDataException($"Unknown error parsing: {str}.");
+    }
+
+    public void Dispose()
+    {
+        HttpClient.Dispose();
     }
 }

@@ -1,10 +1,10 @@
 ﻿using ExchangeTime.Utility;
-using NodaTime;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Windows.Media;
+
 namespace ExchangeTime;
 
 internal sealed class Location

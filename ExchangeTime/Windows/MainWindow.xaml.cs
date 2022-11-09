@@ -6,13 +6,13 @@ using System.Windows.Threading;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
-using NodaTime;
 using HolidayService;
 using System.Net;
 using ExchangeTime.Utility;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Jot;
+
 namespace ExchangeTime;
 
 public sealed partial class MainWindow : Window

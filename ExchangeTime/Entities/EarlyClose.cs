@@ -1,7 +1,7 @@
-﻿using NodaTime;
-using NodaTime.Text;
+﻿using NodaTime.Text;
 using System.IO;
 using System.Text.Json;
+
 namespace ExchangeTime;
 
 internal readonly struct EarlyClose

@@ -4,10 +4,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using NodaTime;
 using HolidayService;
 using ExchangeTime.Utility;
 using System.Threading.Tasks;
+
 namespace ExchangeTime;
 
 public sealed partial class MainWindow

@@ -5,16 +5,16 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.EventLog;
-using NodaTime;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 using ExchangeTime.Utility;
-namespace ExchangeTime;
-// changed build action for this file from 'ApplicationDefinition' to 'C# compiler'
 
+namespace ExchangeTime;
+
+// changed build action for this file from 'ApplicationDefinition' to 'C# compiler'
 public partial class App : Application
 {
     private readonly IHost MyHost;
@@ -54,17 +54,17 @@ public partial class App : Application
             .Build();
 
         Logger = MyHost.Services.GetRequiredService<ILogger<App>>();
-        Logger.LogInformation(Assembly.GetExecutingAssembly().FullName);
+        Logger.LogInformation("{Name}", Assembly.GetExecutingAssembly().FullName);
 
         AppDomain.CurrentDomain.FirstChanceException += (object? sender, FirstChanceExceptionEventArgs args) =>
-            Logger.LogInformation(args.Exception, $"CurrentDomainFirstChanceException: {args.Exception.Message}");
+            Logger.LogInformation(args.Exception, "CurrentDomainFirstChanceException: {Message}", args.Exception.Message);
 
         // Invoked whenever there is an unhandled exception in the default AppDomain.
         // It is invoked for exceptions on any thread that was created on the AppDomain.
         AppDomain.CurrentDomain.UnhandledException += (object sender, UnhandledExceptionEventArgs args) =>
         {
             if (args.ExceptionObject is Exception exception)
-                Logger.LogCritical(exception, $"CurrentDomainUnhandledException: {exception.Message}");
+                Logger.LogCritical(exception, "CurrentDomainUnhandledException: {Message}", exception.Message);
             else
                 Logger.LogCritical("CurrentDomainUnhandledException.");
         };
@@ -75,7 +75,7 @@ public partial class App : Application
         TaskScheduler.UnobservedTaskException += (object? sender, UnobservedTaskExceptionEventArgs args) =>
         {
             args.SetObserved();
-            Logger.LogError(args.Exception, $"TaskSchedulerUnobservedTaskException: {args.Exception.Message}");
+            Logger.LogError(args.Exception, "TaskSchedulerUnobservedTaskException: {Message}", args.Exception.Message);
             DisplayException(args.Exception);
         };
 
@@ -92,7 +92,7 @@ public partial class App : Application
         Dispatcher.UnhandledException += (object sender, DispatcherUnhandledExceptionEventArgs args) =>
         {
             args.Handled = true;
-            Logger.LogCritical(args.Exception, $"DispatcherUnhandledException: {args.Exception.Message}");
+            Logger.LogCritical(args.Exception, "DispatcherUnhandledException: {Message}", args.Exception.Message);
             DisplayException(args.Exception);
         };
 

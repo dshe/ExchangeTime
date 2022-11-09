@@ -1,4 +1,5 @@
 ﻿using System.Windows.Media;
+
 namespace ExchangeTime.Utility;
 
 internal static class MyBrushes

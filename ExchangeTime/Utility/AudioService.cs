@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using NodaTime;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -22,8 +21,10 @@ public sealed class AudioService : IDisposable
     {
         Logger = logger;
 
+#pragma warning disable CA1304
         if (SpeechSynthesizer.GetInstalledVoices().Any(v => v.VoiceInfo.Name == "Microsoft David Desktop"))
             SpeechSynthesizer.SelectVoice("Microsoft David Desktop");
+#pragma warning restore CA1304
 
         SpeechSynthesizer.SpeakCompleted += (object? sender, SpeakCompletedEventArgs e) =>  Semaphore.Release();
     }
