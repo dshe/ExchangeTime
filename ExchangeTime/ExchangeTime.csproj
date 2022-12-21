@@ -12,7 +12,7 @@
     <RepositoryType></RepositoryType>
     <PackageTags>ExchangeTime</PackageTags>
     <Authors>DavidS</Authors>
-	<Version>3.2.0</Version>
+    <Version>3.2.0</Version>
     <AssemblyVersion>3.2.0</AssemblyVersion>
     <FileVersion>3.2.0</FileVersion>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
@@ -27,7 +27,7 @@
     <None Include="worm64.png" Pack="true" PackagePath="" />
     <PackageReference Include="Jot" Version="2.1.13" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.0" />
-    <PackageReference Include="NodaTime" Version="3.1.5" />
+    <PackageReference Include="NodaTime" Version="3.1.6" />
     <PackageReference Include="NReco.Logging.File" Version="1.1.5" />
     <PackageReference Include="System.Speech" Version="7.0.0" />
     <ProjectReference Include="..\HolidayService\HolidayService.csproj" />

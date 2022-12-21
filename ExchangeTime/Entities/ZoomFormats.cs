@@ -46,7 +46,7 @@ internal sealed class ZoomFormats
     }
 }
 
-internal class ZoomFormat
+internal sealed class ZoomFormat
 {
     internal readonly int SecondsPerPixel, Major, Minor;
     internal readonly string MajorFormat;

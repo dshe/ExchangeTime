@@ -3,7 +3,7 @@ using System.Windows;
 
 namespace ExchangeTime;
 
-class Program
+sealed class Program
 {
     private const string Name = "sYMhtkCo1ECwkg8AimtkMg";
 
