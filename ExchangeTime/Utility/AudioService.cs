@@ -21,10 +21,9 @@ public sealed class AudioService : IDisposable
     {
         Logger = logger;
 
-#pragma warning disable CA1304
-        if (SpeechSynthesizer.GetInstalledVoices().Any(v => v.VoiceInfo.Name == "Microsoft David Desktop"))
+        var cultureInfo = CultureInfo.CreateSpecificCulture("en-US");
+        if (SpeechSynthesizer.GetInstalledVoices(cultureInfo).Any(v => v.VoiceInfo.Name == "Microsoft David Desktop"))
             SpeechSynthesizer.SelectVoice("Microsoft David Desktop");
-#pragma warning restore CA1304
 
         SpeechSynthesizer.SpeakCompleted += (object? sender, SpeakCompletedEventArgs e) =>  Semaphore.Release();
     }
