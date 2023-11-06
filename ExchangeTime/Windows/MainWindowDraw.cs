@@ -36,7 +36,7 @@ public sealed partial class MainWindow
                     TextAlignment = TextAlignment.Center
                 };
                 Size size = tb.GetTextSize();
-                tb.Width = size.Width + 15;
+                tb.Width = size.Width;
                 tb.Height = size.Height;
                 double halfWidth = tb.Width / 2.0;
                 if (px >= halfWidth && width - px >= halfWidth)
@@ -186,12 +186,10 @@ public sealed partial class MainWindow
                 break;
             case BarSize.M:
                 tb.Height = Convert.ToInt32(BarHeight / 2.0);
-                //y1 += 3;
                 y1 += Convert.ToInt32(BarHeight/2.0 - BarHeight / 4.0);
                 break;
             case BarSize.S:
                 tb.Height = Convert.ToInt32(BarHeight / 4.0);
-                //y1 += 5;
                 y1 += Convert.ToInt32(BarHeight / 2.0 - BarHeight / 8.0);
                 break;
         }

@@ -25,7 +25,7 @@ internal static class TextUtilityExtension
             TextFormattingMode.Display,
             pixelsPerDip);
 
-        return new(formattedText.Width, formattedText.Height);
+        return new(formattedText.Width * 1.2, formattedText.Height);
     }
 
     internal static void FitText(this TextBlock tb)
@@ -44,6 +44,6 @@ internal static class TextUtilityExtension
             if (tb.GetTextSize().Width < tb.Width - 1)
                 return;
         }
-        tb.Text = null;
+        tb.Text = "";
     }
 }
