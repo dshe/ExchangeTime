@@ -54,10 +54,9 @@ public partial class App : Application
             .Build();
 
         Logger = MyHost.Services.GetRequiredService<ILogger<App>>();
-        Logger.LogInformation("{Name}", Assembly.GetExecutingAssembly().FullName);
 
         AppDomain.CurrentDomain.FirstChanceException += (object? sender, FirstChanceExceptionEventArgs args) =>
-            Logger.LogInformation(args.Exception, "CurrentDomainFirstChanceException: {Message}", args.Exception.Message);
+            Logger.LogDebug(args.Exception, "CurrentDomainFirstChanceException: {Message}", args.Exception.Message);
 
         // Invoked whenever there is an unhandled exception in the default AppDomain.
         // It is invoked for exceptions on any thread that was created on the AppDomain.
@@ -79,13 +78,10 @@ public partial class App : Application
             DisplayException(args.Exception);
         };
 
-        // Invoved for any unhandled exception on the Dispatcher.
+        // Involved for any unhandled exception on the Dispatcher.
         // When e.RequestCatch is set to true, the exception is caught by the Dispatcher
         // and the DispatcherUnhandledException event will be invoked.
-        Dispatcher.UnhandledExceptionFilter += (object sender, DispatcherUnhandledExceptionFilterEventArgs args) =>
-        {
-            args.RequestCatch = true;
-        };
+        Dispatcher.UnhandledExceptionFilter += (object sender, DispatcherUnhandledExceptionFilterEventArgs args) => args.RequestCatch = true;
 
         // Invoked whenever there is an unhandled exception on a delegate
         // that was posted to be executed on the UI-thread (Dispatcher) of a WPF application.
@@ -96,14 +92,17 @@ public partial class App : Application
             DisplayException(args.Exception);
         };
 
-        void DisplayException(Exception e) =>
-            Current.Dispatcher.BeginInvoke(new Action(() => new ExceptionWindow(e).Show()));
+        Logger.LogInformation("{AssemblyName}", Assembly.GetExecutingAssembly().FullName);
+
+        static void DisplayException(Exception e) =>
+            Current.Dispatcher.BeginInvoke(new ExceptionWindow(e).Show);
     }
 
     protected override async void OnStartup(StartupEventArgs e)
     {
         await MyHost.StartAsync().ConfigureAwait(false);
         MyHost.Services.GetRequiredService<MainWindow>().Show();
+        //Logger.LogCritical("This is only a test");
     }
 
     protected override async void OnExit(ExitEventArgs e)

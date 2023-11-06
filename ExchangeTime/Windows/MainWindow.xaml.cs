@@ -9,7 +9,6 @@ using System.Text.Json;
 using HolidayService;
 using System.Net;
 using ExchangeTime.Utility;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Jot;
 
@@ -17,9 +16,11 @@ namespace ExchangeTime;
 
 public sealed partial class MainWindow : Window
 {
+    private const int BarTop = 30;
+    private const int BarHeight = 16;
+
     private const int Y1Hours = 15, Y1Ticks = 27;
     private readonly DateTimeZone TimeZone = DateTimeZoneProviders.Bcl.GetSystemDefault();
-    private readonly ILogger Logger;
     private readonly IClock Clock;
     private readonly IOptions<AppSettings> Settings;
     private readonly Holidays Holidays;
@@ -31,15 +32,17 @@ public sealed partial class MainWindow : Window
     private readonly List<Location> Locations;
     private readonly DispatcherTimer timer = new();
     
-    public MainWindow(ILogger<MainWindow> logger, IClock clock, IOptions<AppSettings> settings, Tracker tracker, Holidays holidays, AudioService audioService)
+    public MainWindow(IClock clock, IOptions<AppSettings> settings, Tracker tracker, Holidays holidays, AudioService audioService)
     {
-        Logger = logger;
         Clock = clock;
         Settings = settings;
         Holidays = holidays;
         AudioService = audioService;
 
         InitializeComponent();
+
+        FontSize = 12;
+        Width = 648;
 
         ArgumentNullException.ThrowIfNull(tracker);
         tracker.Configure<MainWindow>()
@@ -57,8 +60,8 @@ public sealed partial class MainWindow : Window
             .Select(location => new Location(location))
             .ToList();
 
-        width = Convert.ToInt32(Width - 2 * BorderThickness.Left); // 484 -> 480
-        Height = Locations.Count * 11 + 32;
+        width = Convert.ToInt32(Width - 2 * BorderThickness.Left);
+        Height = Locations.Count * BarHeight + 33;
         height = Convert.ToInt32(Height - 2 * BorderThickness.Top);
 
         leftHeader = CreateTopTextBlock(TextAlignment.Left);

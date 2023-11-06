@@ -15,13 +15,6 @@ public sealed partial class ExceptionWindow : Window
         DataContext = this;
     }
 
-    internal void OnExitAppClick(object sender, RoutedEventArgs e)
-    {
-        Application.Current.Shutdown();
-    }
-
-    internal void OnExceptionWindowClosed(object sender, EventArgs e)
-    {
-        Application.Current.Shutdown();
-    }
+    internal void OnExitAppClick(object sender, RoutedEventArgs e) => Application.Current.Shutdown();
+    internal void OnExceptionWindowClosed(object sender, EventArgs e) => Application.Current.Shutdown();
 }

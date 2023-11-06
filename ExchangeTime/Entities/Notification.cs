@@ -7,8 +7,8 @@ namespace ExchangeTime;
 internal sealed class Notification
 {
     private static readonly LocalTimePattern TimePattern = LocalTimePattern.CreateWithInvariantCulture("HH:mm:ss");
-    internal readonly LocalTime Time;
-    internal readonly string Text;
+    internal LocalTime Time { get; }
+    internal string Text { get; }
     internal Notification(JsonElement json)
     {
         string time = json.GetProperty("time").GetString() ?? throw new InvalidDataException("Missing property: 'time'.");

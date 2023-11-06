@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:p="clr-namespace:ExchangeTime"
         FontFamily = "Verdana"
-        FontSize="10"
+        FontSize="11"
 		ShowInTaskbar="False"
 		WindowStyle="None"
 		ResizeMode="NoResize"

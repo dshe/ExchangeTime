@@ -9,16 +9,28 @@ internal static class TextUtilityExtension
 {
     internal static Size GetTextSize(this TextBlock tb)
     {
-        Typeface typeface = new(tb.FontFamily, tb.FontStyle, tb.FontWeight, tb.FontStretch);
         DpiScale m_dpiInfo = VisualTreeHelper.GetDpi(tb);
         double pixelsPerDip = m_dpiInfo.PixelsPerDip;
-        FormattedText formattedText =
-            new(tb.Text, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, typeface, tb.FontSize, Brushes.Black, null, TextFormattingMode.Display, pixelsPerDip);
+
+        Typeface typeface = new(tb.FontFamily, tb.FontStyle, tb.FontWeight, tb.FontStretch);
+
+        FormattedText formattedText = new(
+            tb.Text,
+            CultureInfo.CurrentUICulture, 
+            FlowDirection.LeftToRight,
+            typeface,
+            tb.FontSize, 
+            Brushes.Black,
+            new NumberSubstitution(),
+            TextFormattingMode.Display,
+            pixelsPerDip);
+
         return new(formattedText.Width, formattedText.Height);
     }
 
     internal static void FitText(this TextBlock tb)
     {
+        tb.TextWrapping = TextWrapping.NoWrap;
         string[] strings = tb.Text.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries); // "Saturday;Sat" -> "Sat"
         foreach (string s in strings)
         {
@@ -28,7 +40,7 @@ internal static class TextUtilityExtension
         }
         if (char.IsLetter(strings[0][0])) // first letter of first string
         {
-            tb.Text = strings[0].Substring(0, 1); // try first letter
+            tb.Text = strings[0][..1]; // try first letter
             if (tb.GetTextSize().Width < tb.Width - 1)
                 return;
         }

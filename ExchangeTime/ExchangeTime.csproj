@@ -12,9 +12,9 @@
     <RepositoryType></RepositoryType>
     <PackageTags>ExchangeTime</PackageTags>
     <Authors>DavidS</Authors>
-    <Version>3.2.1</Version>
-    <AssemblyVersion>3.2.1</AssemblyVersion>
-    <FileVersion>3.2.1</FileVersion>
+    <Version>3.3.0</Version>
+    <AssemblyVersion>3.3.0</AssemblyVersion>
+    <FileVersion>3.3.0</FileVersion>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <StartupObject></StartupObject>
     <DebugType>embedded</DebugType>

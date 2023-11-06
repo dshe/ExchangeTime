@@ -30,20 +30,22 @@ public sealed partial class MainWindow
             {
                 TextBlock tb = new()
                 {
+                    FontSize = FontSize,
                     Foreground = MyBrushes.Gray128,
                     Text = Instant.FromUnixTimeSeconds(s).InZone(TimeZone).ToString(zoomFormats.MajorFormat, null),
                     TextAlignment = TextAlignment.Center
                 };
                 Size size = tb.GetTextSize();
-                tb.Width = size.Width + 4;
+                tb.Width = size.Width + 15;
                 tb.Height = size.Height;
-                double halfWidth = tb.Width / 2;
+                double halfWidth = tb.Width / 2.0;
                 if (px >= halfWidth && width - px >= halfWidth)
                 {
                     Canvas.SetTop(tb, Y1Hours);
                     Canvas.SetLeft(tb, px - halfWidth);
                     canvas.Children.Add(tb);
                 }
+
                 canvas.Children.Add(new Line
                 {
                     X1 = px,
@@ -74,11 +76,11 @@ public sealed partial class MainWindow
     {
         Instant originInstant = Instant.FromUnixTimeSeconds(originSeconds);
         Instant endInstant = Instant.FromUnixTimeSeconds(originSeconds + zoomFormats.SecondsPerPixel * width);
-        int y = 28;
+        int y = BarTop;
         foreach (Location location in Locations)
         {
             DrawBarsForLocation(originSeconds, originInstant, endInstant, location, y);
-            y += 11;
+            y += BarHeight;
         }
     }
 
@@ -99,8 +101,8 @@ public sealed partial class MainWindow
             if (dayOfWeekend == 1 || dayOfWeekend == 2)
                 continue;
 
-            EarlyClose earlyClose = location.EarlyCloses.Where(x => x.DateTime.Date == dt.Date).SingleOrDefault(EarlyClose.Undefined);
-            if (Holidays.TryGetHoliday(location.Country, location.Region, dt.Date, out Holiday holiday) && !earlyClose.IsValid)
+            EarlyClose? earlyClose = location.EarlyCloses.Where(x => x.DateTime.Date == dt.Date).SingleOrDefault();
+            if (earlyClose == null && Holidays.TryGetHoliday(location.Country, location.Region, dt.Date, out Holiday holiday))
             {
                 DrawBar(originSeconds, location, dt, dt.PlusDays(1), BarSize.Holiday, "Holiday: " + holiday.Name + ";Holiday;H", y);
                 continue;
@@ -110,7 +112,7 @@ public sealed partial class MainWindow
             {
                 LocalDateTime start = dt.Date + bar.Start;
                 LocalDateTime end = dt.Date + bar.End;
-                if (earlyClose.IsValid)
+                if (earlyClose != null)
                 {
                     if (earlyClose.DateTime.TimeOfDay <= bar.Start)
                         continue;
@@ -155,7 +157,8 @@ public sealed partial class MainWindow
             Background = location.Brush,
             Opacity = .95,
             TextAlignment = TextAlignment.Center,
-            LineHeight = 11,
+            VerticalAlignment = VerticalAlignment.Bottom,
+            FontSize = FontSize,
             LineStackingStrategy = LineStackingStrategy.BlockLineHeight,
             Width = x2 - x1 + 1
         };
@@ -169,12 +172,12 @@ public sealed partial class MainWindow
                 tb.Background = location.Brush.Clone();
                 tb.Background.Opacity = .5;
                 tb.Foreground = MyBrushes.Gray224;
-                tb.Height = 11;
+                tb.Height = BarHeight; 
                 tb.Text = label;
                 tb.FitText();
                 break;
             case BarSize.L:
-                tb.Height = 11;
+                tb.Height = BarHeight;
                 if (zoomFormats.SecondsPerPixel < 1800)
                 {
                     tb.Text = label;
@@ -182,12 +185,14 @@ public sealed partial class MainWindow
                 }
                 break;
             case BarSize.M:
-                tb.Height = 5;
-                y1 += 3;
+                tb.Height = Convert.ToInt32(BarHeight / 2.0);
+                //y1 += 3;
+                y1 += Convert.ToInt32(BarHeight/2.0 - BarHeight / 4.0);
                 break;
             case BarSize.S:
-                tb.Height = 1;
-                y1 += 5;
+                tb.Height = Convert.ToInt32(BarHeight / 4.0);
+                //y1 += 5;
+                y1 += Convert.ToInt32(BarHeight / 2.0 - BarHeight / 8.0);
                 break;
         }
         Canvas.SetTop(tb, y1);
@@ -226,10 +231,11 @@ public sealed partial class MainWindow
                 continue;
 
             // don't notify on holidays
-            EarlyClose earlyClose = location.EarlyCloses.Where(x => x.DateTime.Date == dt.Date).SingleOrDefault(EarlyClose.Undefined);
-            if (Holidays.TryGetHoliday(location.Country, location.Region, dt.Date, out Holiday holiday) && !earlyClose.IsValid)
+            EarlyClose? earlyClose = location.EarlyCloses.Where(x => x.DateTime.Date == dt.Date).SingleOrDefault();
+            if (Holidays.TryGetHoliday(location.Country, location.Region, dt.Date, out Holiday holiday) && earlyClose == null)
                 continue;
-            if (earlyClose.IsValid && dt.TimeOfDay > earlyClose.DateTime.TimeOfDay)
+
+            if (earlyClose != null && dt.TimeOfDay > earlyClose.DateTime.TimeOfDay)
                 continue;
 
             // holiday   earlyClose   Notify
