@@ -185,12 +185,12 @@ public sealed partial class MainWindow
                 }
                 break;
             case BarSize.M:
-                tb.Height = Convert.ToInt32(BarHeight / 2.0);
-                y1 += Convert.ToInt32(BarHeight/2.0 - BarHeight / 4.0);
+                tb.Height = 5;
+                y1 += Convert.ToInt32((BarHeight - tb.Height) / 2.0);
                 break;
             case BarSize.S:
-                tb.Height = Convert.ToInt32(BarHeight / 4.0);
-                y1 += Convert.ToInt32(BarHeight / 2.0 - BarHeight / 8.0);
+                tb.Height = 2;
+                y1 += Convert.ToInt32((BarHeight - tb.Height) / 2.0);
                 break;
         }
         Canvas.SetTop(tb, y1);
