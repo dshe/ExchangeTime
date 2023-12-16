@@ -7,6 +7,7 @@ namespace ExchangeTime.Utility;
 
 internal static class TextUtilityExtension
 {
+    internal static readonly char[] separator = { ';' };
     internal static Size GetTextSize(this TextBlock tb)
     {
         DpiScale m_dpiInfo = VisualTreeHelper.GetDpi(tb);
@@ -31,7 +32,7 @@ internal static class TextUtilityExtension
     internal static void FitText(this TextBlock tb)
     {
         tb.TextWrapping = TextWrapping.NoWrap;
-        string[] strings = tb.Text.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries); // "Saturday;Sat" -> "Sat"
+        string[] strings = tb.Text.Split(separator, StringSplitOptions.RemoveEmptyEntries); // "Saturday;Sat" -> "Sat"
         foreach (string s in strings)
         {
             tb.Text = s;

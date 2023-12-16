@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace HolidayService;
@@ -19,16 +20,20 @@ internal sealed class Enrico : IDisposable
     private readonly IClock Clock;
     private readonly ILogger Logger;
     private readonly LocalDatePattern DatePattern = LocalDatePattern.CreateWithInvariantCulture("dd-MM-yyyy");
-    private readonly HttpClient HttpClient = new() { Timeout = TimeSpan.FromSeconds( 30) };
+    private readonly HttpClient HttpClient = new() { Timeout = TimeSpan.FromSeconds(30) };
+    private readonly JsonSerializerOptions JsonSerializerOptions;
     public Enrico(ILogger logger, IClock clock)
     {
         Logger = logger;
         Clock = clock;
         if (!Directory.Exists(FolderName))
             Directory.CreateDirectory(FolderName);
+
+        JavaScriptEncoder customEncoder = JavaScriptEncoder.Create(new TextEncoderSettings(UnicodeRanges.All));
+        JsonSerializerOptions = new() { WriteIndented = true, Encoder = customEncoder };
     }
 
-    public async Task<JsonDocument> GetHolidays(string country, string region)
+    public async Task<JsonDocument> GetHolidays(string country, string region, CancellationToken ct)
     {
         const int MaxAgeDays = 10;
         string fileName = MakeFileName(country, region);
@@ -43,7 +48,7 @@ internal sealed class Enrico : IDisposable
 
         try
         {
-            JsonDocument json = await DownloadJson().ConfigureAwait(false);
+            JsonDocument json = await Download(country, region, ct).ConfigureAwait(false);
             SaveJson(json);
             return json;
         }
@@ -54,13 +59,9 @@ internal sealed class Enrico : IDisposable
             throw;
         }
 
-        async Task<JsonDocument> DownloadJson() => await Download(country, region).ConfigureAwait(false);
-
         void SaveJson(JsonDocument json)
         {
-            JavaScriptEncoder customEncoder = JavaScriptEncoder.Create(new TextEncoderSettings(UnicodeRanges.All));
-            JsonSerializerOptions jso = new() { WriteIndented = true, Encoder = customEncoder };
-            string str = JsonSerializer.Serialize(json, jso);
+            string str = JsonSerializer.Serialize(json, JsonSerializerOptions);
             File.WriteAllText(fileName, str);
         }
 
@@ -69,7 +70,6 @@ internal sealed class Enrico : IDisposable
             string txt = File.ReadAllText(fileName);
             return JsonDocument.Parse(txt);
         }
-
     }
 
     private static string MakeFileName(string country, string region)
@@ -82,7 +82,7 @@ internal sealed class Enrico : IDisposable
         return $"{FolderName}/holidays-{location}.json";
     }
 
-    private async Task<JsonDocument> Download(string country, string region)
+    private async Task<JsonDocument> Download(string country, string region, CancellationToken ct)
     {
         const int LeadDays = 90, LagDays = 30;
         Instant instant = Clock.GetCurrentInstant();
@@ -100,7 +100,8 @@ internal sealed class Enrico : IDisposable
 
         Logger.LogInformation("Downloading: {Url}.", url);
 
-        string str = await HttpClient.GetStringAsync(new Uri(url)).ConfigureAwait(false);
+        Uri uri = new(url);
+        string str = await HttpClient.GetStringAsync(uri, ct).ConfigureAwait(false);
 
         JsonDocument json = JsonDocument.Parse(str);
         JsonElement root = json.RootElement;
@@ -120,8 +121,5 @@ internal sealed class Enrico : IDisposable
         throw new InvalidDataException($"Unknown error parsing: {str}.");
     }
 
-    public void Dispose()
-    {
-        HttpClient.Dispose();
-    }
+    public void Dispose() => HttpClient.Dispose();
 }

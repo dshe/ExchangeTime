@@ -39,7 +39,7 @@ public readonly struct Holiday : IEquatable<Holiday>
 
         return json.RootElement
             .EnumerateArray()
-            .Select(j => Create(j))
+            .Select(Create)
             .GroupBy(h => h.Date) // in case there is more than one holiday on a particular date
             .Select(g => g.First())
             .ToDictionary(h => h.Date, h => h);

@@ -1,20 +1,19 @@
 ﻿using HolidayService;
 using Jot;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.EventLog;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 using ExchangeTime.Utility;
+using System.IO;
+using Microsoft.Extensions.Configuration;
 
 namespace ExchangeTime;
 
-// changed build action for this file from 'ApplicationDefinition' to 'C# compiler'
 public partial class App : Application
 {
     private readonly IHost MyHost;
@@ -22,38 +21,22 @@ public partial class App : Application
 
     public App() // base class constructor is called first
     {
-        MyHost = new HostBuilder()
-            .ConfigureAppConfiguration((ctx, config) => config
-                .SetBasePath(ctx.HostingEnvironment.ContentRootPath)
-                .AddJsonFile($"appsettings.json", optional: false))
-            .ConfigureLogging((ctx, logging) => logging
-                .Configure(options => options.ActivityTrackingOptions = ActivityTrackingOptions.SpanId | ActivityTrackingOptions.TraceId | ActivityTrackingOptions.ParentId)
-                .SetMinimumLevel(LogLevel.Information)
-                .AddDebug()
-                .AddEventLog()
-                .AddFilter<EventLogLoggerProvider>(level => level >= LogLevel.Warning)
-                .AddEventSourceLogger()
-                .AddFile("application.log", config => // NReco.Logging dependency
-                {
-                    config.Append = true;
-                    config.FileSizeLimitBytes = 10_000_000;
-                })
-                .AddConfiguration(ctx.Configuration.GetSection("Logging")))
-            .ConfigureServices((ctx, services) => services
-                .Configure<AppSettings>(ctx.Configuration)
-                .AddSingleton<IClock>(SystemClock.Instance)
-                .AddSingleton<AudioService>()
-                .AddSingleton<Holidays>()
-                .AddSingleton<MainWindow>()
-                .AddSingleton(new Tracker()))
-            .UseDefaultServiceProvider((ctx, options) =>
-            {
-                options.ValidateScopes = ctx.HostingEnvironment.IsDevelopment();
-                options.ValidateOnBuild = ctx.HostingEnvironment.IsDevelopment();
-            })
-            .Build();
+        HostApplicationBuilder builder = Host.CreateApplicationBuilder();
+        builder.Configuration.SetBasePath(Directory.GetCurrentDirectory());
+        builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: false);
+        builder.Services
+            .AddSingleton<IClock>(SystemClock.Instance)
+            .AddSingleton<AudioService>()
+            .AddSingleton<Holidays>()
+            .AddSingleton<MainWindow>()
+            .AddSingleton(new Tracker())
+            //.AddOptions<AppSettings>().BindConfiguration("");
+            //.Configure<AppSettings>(builder.Configuration.GetSection(""));
+            .Configure<AppSettings>(builder.Configuration);
+        MyHost = builder.Build();
 
         Logger = MyHost.Services.GetRequiredService<ILogger<App>>();
+        Logger.LogInformation("{AssemblyName}", Assembly.GetExecutingAssembly().FullName);
 
         AppDomain.CurrentDomain.FirstChanceException += (object? sender, FirstChanceExceptionEventArgs args) =>
             Logger.LogDebug(args.Exception, "CurrentDomainFirstChanceException: {Message}", args.Exception.Message);
@@ -92,22 +75,18 @@ public partial class App : Application
             DisplayException(args.Exception);
         };
 
-        Logger.LogInformation("{AssemblyName}", Assembly.GetExecutingAssembly().FullName);
-
         static void DisplayException(Exception e) =>
             Current.Dispatcher.BeginInvoke(new ExceptionWindow(e).Show);
     }
 
-    protected override async void OnStartup(StartupEventArgs e)
+    protected override void OnStartup(StartupEventArgs e)
     {
-        await MyHost.StartAsync().ConfigureAwait(false);
         MyHost.Services.GetRequiredService<MainWindow>().Show();
-        //Logger.LogCritical("This is only a test");
+        base.OnStartup(e);
     }
 
-    protected override async void OnExit(ExitEventArgs e)
+    protected override void OnExit(ExitEventArgs e)
     {
-        await MyHost.StopAsync().ConfigureAwait(false);
         MyHost.Dispose();
         base.OnExit(e);
     }

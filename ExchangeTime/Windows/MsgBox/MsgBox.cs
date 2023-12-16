@@ -7,6 +7,7 @@ namespace ExchangeTime;
 
 public class MsgBox
 {
+    private static readonly char[] separator = { ';' };
     private readonly Window window = new();
     private Image? image;
     public MsgBox(Window? owner = null)
@@ -41,6 +42,7 @@ public class MsgBox
             };
         }
     }
+
     internal string? Show(string message = "")
     {
         string? result = null;
@@ -93,7 +95,7 @@ public class MsgBox
             Grid.SetRow(panel, 1);
             Grid.SetColumn(panel, 1);
 
-            string[] buttonText = Buttons.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] buttonText = Buttons.Split(separator, StringSplitOptions.RemoveEmptyEntries);
             for (int i = 0; i < buttonText.Length; i++)
             {
                 Button button = new()

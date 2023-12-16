@@ -11,30 +11,35 @@ using System.Net;
 using ExchangeTime.Utility;
 using Microsoft.Extensions.Options;
 using Jot;
+using System.Threading;
+using Microsoft.Extensions.Logging;
+using System.ComponentModel;
 
 namespace ExchangeTime;
 
-public sealed partial class MainWindow : Window
+public sealed partial class MainWindow : Window, IDisposable
 {
     private const int BarTop = 30;
     private const int BarHeight = 16;
-
     private const int Y1Hours = 15, Y1Ticks = 27;
+    private readonly int width, height;
     private readonly DateTimeZone TimeZone = DateTimeZoneProviders.Bcl.GetSystemDefault();
     private readonly IClock Clock;
+    private readonly ILogger Logger;
     private readonly IOptions<AppSettings> Settings;
     private readonly Holidays Holidays;
     private readonly AudioService AudioService;
-    private readonly int width, height;
     private readonly ZoomFormats zoomFormats = new();
     private readonly Canvas canvas = new();
     private readonly TextBlock centerHeader, leftHeader, rightHeader;
     private readonly List<Location> Locations;
     private readonly DispatcherTimer timer = new();
-    
-    public MainWindow(IClock clock, IOptions<AppSettings> settings, Tracker tracker, Holidays holidays, AudioService audioService)
+    private readonly CancellationTokenSource Cts = new();
+
+    public MainWindow(IClock clock, ILogger<MainWindow> logger, IOptions<AppSettings> settings, Tracker tracker, Holidays holidays, AudioService audioService)
     {
         Clock = clock;
+        Logger = logger;
         Settings = settings;
         Holidays = holidays;
         AudioService = audioService;
@@ -87,15 +92,21 @@ public sealed partial class MainWindow : Window
     {
         try
         {
-            foreach (Location location in Locations)
-                await Holidays.LoadHolidays(location.Country, location.Region).ConfigureAwait(false);
+            await Holidays.LoadAllHolidays(Locations.Select(x => (x.Country, x.Region)), Cts.Token).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException)
+        {
+            Logger.LogInformation("Cancelling.");
+            return;
         }
         catch (WebException e)
         {
             HttpWebResponse response = (HttpWebResponse?)e.Response ?? throw new InvalidOperationException("No response object!");
             if (response.StatusCode != HttpStatusCode.TooManyRequests)
                 throw;
-            MessageBox.Show("Enrico Holiday Service: too many requests.", "warning", MessageBoxButton.OK);
+            string msg = "Enrico Holiday Service: too many requests.";
+            MessageBox.Show(msg, "warning", MessageBoxButton.OK);
+            Logger.LogWarning(e, "{Message}", msg);
         }
 
         timer.Tick += Repaint;
@@ -123,4 +134,7 @@ public sealed partial class MainWindow : Window
         if (Settings.Value.AudioEnable)
             await Notify(instant).ConfigureAwait(false);
     }
+
+    private void Window_Closing(object sender, CancelEventArgs e) => Cts.Cancel();
+    public void Dispose() => Cts.Dispose();
 }

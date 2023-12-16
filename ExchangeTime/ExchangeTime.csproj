@@ -1,35 +1,38 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net7.0-windows10.0.19041.0</TargetFramework>
+	<PlatformTarget>AnyCPU</PlatformTarget>
+	<OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
     <UseWPF>true</UseWPF>
     <Nullable>enable</Nullable>
     <ApplicationIcon>clock.ico</ApplicationIcon>
     <PackageIcon>worm64.png</PackageIcon>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/dshe/ExchangeTime</PackageProjectUrl>
-    <RepositoryType></RepositoryType>
+	<RepositoryUrl>https://github.com/dshe/ExchangeTime</RepositoryUrl>	  
     <PackageTags>ExchangeTime</PackageTags>
     <Authors>DavidS</Authors>
-    <Version>3.3.0</Version>
-    <AssemblyVersion>3.3.0</AssemblyVersion>
-    <FileVersion>3.3.0</FileVersion>
+    <Version>3.3.1</Version>
+    <AssemblyVersion>3.3.1</AssemblyVersion>
+    <FileVersion>3.3.1</FileVersion>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <StartupObject></StartupObject>
+    <StartupObject>ExchangeTime.Program</StartupObject>
     <DebugType>embedded</DebugType>
     <DebugSymbols>true</DebugSymbols>
 	<AnalysisMode>All</AnalysisMode>
 	<NoWarn>CA1848</NoWarn>
+	<SatelliteResourceLanguages>en-US</SatelliteResourceLanguages>
+	<!-- Required for self-contained publish -->
+	<SelfContained>true</SelfContained>
+	<InterceptorsPreviewNamespaces>$(InterceptorsPreviewNamespaces);Microsoft.Extensions.Configuration.Binder.SourceGeneration</InterceptorsPreviewNamespaces>
   </PropertyGroup>
 
   <ItemGroup>
     <None Include="worm64.png" Pack="true" PackagePath="" />
     <PackageReference Include="Jot" Version="2.1.17" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
     <PackageReference Include="NodaTime" Version="3.1.9" />
-    <PackageReference Include="NReco.Logging.File" Version="1.1.7" />
-    <PackageReference Include="System.Speech" Version="7.0.0" />
+    <PackageReference Include="System.Speech" Version="8.0.0" />
     <ProjectReference Include="..\HolidayService\HolidayService.csproj" />
   </ItemGroup>
 
@@ -43,9 +46,6 @@
     <None Update="zooms.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
     <Resource Include="Windows\MsgBox\Information48.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>

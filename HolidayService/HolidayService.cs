@@ -12,29 +12,28 @@ public sealed class Holidays : IDisposable
     private readonly Enrico Enrico;
     private readonly Dictionary<string, Dictionary<LocalDate, Holiday>> Dictionary = new();
     private static string MakeKey(string country, string region) => country + "-" + region;
-    private readonly SemaphoreSlim Semaphore = new(1);
 
     public Holidays(ILogger<Holidays> logger, IClock clock)
     {
         Enrico = new Enrico(logger, clock);
     }
 
-    public async Task LoadHolidays(string country, string region)
+    // not thread safe
+    public async Task LoadAllHolidays(IEnumerable<(string country, string region)> locations, CancellationToken ct)
     {
-        await Semaphore.WaitAsync().ConfigureAwait(false);
-        try
+        ArgumentNullException.ThrowIfNull(locations);
+        foreach (var (country, region) in locations)
+            await LoadHolidays(country, region, ct).ConfigureAwait(false);
+    }
+
+    private async Task LoadHolidays(string country, string region, CancellationToken ct)
+    {
+        string key = MakeKey(country, region);
+        if (!Dictionary.ContainsKey(key))
         {
-            string key = MakeKey(country, region);
-            if (!Dictionary.ContainsKey(key))
-            {
-                JsonDocument json = await Enrico.GetHolidays(country, region).ConfigureAwait(false);
-                Dictionary<LocalDate, Holiday> holidays = Holiday.GetHolidays(json);
-                Dictionary.Add(key, holidays);
-            }
-        }
-        finally
-        {
-            Semaphore.Release();
+            JsonDocument json = await Enrico.GetHolidays(country, region, ct).ConfigureAwait(false);
+            Dictionary<LocalDate, Holiday> holidays = Holiday.GetHolidays(json);
+            Dictionary.Add(key, holidays);
         }
     }
 
@@ -49,9 +48,5 @@ public sealed class Holidays : IDisposable
         return false;
     }
 
-    public void Dispose()
-    {
-        Enrico.Dispose();
-        Semaphore.Dispose();
-    }
+    public void Dispose() => Enrico.Dispose();
 }

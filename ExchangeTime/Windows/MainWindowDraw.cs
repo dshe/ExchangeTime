@@ -220,7 +220,7 @@ public sealed partial class MainWindow
 
     private async Task Notify(Instant instant)
     {
-        foreach (Location location in Locations.Where(loc => loc.Notifications.Any()))
+        foreach (Location location in Locations.Where(loc => loc.Notifications.Count != 0))
         {
             LocalDateTime dt = instant.InZone(location.TimeZone).LocalDateTime;
 
