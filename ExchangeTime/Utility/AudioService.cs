@@ -45,7 +45,7 @@ public sealed class AudioService : IDisposable
 
         SoundPlayer.SoundLocation = fileName;
 
-        await Task.Run(() => SoundPlayer.PlaySync()).ConfigureAwait(false);
+        await Task.Run(SoundPlayer.PlaySync).ConfigureAwait(false);
     }
 
     public async Task AnnounceTime(ZonedDateTime zdt, string text = "")

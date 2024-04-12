@@ -7,16 +7,11 @@ using System.Threading.Tasks;
 namespace HolidayService;
 
 // get all holidays 2 weeks back and 4 weeks ahead
-public sealed class Holidays : IDisposable
+public sealed class Holidays(ILogger<Holidays> logger, IClock clock) : IDisposable
 {
-    private readonly Enrico Enrico;
-    private readonly Dictionary<string, Dictionary<LocalDate, Holiday>> Dictionary = new();
+    private readonly Enrico Enrico = new(logger, clock);
+    private readonly Dictionary<string, Dictionary<LocalDate, Holiday>> Dictionary = [];
     private static string MakeKey(string country, string region) => country + "-" + region;
-
-    public Holidays(ILogger<Holidays> logger, IClock clock)
-    {
-        Enrico = new Enrico(logger, clock);
-    }
 
     // not thread safe
     public async Task LoadAllHolidays(IEnumerable<(string country, string region)> locations, CancellationToken ct)
