@@ -3,7 +3,7 @@
   <PropertyGroup>
 	<PlatformTarget>AnyCPU</PlatformTarget>
 	<OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
+    <TargetFramework>net8.0-windows10.0.26100.0</TargetFramework>
     <UseWPF>true</UseWPF>
     <Nullable>enable</Nullable>
     <ApplicationIcon>clock.ico</ApplicationIcon>
@@ -20,24 +20,26 @@
     <DebugType>embedded</DebugType>
     <DebugSymbols>true</DebugSymbols>
 	<AnalysisMode>All</AnalysisMode>
-	<NoWarn>CA1848</NoWarn>
+	<NoWarn>CA1848,IDE0130</NoWarn>
 	<SatelliteResourceLanguages>en-US</SatelliteResourceLanguages>
 	<!-- Required for self-contained publish -->
 	<SelfContained>true</SelfContained>
 	<InterceptorsPreviewNamespaces>$(InterceptorsPreviewNamespaces);Microsoft.Extensions.Configuration.Binder.SourceGeneration</InterceptorsPreviewNamespaces>
+	<ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
 
   <ItemGroup>
     <None Include="worm64.png" Pack="true" PackagePath="" />
     <PackageReference Include="Jot" Version="2.1.17" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.8" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.9" />
     <PackageReference Include="NodaTime" Version="3.2.2" />
-    <PackageReference Include="System.Speech" Version="9.0.8" />
+    <PackageReference Include="System.Speech" Version="9.0.9" />
     <ProjectReference Include="..\HolidayService\HolidayService.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="appsettings.json">
+	  <RuntimeHostConfigurationOption Include="Switch.System.Windows.DoNotScaleForDpiChanges" Value="false" />
+	  <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="data.json">

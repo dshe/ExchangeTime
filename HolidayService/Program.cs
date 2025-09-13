@@ -14,7 +14,7 @@ public static class Program
     static async Task Main()
     {
         //await holidays.LoadHolidays("usa", "ny");
-        await holidays.LoadHolidays("isl", "");
+        await holidays.LoadAllHolidays("isl", "");
 
         //if (holidays.TryGetHoliday("usa", "ny", new LocalDate(2021, 12, 25), out Holiday holiday))
         if (holidays.TryGetHoliday("isl", "", new LocalDate(2021, 12, 25), out Holiday holiday))
@@ -31,7 +31,7 @@ public static class Program
         LocalDate from = now.Minus(Duration.FromDays(30)).Date;
         LocalDate to = now.Plus(Duration.FromDays(90)).Date;
 
-        JsonDocument json = await holidayService.GetHolidays("usa", "ny").ConfigureAwait(false);
+        JsonDocument json = await holidayService.GetHolidays("usa", "ny", default).ConfigureAwait(false);
     }
 
 }

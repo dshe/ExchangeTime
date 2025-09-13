@@ -1,13 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Media;
-using System.Threading.Tasks;
 using System.Speech.Synthesis;
 using System.Threading;
-
 namespace ExchangeTime.Utility;
 
 public sealed class AudioService : IDisposable
@@ -25,7 +22,7 @@ public sealed class AudioService : IDisposable
         if (SpeechSynthesizer.GetInstalledVoices(cultureInfo).Any(v => v.VoiceInfo.Name == "Microsoft David Desktop"))
             SpeechSynthesizer.SelectVoice("Microsoft David Desktop");
 
-        SpeechSynthesizer.SpeakCompleted += (object? sender, SpeakCompletedEventArgs e) =>  Semaphore.Release();
+        SpeechSynthesizer.SpeakCompleted += (sender, e) => Semaphore.Release();
     }
 
     private async Task PlayWindowsMediaFile(string fileName = "Alarm01.wav")

@@ -1,13 +1,10 @@
-﻿using System.Linq;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using HolidayService;
 using ExchangeTime.Utility;
-using System.Threading.Tasks;
-
 namespace ExchangeTime;
 
 public sealed partial class MainWindow

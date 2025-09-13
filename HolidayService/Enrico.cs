@@ -7,7 +7,6 @@ using System.Text.Json;
 using System.Text.Unicode;
 using System.Threading;
 using System.Threading.Tasks;
-
 namespace HolidayService;
 /*
 Enrico Service 2.0: http://kayaposoft.com/enrico/json/

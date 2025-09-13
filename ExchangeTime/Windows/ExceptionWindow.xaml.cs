@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-
 namespace ExchangeTime;
 
 public sealed partial class ExceptionWindow : Window

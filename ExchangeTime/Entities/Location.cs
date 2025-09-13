@@ -1,10 +1,7 @@
 ﻿using ExchangeTime.Utility;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text.Json;
 using System.Windows.Media;
-
 namespace ExchangeTime;
 
 internal sealed class Location
@@ -13,8 +10,8 @@ internal sealed class Location
     internal readonly DateTimeZone TimeZone;
     internal readonly SolidColorBrush Brush;
     internal readonly List<Bar> Bars;
-    internal readonly List<EarlyClose> EarlyCloses = new();
-    internal readonly List<Notification> Notifications = new();
+    internal readonly List<EarlyClose> EarlyCloses = [];
+    internal readonly List<Notification> Notifications = [];
     internal Location(JsonElement json)
     {
         Name = json.GetProperty("name").GetString() ?? throw new InvalidDataException("Missing property: 'name'");
@@ -38,7 +35,7 @@ internal sealed class Location
 
             Brush = MyBrushes.CreateBrush(color);
 
-            Bars = json.GetProperty("bars").EnumerateArray().Select(interval => new Bar(interval)).ToList();
+            Bars = [.. json.GetProperty("bars").EnumerateArray().Select(interval => new Bar(interval))];
 
             // optional
             if (json.TryGetProperty("earlycloses", out JsonElement earlyCloses))

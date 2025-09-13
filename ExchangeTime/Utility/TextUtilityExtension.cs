@@ -2,18 +2,15 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-
 namespace ExchangeTime.Utility;
 
 internal static class TextUtilityExtension
 {
-    internal static readonly char[] separator = { ';' };
+    internal static readonly char[] separator = [';'];
     internal static Size GetTextSize(this TextBlock tb)
     {
-        DpiScale m_dpiInfo = VisualTreeHelper.GetDpi(tb);
-        double pixelsPerDip = m_dpiInfo.PixelsPerDip;
-
         Typeface typeface = new(tb.FontFamily, tb.FontStyle, tb.FontWeight, tb.FontStretch);
+        double pixelsPerDip = VisualTreeHelper.GetDpi(tb).PixelsPerDip; // for text scaling
 
         FormattedText formattedText = new(
             tb.Text,
@@ -26,7 +23,7 @@ internal static class TextUtilityExtension
             TextFormattingMode.Display,
             pixelsPerDip);
 
-        return new(formattedText.Width * 1.2, formattedText.Height);
+        return new(formattedText.Width * 1.3, formattedText.Height);
     }
 
     internal static void FitText(this TextBlock tb)
@@ -47,4 +44,5 @@ internal static class TextUtilityExtension
         }
         tb.Text = "";
     }
+
 }

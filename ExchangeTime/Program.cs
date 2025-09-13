@@ -1,14 +1,13 @@
 ﻿using System.Threading;
 using System.Windows;
-
 namespace ExchangeTime;
 
-sealed class Program
+public sealed class Program
 {
     private const string Name = "sYMhtkCo1ECwkg8AimtkMg";
 
     [STAThread]
-    static int Main()
+    public static int Main()
     {
         using Mutex mutex = new(true, Name, out bool createdNew);
         {
@@ -18,7 +17,9 @@ sealed class Program
                 return -1;
             }
 
-            return new App().Run();
+            App app = new();
+            //app.InitializeComponent();
+            return app.Run();
         }
     }
 }

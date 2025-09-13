@@ -1,7 +1,6 @@
 ﻿using NodaTime.Text;
 using System.IO;
 using System.Text.Json;
-
 namespace ExchangeTime;
 
 internal sealed class Bar

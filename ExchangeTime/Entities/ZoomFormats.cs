@@ -1,8 +1,5 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Text.Json;
-using System.Linq;
-
 namespace ExchangeTime;
 
 internal sealed class ZoomFormats
@@ -11,12 +8,11 @@ internal sealed class ZoomFormats
     internal ZoomFormats()
     {
         using FileStream fs = File.OpenRead("zooms.json");
-        Formats = JsonDocument
+        Formats = [.. JsonDocument
             .Parse(fs)
             .RootElement
             .EnumerateArray()
-            .Select(j => new ZoomFormat(j))
-            .ToList();
+            .Select(j => new ZoomFormat(j))];
     }
 
     private int index = 3;

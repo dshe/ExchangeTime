@@ -9,7 +9,7 @@
 		WindowStyle="None"
 		ResizeMode="NoResize"
 		Title="ExchangeTime"
-        Width="484"
+        Width="400"
         Height="100"
         WindowStartupLocation="Manual"
         BorderThickness="2"

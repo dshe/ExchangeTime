@@ -14,7 +14,6 @@ using Jot;
 using System.Threading;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel;
-
 namespace ExchangeTime;
 
 public sealed partial class MainWindow : Window, IDisposable
@@ -46,8 +45,12 @@ public sealed partial class MainWindow : Window, IDisposable
 
         InitializeComponent();
 
+        // hardware pixels
+        // DIP (device independent pixels) are 1/96 inch, virtiual
+        //var xx = VisualTreeHelper.GetDpi(this).PixelsPerDip;
+
         FontSize = 12;
-        Width = 648;
+        Width = 649;
 
         ArgumentNullException.ThrowIfNull(tracker);
         tracker.Configure<MainWindow>()
@@ -57,16 +60,15 @@ public sealed partial class MainWindow : Window, IDisposable
         tracker.Track(this);
 
         ArgumentNullException.ThrowIfNull(settings);
-        Locations = JsonDocument
+        Locations = [.. JsonDocument
             .Parse(File.ReadAllText(settings.Value.DataFilePath))
             .RootElement
             .GetProperty("locations")
             .EnumerateArray()
-            .Select(location => new Location(location))
-            .ToList();
+            .Select(location => new Location(location))];
 
         width = Convert.ToInt32(Width - 2 * BorderThickness.Left);
-        Height = Locations.Count * BarHeight + 33;
+        Height = Locations.Count * BarHeight + 34;
         height = Convert.ToInt32(Height - 2 * BorderThickness.Top);
 
         leftHeader = CreateTopTextBlock(TextAlignment.Left);

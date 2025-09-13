@@ -1,7 +1,6 @@
 ﻿using System.IO;
 using System.Text.Json;
 using NodaTime.Text;
-
 namespace ExchangeTime;
 
 internal sealed class Notification

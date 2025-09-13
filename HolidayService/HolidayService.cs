@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-
 namespace HolidayService;
 
 // get all holidays 2 weeks back and 4 weeks ahead
