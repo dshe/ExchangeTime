@@ -30,7 +30,7 @@ public class MsgBox
         get => IconType.Error;
         init
         {
-            string file = $"{Enum.GetName(typeof(IconType), value)}48.png";
+            string file = $"{Enum.GetName(value)}48.png";
             Uri uri = new($"pack://application:,,,/Windows/MsgBox/{file}");
             BitmapImage bmi = new(uri);
             image = new Image
