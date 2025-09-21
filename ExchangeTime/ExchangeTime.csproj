@@ -12,9 +12,9 @@
 	<RepositoryUrl>https://github.com/dshe/ExchangeTime</RepositoryUrl>	  
     <PackageTags>ExchangeTime</PackageTags>
     <Authors>DavidS</Authors>
-    <Version>3.3.5</Version>
-    <AssemblyVersion>3.3.5</AssemblyVersion>
-    <FileVersion>3.3.5</FileVersion>
+    <Version>3.3.6</Version>
+    <AssemblyVersion>3.3.6</AssemblyVersion>
+    <FileVersion>3.3.6</FileVersion>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <StartupObject>ExchangeTime.Program</StartupObject>
     <DebugType>embedded</DebugType>
