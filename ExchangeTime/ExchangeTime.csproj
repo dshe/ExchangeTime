@@ -4,6 +4,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>	  
     <UseWPF>true</UseWPF>
     <Nullable>enable</Nullable>
     <ApplicationIcon>clock.ico</ApplicationIcon>
