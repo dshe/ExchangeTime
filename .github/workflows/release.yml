@@ -21,7 +21,7 @@ jobs:
         dotnet-version: "10.0.x"
 
     - name: Build executable
-      run: dotnet publish OpenFigiClient/OpenFigiClient.csproj -c Release -r win-x64 --self-contained true -o ./publish
+      run: dotnet publish ExchangeTime/ExchangeTime.csproj -c Release -r win-x64 --self-contained true -o ./publish
 
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v2
