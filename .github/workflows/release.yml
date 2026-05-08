@@ -1,0 +1,31 @@
+name: Create GitHub Release
+
+on:
+  workflow_dispatch:   # run manually from Actions tab
+  # OR use tags if you want automatic releases:
+  # push:
+  #   tags:
+  #     - 'v*'
+
+jobs:
+  release:
+    runs-on: windows-latest  # use Windows runner
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v6
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: "10.0.x"
+
+    - name: Build executable
+      run: dotnet publish OpenFigiClient/OpenFigiClient.csproj -c Release -r win-x64 --self-contained true -o ./publish
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: ./publish/*
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
