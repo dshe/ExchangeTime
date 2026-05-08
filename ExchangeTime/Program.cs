@@ -2,9 +2,9 @@
 using System.Windows;
 namespace ExchangeTime;
 
-public sealed class Program
+internal sealed class Program
 {
-    private const string Name = "sYMhtkCo1ECwkg8AimtkMg";
+    private const string Name = "sYMhtkCo1ECwkg8AimtkMh";
 
     [STAThread]
     public static int Main()

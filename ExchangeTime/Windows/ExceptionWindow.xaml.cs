@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 namespace ExchangeTime;
 
-public sealed partial class ExceptionWindow : Window
+sealed partial class ExceptionWindow : Window
 {
     public Exception Exception { get; }
     public string ExceptionType { get; }

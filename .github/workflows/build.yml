@@ -1,0 +1,31 @@
+name: .NET Build & Test
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+  workflow_dispatch:  # enable manual runs
+  workflow_call:   # allows other workflows to call this one  
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v6
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: "10.0.x"
+
+    - name: Restore dependencies
+      run: dotnet restore ExchangeTime.slnx
+
+    - name: Build solution
+      run: dotnet build ExchangeTime.slnx --configuration Release --no-restore
+
+#    - name: Run tests
+#      run: dotnet test ExchangeTime.Tests/ExchangeTime.Tests.csproj --configuration Release --no-build --verbosity normal

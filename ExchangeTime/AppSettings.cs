@@ -1,6 +1,6 @@
 ﻿namespace ExchangeTime;
 
-public class AppSettings
+public sealed class AppSettings
 {
     public bool AudioEnable { get; set; } = true;
 

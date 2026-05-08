@@ -1,6 +1,6 @@
 ﻿namespace ExchangeTime.Utility;
 
-public static class DateTimeExtenstions
+internal static class DateTimeExtenstions
 {
     private static bool IsIsrael(this string name) => (name == "Israel" || name == "isr");
     private static bool IsFriday(this LocalDateTime dt) => dt.DayOfWeek == IsoDayOfWeek.Friday;

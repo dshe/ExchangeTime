@@ -4,12 +4,12 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 namespace ExchangeTime;
 
-public class MsgBox
+internal sealed class MsgBox
 {
     private static readonly char[] separator = { ';' };
     private readonly Window window = new();
     private Image? image;
-    public MsgBox(Window? owner = null)
+    internal MsgBox(Window? owner = null)
     {
         if (owner is not null)
         {
@@ -19,13 +19,13 @@ public class MsgBox
         window.ResizeMode = ResizeMode.NoResize;
         window.SizeToContent = SizeToContent.WidthAndHeight;
     }
-    public string Title { get => window.Title; init => window.Title = value; }
-    public double FontSize { get; init; }
-    public Brush ForeGround { get => window.Foreground; init => window.Foreground = value; }
-    public Brush Background { get => window.Background; init => window.Background = value; }
-    public string Buttons { get; init; } = "";
-    public enum IconType { Information, Question, Warning, Error };
-    public IconType MsgBoxIconType
+    internal string Title { get => window.Title; init => window.Title = value; }
+    internal double FontSize { get; init; }
+    internal Brush ForeGround { get => window.Foreground; init => window.Foreground = value; }
+    internal Brush Background { get => window.Background; init => window.Background = value; }
+    internal string Buttons { get; init; } = "";
+    internal enum IconType { Information, Question, Warning, Error };
+    internal IconType MsgBoxIconType
     {
         get => IconType.Error;
         init

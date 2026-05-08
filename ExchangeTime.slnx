@@ -1,0 +1,15 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="ARM" />
+    <Platform Name="arm64" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Solution Items/">
+    <File Path="Screencap1.png" />
+    <File Path="Screencap2.png" />
+  </Folder>
+  <Project Path="ExchangeTime/ExchangeTime.csproj" />
+  <Project Path="HolidayService/HolidayService.csproj" />
+</Solution>
