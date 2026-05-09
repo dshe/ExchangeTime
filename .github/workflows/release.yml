@@ -26,12 +26,13 @@ jobs:
           echo "version=$version" >> $env:GITHUB_OUTPUT
 
       - name: Check if tag exists
+        shell: bash
         run: |
           if git ls-remote --tags origin | grep "refs/tags/v${{ steps.get_version.outputs.version }}"; then
             echo "Tag already exists"
             exit 1
           fi
-          
+
       - name: Create Git tag
         run: |
           git config user.name "github-actions[bot]"
