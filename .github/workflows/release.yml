@@ -20,7 +20,7 @@ jobs:
       - name: Read version from csproj
         id: get_version
         run: |
-          VERSION=$(grep -oPm1 "(?<=<Version>)[^<]+" ExchangeTime/ExchangeTime.csproj)
+          VERSION=$(grep -oPm1 "(?<=<Version>)[^<]+"ExchangeTime/ExchangeTime.csproj)
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Create Git tag
