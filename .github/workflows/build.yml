@@ -2,6 +2,8 @@ name: .NET Build
 
 on:
   push:
+    paths-ignore:
+     - '.github/workflows/release.yml'
     branches:
      - "**"  # all branches
   pull_request:
