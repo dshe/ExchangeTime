@@ -43,7 +43,7 @@ jobs:
 
       - name: List fies
         run: |
-          ls ./publish/win-x6
+          ls ./publish/win-x64
           ls ./publish/win-arm64
 
       - name: Zip published output
