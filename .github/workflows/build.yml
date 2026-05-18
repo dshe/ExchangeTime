@@ -1,11 +1,6 @@
 name: Build, Publish
 
 on:
-  push:
-    paths-ignore:
-     - '.github/workflows/release.yml'
-    branches:
-      - main
   workflow_dispatch:
     inputs:
       publish:
@@ -24,15 +19,6 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "10.0.x"
-
-      - name: Extract project version
-        id: get_version
-        shell: pwsh
-        run: |
-           [xml]$proj = Get-Content "./${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj"
-           $version = $proj.Project.PropertyGroup.Version
-           if (-not $version) { $version = "0.0.0" }
-           Write-Output "version=$version" >> $env:GITHUB_OUTPUT
 
       - name: Restore
         run: dotnet restore ${{ env.PROJECT_NAME }}.slnx
@@ -57,12 +43,25 @@ jobs:
           cd publish
           powershell Compress-Archive -Path * -DestinationPath ../${{ env.PROJECT_NAME }}-$version.zip
 
+      - name: Zip published output
+        shell: pwsh
+        run: |
+          [xml]$proj = Get-Content "./${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj"
+          $version = $proj.Project.PropertyGroup.Version
+          if (-not $version) { $version = "0.0.0" }
+          $zipName = "${{ env.PROJECT_NAME }}-$version.zip"
+          Write-Host "Creating release package: $zipName"
+          Compress-Archive -Path ./publish/* -DestinationPath ./$zipName
+          Write-Output "zipName=$zipName" >> $env:GITHUB_OUTPUT
+
       - name: Create GitHub Release
-        if: github.event.inputs.publish == 'true'
+        if: ${{ github.event.inputs.publish == 'true' }}
         uses: softprops/action-gh-release@v2
         with:
-          name: v$version
-          generate_release_notes: false
-          files: ./publish/*
+          tag_name: v${{ steps.get_version.outputs.version }}
+          name: "App v${{ steps.get_version.outputs.version }}"
+          body: "Automated release of WPF application version ${{ steps.get_version.outputs.version }}."
+          files: ./${{ steps.zip_published.outputs.zipName }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
