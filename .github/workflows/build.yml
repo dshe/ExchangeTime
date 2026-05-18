@@ -40,6 +40,7 @@ jobs:
         run: ls ./publish
 
       - name: Zip published output
+        id: publish
         shell: pwsh
         run: |
           [xml]$proj = Get-Content "./${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj"
@@ -55,10 +56,10 @@ jobs:
         if: ${{ github.event.inputs.publish == 'true' }}
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ steps.get_version.outputs.version }}
-          name: "App v${{ steps.get_version.outputs.version }}"
-          body: "Automated release of WPF application version ${{ steps.get_version.outputs.version }}."
-          files: ./${{ steps.zip_published.outputs.zipName }}
+          tag_name: v${{ steps.publish.outputs.version }}
+          name: "${{ env.PROJECT_NAME }} v${{ steps.publish.outputs.version }}"
+          files: ./${{ steps.publish.outputs.zipName }}
+          overwrite: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
