@@ -2,6 +2,8 @@ name: Build, Publish
 
 on:
   push:
+    paths-ignore:
+     - '.github/workflows/release.yml'
     branches:
       - main
   workflow_dispatch:
