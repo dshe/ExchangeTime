@@ -38,11 +38,6 @@ jobs:
       - name: List fies
         run: ls ./publish
 
-      - name: Zip publish folder
-        run: |
-          cd publish
-          powershell Compress-Archive -Path * -DestinationPath ../${{ env.PROJECT_NAME }}-$version.zip
-
       - name: Zip published output
         shell: pwsh
         run: |
@@ -53,6 +48,7 @@ jobs:
           Write-Host "Creating release package: $zipName"
           Compress-Archive -Path ./publish/* -DestinationPath ./$zipName
           Write-Output "zipName=$zipName" >> $env:GITHUB_OUTPUT
+          run: ls ./publish
 
       - name: Create GitHub Release
         if: ${{ github.event.inputs.publish == 'true' }}
