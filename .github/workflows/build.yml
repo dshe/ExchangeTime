@@ -1,31 +1,65 @@
-name: .NET Build
+name: Build, Publish
 
 on:
   push:
     branches:
-     - "**"  # all branches
-  pull_request:
-  workflow_dispatch:  # enable manual runs
+      - main
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: 'Publish release?'
+        required: false
+        default: 'false'
 
 jobs:
-
-  build:
-    runs-on: windows-latest  # use Windows runner
+  build-and-publish:
+    runs-on: windows-latest
+    env:
+      PROJECT_NAME: ExchangeTime
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v6
+      - uses: actions/checkout@v6
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: "10.0.x"
+      - name: Read version from csproj
+        id: get_version
+        run: |
+          VERSION=$(grep -oPm1 "(?<=<Version>)[^<]+" ${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
 
-    - name: Restore dependencies
-      run: dotnet restore ExchangeTime.slnx
+      - name: Restore
+        run: dotnet restore ${{ env.PROJECT_NAME }}.slnx
 
-    - name: Build solution
-      run: dotnet build ExchangeTime.slnx --configuration Release --no-restore
+      - name: Build
+        run: dotnet build ${{ env.PROJECT_NAME }}.slnx `
+          --configuration Release --no-restore
 
-#    - name: Run tests
-#      run: dotnet test ExchangeTime.Tests/ExchangeTime.Tests.csproj --configuration Release --no-build --verbosity normal
+      #- name: Test
+      #  run: dotnet test ${{ env.PROJECT_NAME }}.slnx `
+      #    --configuration Release --no-build
+
+      - name: Publish executable
+        run: dotnet publish ${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj `
+          -c Release -r win-x64 --self-contained true -o ./publish
+
+      - name: List fies
+        run: ls ./publish
+
+      - name: Zip publish folder
+        run: |
+          cd publish
+          powershell Compress-Archive -Path * -DestinationPath ../${{ env.PROJECT_NAME }}-${{ steps.get_version.outputs.version }}.zip
+      
+      - name: Create GitHub Release
+        if: github.event.inputs.publish == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          name: v${{ steps.get_version.outputs.version }}
+          generate_release_notes: false
+          files: ./publish/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+

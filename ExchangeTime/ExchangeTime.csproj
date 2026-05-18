@@ -32,9 +32,9 @@
   <ItemGroup>
     <None Include="worm64.png" Pack="true" PackagePath="" />
     <PackageReference Include="Jot" Version="2.1.17" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.7" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.8" />
     <PackageReference Include="NodaTime" Version="3.3.2" />
-    <PackageReference Include="System.Speech" Version="10.0.7" />
+    <PackageReference Include="System.Speech" Version="10.0.8" />
     <ProjectReference Include="..\HolidayService\HolidayService.csproj" />
   </ItemGroup>
 
