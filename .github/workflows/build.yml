@@ -60,7 +60,7 @@ jobs:
           tag_name: v${{ steps.publish.outputs.version }}
           name: "${{ env.PROJECT_NAME }} v${{ steps.publish.outputs.version }}"
           files: ./${{ steps.publish.outputs.zipName }}
-          overwrite: true
+          overwrite_files: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
