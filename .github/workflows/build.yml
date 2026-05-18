@@ -33,7 +33,8 @@ jobs:
 
       - name: Publish executable
         run: dotnet publish ${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj `
-          -c Release -r win-x64 --self-contained true -o ./publish
+          -c Release --no-build -r win-x64 `
+          --self-contained true -o ./publish
 
       - name: List fies
         run: ls ./publish
