@@ -48,7 +48,7 @@ jobs:
           Write-Host "Creating release package: $zipName"
           Compress-Archive -Path ./publish/* -DestinationPath ./$zipName
           Write-Output "zipName=$zipName" >> $env:GITHUB_OUTPUT
-          ls ./publish
+          ls
 
       - name: Create GitHub Release
         if: ${{ github.event.inputs.publish == 'true' }}
