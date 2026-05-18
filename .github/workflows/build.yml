@@ -25,12 +25,6 @@ jobs:
         with:
           dotnet-version: "10.0.x"
 
-      - name: Read version from csproj
-        id: get_version
-        run: |
-          VERSION=$(grep -oPm1 "(?<=<Version>)[^<]+" ${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj)
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-
       - name: Restore
         run: dotnet restore ${{ env.PROJECT_NAME }}.slnx
 
@@ -53,15 +47,22 @@ jobs:
         run: |
           cd publish
           powershell Compress-Archive -Path * -DestinationPath ../${{ env.PROJECT_NAME }}-${{ steps.get_version.outputs.version }}.zip
-      
+
+      - name: Extract project version
+        id: get_version
+        shell: pwsh
+        run: |
+           [xml]$proj = Get-Content "./YourProjectName/YourProjectName.csproj"
+           $version = $proj.Project.PropertyGroup.Version
+           if (-not $version) { $version = "0.0.0" }
+           Write-Output "version=$version" >> $env:GITHUB_OUTPUT
+
       - name: Create GitHub Release
         if: github.event.inputs.publish == 'true'
         uses: softprops/action-gh-release@v2
         with:
-          name: v${{ steps.get_version.outputs.version }}
+          name: v${{ needs.build.outputs.version }}
           generate_release_notes: false
           files: ./publish/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-
