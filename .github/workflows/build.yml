@@ -46,6 +46,7 @@ jobs:
           [xml]$proj = Get-Content "./${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj"
           $version = $proj.Project.PropertyGroup.Version
           if (-not $version) { $version = "0.0.0" }
+          Write-Output "version=$version" >> $env:GITHUB_OUTPUT
           $zipName = "${{ env.PROJECT_NAME }}-$version.zip"
           Write-Host "Creating release package: $zipName"
           Compress-Archive -Path ./publish/* -DestinationPath ./$zipName
