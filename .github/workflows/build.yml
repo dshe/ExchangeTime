@@ -1,11 +1,6 @@
 name: Build, Publish
 
 on:
-  push:
-    paths-ignore:
-     - '.github/workflows/release.yml'
-    branches:
-      - main
   workflow_dispatch:
     inputs:
       publish:
@@ -25,12 +20,6 @@ jobs:
         with:
           dotnet-version: "10.0.x"
 
-      - name: Read version from csproj
-        id: get_version
-        run: |
-          VERSION=$(grep -oPm1 "(?<=<Version>)[^<]+" ${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj)
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-
       - name: Restore
         run: dotnet restore ${{ env.PROJECT_NAME }}.slnx
 
@@ -42,26 +31,51 @@ jobs:
       #  run: dotnet test ${{ env.PROJECT_NAME }}.slnx `
       #    --configuration Release --no-build
 
-      - name: Publish executable
+      - name: Publish win-x64 executable
         run: dotnet publish ${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj `
-          -c Release -r win-x64 --self-contained true -o ./publish
+          -c Release --no-build -r win-x64 `
+          --self-contained true -o ./publish/win-x64
+
+      - name: Publish win-arm64 executable
+        run: dotnet publish ${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj `
+          -c Release --no-build -r win-arm64 `
+          --self-contained true -o ./publish/win-arm64
 
       - name: List fies
-        run: ls ./publish
-
-      - name: Zip publish folder
         run: |
-          cd publish
-          powershell Compress-Archive -Path * -DestinationPath ../${{ env.PROJECT_NAME }}-${{ steps.get_version.outputs.version }}.zip
-      
+          ls ./publish/win-x6
+          ls ./publish/win-arm64
+
+      - name: Zip published output
+        id: publish
+        shell: pwsh
+        run: |
+          [xml]$proj = Get-Content "./${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj"
+          $version = $proj.Project.PropertyGroup.Version
+          if (-not $version) { $version = "0.0.0" }
+          Write-Output "version=$version" >> $env:GITHUB_OUTPUT
+
+          $zipX64 = "${{ env.PROJECT_NAME }}-$version-x64.zip"
+          $zipArm64 = "${{ env.PROJECT_NAME }}-$version-arm64.zip"
+          
+          Write-Host "Creating release packages: $zipX64 and $zipArm64."
+          Compress-Archive -Path ./publish/win-x64/* -DestinationPath ./$zipX64
+          Compress-Archive -Path ./publish/win-arm64/* -DestinationPath ./$zipArm64
+          
+          Write-Output "zipX64=$zipX64" >> $env:GITHUB_OUTPUT
+          Write-Output "zipArm64=$zipArm64" >> $env:GITHUB_OUTPUT
+          ls
+
       - name: Create GitHub Release
-        if: github.event.inputs.publish == 'true'
+        if: ${{ github.event.inputs.publish == 'true' }}
         uses: softprops/action-gh-release@v2
         with:
-          name: v${{ steps.get_version.outputs.version }}
-          generate_release_notes: false
-          files: ./publish/*
+          tag_name: v${{ steps.publish.outputs.version }}
+          name: "${{ env.PROJECT_NAME }} v${{ steps.publish.outputs.version }}"
+          files: |
+            ./${{ steps.publish.outputs.zipX64 }}
+            ./${{ steps.publish.outputs.zipArm64 }}          
+          overwrite_files: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-
+          
