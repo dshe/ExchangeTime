@@ -1,7 +1,7 @@
 ## ExchangeTime&nbsp;&nbsp;
 [![Build & Test](https://github.com/dshe/ExchangeTime/actions/workflows/build.yml/badge.svg)](https://github.com/dshe/ExchangeTime/actions/workflows/build.yml)
 [![Latest Release](https://img.shields.io/github/v/release/dshe/ExchangeTime)](https://github.com/dshe/ExchangeTime/releases)
-[![Downloads](https://img.shields.io/github/downloads/dshe/ExchangeTime/total)](https://github.com/dshe/ExchangeTime/releases)
+[![Downloads](https://img.shields.io/github/downloads/dshe/ExchangeTime/latest/total)](https://github.com/dshe/ExchangeTime/releases)
 [![License](https://img.shields.io/badge/license-Apache%202.0-7755BB.svg)](https://opensource.org/licenses/Apache-2.0) 
 [![Ukraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/badges/StandWithUkraine.svg)](https://stand-with-ukraine.pp.ua)
 
