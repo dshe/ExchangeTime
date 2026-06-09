@@ -12,7 +12,7 @@
 - right-click to announce the current time
 - double-click to exit
 - edit the file "data.json" to modify timelines and schedule audio announcements
-- built with **WPF and .NET 9**
+- built with **WPF and .NET 10**
 
 <img src="/Screencap2.png" width="484" height="120">
 <img src="/Screencap1.png" width="484" height="120">
